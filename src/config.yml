@@ -1,0 +1,7 @@
+#### Pvp Realm configuration file ####
+
+# Pvp Realm world name
+pvp-world: my_awesome_pvp_world_name
+
+# Whether loss Heroes exp on death in the Pvp Realm
+death-heroes-exp-loss: false

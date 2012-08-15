@@ -1,0 +1,11 @@
+<project name="PvpRealm" basedir=".">
+
+    <property name="plugins.dir" value="C:/Users/Galaran/Desktop/McServer/plugins"/>
+
+    <target name="copy-plugin">
+        <copy todir="${plugins.dir}" overwrite="true">
+            <fileset file="PvpRealm.jar"/>
+        </copy>
+    </target>
+
+</project>
