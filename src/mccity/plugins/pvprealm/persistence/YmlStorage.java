@@ -1,6 +1,7 @@
 package mccity.plugins.pvprealm.persistence;
 
 import mccity.plugins.pvprealm.object.BattlePoint;
+import mccity.plugins.pvprealm.object.ItemsKit;
 import mccity.plugins.pvprealm.object.PvpPlayer;
 import me.galaran.bukkitutils.pvprealm.GUtils;
 import org.bukkit.configuration.file.FileConfiguration;
@@ -9,44 +10,35 @@ import org.bukkit.entity.Player;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.logging.Level;
 
 public class YmlStorage {
 
     private final File playersDir;
-
     private final File battlePointsFile;
-    private final String BATTLE_POINTS_ROOT = "battlePoints";
+    private final File kitsFile;
 
     public YmlStorage(File pluginDir) {
         playersDir = new File(pluginDir, "players");
         if (!playersDir.isDirectory()) {
             playersDir.mkdirs();
         }
+
         battlePointsFile = new File(pluginDir, "battle_points.yml");
-        if (!battlePointsFile.isFile()) {
-            try {
-                battlePointsFile.createNewFile();
-            } catch (IOException ex) {
-                ex.printStackTrace();
-            }
-        }
+        createFileIfNotExists(battlePointsFile);
+
+        kitsFile = new File(pluginDir, "kits.yml");
+        createFileIfNotExists(kitsFile);
     }
 
     public List<BattlePoint> loadBattlePoints() {
-        FileConfiguration config = YamlConfiguration.loadConfiguration(battlePointsFile);
-        List<Map<?, ?>> battlePointsData = config.getMapList(BATTLE_POINTS_ROOT);
+        FileConfiguration bPointsConfig = YamlConfiguration.loadConfiguration(battlePointsFile);
+        Set<String> keys = bPointsConfig.getKeys(false);
 
         List<BattlePoint> results = new ArrayList<BattlePoint>();
-        if (battlePointsData != null) {
-            for (Map<?, ?> curPointData : battlePointsData) {
-                BattlePoint curBattlePoint = new BattlePoint(curPointData);
-                results.add(curBattlePoint);
-            }
+        for (String key : keys) {
+            results.add(new BattlePoint(bPointsConfig.getConfigurationSection(key)));
         }
         return results;
     }
@@ -54,12 +46,11 @@ public class YmlStorage {
     public void storeBattlePoints(Collection<BattlePoint> points) {
         FileConfiguration config = new YamlConfiguration();
 
-        List<Map<String, ?>> battlePointsData = new ArrayList<Map<String, ?>>();
+        int idx = 0;
         for (BattlePoint curPoint : points) {
-            battlePointsData.add(curPoint.serialize());
+            config.set(String.valueOf(idx++), curPoint.serialize());
         }
 
-        config.set(BATTLE_POINTS_ROOT, battlePointsData);
         saveYml(config, battlePointsFile);
     }
 
@@ -86,12 +77,44 @@ public class YmlStorage {
         return new File(subDir, name + ".yml");
     }
 
+    public List<ItemsKit> loadKits() {
+        FileConfiguration kitsConfig = YamlConfiguration.loadConfiguration(kitsFile);
+        Set<String> keys = kitsConfig.getKeys(false);
+
+        List<ItemsKit> results = new ArrayList<ItemsKit>();
+        for (String curKey : keys) {
+            results.add(new ItemsKit(kitsConfig.getConfigurationSection(curKey)));
+        }
+        return results;
+    }
+
+    public void storeKits(Collection<ItemsKit> kits) {
+        FileConfiguration config = new YamlConfiguration();
+
+        int idx = 0;
+        for (ItemsKit kit : kits) {
+            config.set(String.valueOf(idx++), kit.serialize());
+        }
+
+        saveYml(config, kitsFile);
+    }
+
     private void saveYml(FileConfiguration config, File file) {
         try {
             config.save(file);
         } catch (IOException ex) {
             GUtils.log("Failed to save " + file.getAbsolutePath(), Level.SEVERE);
             ex.printStackTrace();
+        }
+    }
+
+    private void createFileIfNotExists(File file) {
+        if (!file.isFile()) {
+            try {
+                file.createNewFile();
+            } catch (IOException ex) {
+                ex.printStackTrace();
+            }
         }
     }
 }

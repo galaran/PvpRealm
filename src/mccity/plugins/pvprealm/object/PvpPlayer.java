@@ -3,15 +3,16 @@ package mccity.plugins.pvprealm.object;
 import mccity.plugins.pvprealm.Config;
 import mccity.plugins.pvprealm.PvpRealmEventHandler;
 import me.galaran.bukkitutils.pvprealm.GUtils;
+import org.bukkit.ChatColor;
 import org.bukkit.Location;
+import org.bukkit.World;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.serialization.ConfigurationSerializable;
 import org.bukkit.entity.Player;
+import org.bukkit.inventory.Inventory;
+import org.bukkit.inventory.ItemStack;
 
-import java.util.ArrayList;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.logging.Level;
 
 public class PvpPlayer implements ConfigurationSerializable {
@@ -32,6 +33,22 @@ public class PvpPlayer implements ConfigurationSerializable {
 
     public Player getPlayer() {
         return player;
+    }
+
+    public void giveKit(ItemsKit kit, boolean dropIfFull) {
+        Inventory inv = player.getInventory();
+        HashMap<Integer,ItemStack> ungiven = inv.addItem(kit.getStacks());
+        if (ungiven != null && !ungiven.isEmpty()) {
+            GUtils.sendMessage(player, "You have not enought slots in the inventory");
+            if (dropIfFull) {
+                World world = player.getWorld();
+                for (ItemStack ungivenStack : ungiven.values()) {
+                    world.dropItem(player.getLocation().add(0, 2, 0), ungivenStack);
+                }
+            }
+        }
+        player.updateInventory();
+        GUtils.sendMessage(player, "You have obtain kit " + ChatColor.GOLD + kit.getName());
     }
 
     public void enterPvpRealm() {

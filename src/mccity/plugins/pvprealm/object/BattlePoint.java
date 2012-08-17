@@ -2,6 +2,7 @@ package mccity.plugins.pvprealm.object;
 
 import me.galaran.bukkitutils.pvprealm.GUtils;
 import org.bukkit.Location;
+import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.serialization.ConfigurationSerializable;
 
 import java.util.LinkedHashMap;
@@ -14,12 +15,13 @@ public class BattlePoint implements ConfigurationSerializable {
 
     public BattlePoint(Location loc, String name) {
         this.loc = loc;
-        this.name = name.toLowerCase();
+        this.name = name;
     }
 
-    public BattlePoint(Map<?, ?> dataMap) {
-        name = (String) dataMap.get("name");
-        loc = GUtils.deserializeLocation(dataMap.get("location"));
+    public BattlePoint(ConfigurationSection section) {
+        name = section.getString("name");
+        Map<String, Object> locData = section.getConfigurationSection("location").getValues(false);
+        loc = GUtils.deserializeLocation(locData);
     }
 
     public Location getLoc() {

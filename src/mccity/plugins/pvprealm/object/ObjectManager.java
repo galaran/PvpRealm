@@ -23,8 +23,11 @@ public class ObjectManager {
     private final YmlStorage storage;
 
     private final Map<String, BattlePoint> battlePoints = new LinkedHashMap<String, BattlePoint>();
+
     private final Map<String, PvpPlayer> pvpPlayers = new ConcurrentHashMap<String, PvpPlayer>();
-    private final Set<String> unloadSet = Collections.synchronizedSet(new HashSet<String>());
+    private final Set<String> unloadPlayers = Collections.synchronizedSet(new HashSet<String>());
+
+    private final Map<String, ItemsKit> kits = new LinkedHashMap<String, ItemsKit>();
 
     public static void init(PvpRealm plugin) {
         instance = new ObjectManager(plugin);
@@ -33,9 +36,14 @@ public class ObjectManager {
     private ObjectManager(PvpRealm plugin) {
         storage = new YmlStorage(plugin.getDataFolder());
 
-        List<BattlePoint> battlePointsList = storage.loadBattlePoints();
-        for (BattlePoint battlePoint : battlePointsList) {
+        List<BattlePoint> loadedPoints = storage.loadBattlePoints();
+        for (BattlePoint battlePoint : loadedPoints) {
             battlePoints.put(battlePoint.getName(), battlePoint);
+        }
+
+        List<ItemsKit> loadedKits = storage.loadKits();
+        for (ItemsKit loadedKit : loadedKits) {
+            kits.put(loadedKit.getName(), loadedKit);
         }
 
         Bukkit.getScheduler().scheduleAsyncRepeatingTask(plugin, new AutoSaveTask(), AUTOSAVE_INTERVAL, AUTOSAVE_INTERVAL);
@@ -55,7 +63,7 @@ public class ObjectManager {
     }
 
     public BattlePoint getBattlePoint(String name) {
-        return battlePoints.get(name.toLowerCase());
+        return battlePoints.get(name);
     }
 
     public BattlePoint[] getBattlePoints() {
@@ -63,7 +71,7 @@ public class ObjectManager {
     }
 
     public boolean removeBattlePoint(String bPointName) {
-        boolean removed = battlePoints.remove(bPointName.toLowerCase()) != null;
+        boolean removed = battlePoints.remove(bPointName) != null;
         if (removed) {
             storage.storeBattlePoints(battlePoints.values());
         }
@@ -75,9 +83,31 @@ public class ObjectManager {
         storage.storeBattlePoints(battlePoints.values());
     }
 
+    public void addKit(ItemsKit newKit) {
+        kits.put(newKit.getName(), newKit);
+        storage.storeKits(kits.values());
+    }
+
+    public boolean removeKit(String kitName) {
+        boolean removed = kits.remove(kitName) != null;
+        if (removed) {
+            storage.storeKits(kits.values());
+        }
+        return removed;
+    }
+
+    public ItemsKit[] getKits() {
+        return kits.values().toArray(new ItemsKit[kits.size()]);
+    }
+
+    public ItemsKit getKit(String kitName) {
+        return kits.get(kitName);
+    }
+
     public void shutdown() {
         Config.save();
         storage.storeBattlePoints(battlePoints.values());
+        storage.storeKits(kits.values());
         for (PvpPlayer pvpPlayer : pvpPlayers.values()) {
             storage.storePvpPlayer(pvpPlayer);
         }
@@ -91,7 +121,7 @@ public class ObjectManager {
             while (itr.hasNext()) {
                 PvpPlayer pvpPlayer = itr.next().getValue();
                 storage.storePvpPlayer(pvpPlayer);
-                if (unloadSet.remove(pvpPlayer.getName())) {
+                if (unloadPlayers.remove(pvpPlayer.getName())) {
                     itr.remove();
                 }
             }
@@ -104,7 +134,7 @@ public class ObjectManager {
         public void onPlayerQuit(PlayerQuitEvent event) {
             PvpPlayer pvpPlayer = pvpPlayers.get(event.getPlayer().getName());
             if (pvpPlayer != null) {
-                unloadSet.add(pvpPlayer.getName());
+                unloadPlayers.add(pvpPlayer.getName());
             }
         }
 
@@ -112,7 +142,7 @@ public class ObjectManager {
         public void onPlayerJoin(PlayerJoinEvent event) {
             String playerName = event.getPlayer().getName();
 
-            unloadSet.remove(playerName);
+            unloadPlayers.remove(playerName);
             PvpPlayer joined = pvpPlayers.get(playerName);
             if (joined != null) {
                 joined.updateEntity(event.getPlayer());

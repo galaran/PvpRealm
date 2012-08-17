@@ -11,9 +11,9 @@ import org.bukkit.Location;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
-public class BattlePointCommands {
+public class BattlePointCommands implements SubCommandExecutor {
 
-    public static boolean onCommand(CommandSender sender, String label, String[] args) {
+    public boolean onCommand(CommandSender sender, String label, String[] args) {
         ObjectManager om = ObjectManager.instance;
 
         if (args.length == 1) {

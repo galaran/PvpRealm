@@ -1,6 +1,6 @@
 name: PvpRealm
 main: mccity.plugins.pvprealm.PvpRealm
-version: 0.1
+version: 0.2
 author: Galaran
 
 load: POSTWORLD
@@ -17,4 +17,6 @@ commands:
 
 permissions:
     pvprealm.command:
+        default: op
+    pvprealm.kit.placesign:
         default: op

@@ -1,12 +1,11 @@
 package me.galaran.bukkitutils.pvprealm;
 
-import org.bukkit.Bukkit;
-import org.bukkit.ChatColor;
-import org.bukkit.Location;
-import org.bukkit.World;
+import org.bukkit.*;
 import org.bukkit.block.Block;
 import org.bukkit.command.CommandSender;
+import org.bukkit.enchantments.Enchantment;
 import org.bukkit.entity.Player;
+import org.bukkit.inventory.ItemStack;
 import org.bukkit.material.MaterialData;
 
 import java.util.LinkedHashMap;
@@ -118,6 +117,45 @@ public class GUtils {
 
     public static String locToStringWorldXYZ(Location loc) {
         return loc.getWorld().getName() + ": " + locToStringXYZ(loc);
+    }
+
+    public static String stackToString(ItemStack stack) {
+        Material type = stack.getType();
+
+        StringBuilder sb = new StringBuilder();
+        if (stack.getAmount() > 1) {
+            sb.append(ChatColor.GREEN);
+            sb.append(stack.getAmount());
+            sb.append("x ");
+        }
+        sb.append(ChatColor.DARK_PURPLE);
+        sb.append(type.toString().toLowerCase());
+        sb.append(ChatColor.GRAY);
+
+        if (type.getMaxDurability() > 0) {
+            sb.append('(');
+            sb.append(type.getMaxDurability() - stack.getDurability());
+            sb.append('/');
+            sb.append(type.getMaxDurability());
+            sb.append(')');
+        } else {
+            sb.append(':');
+            sb.append(stack.getData().getData());
+        }
+        sb.append(' ');
+
+        Map<Enchantment, Integer> enchMap = stack.getEnchantments();
+        if (!enchMap.isEmpty()) {
+            sb.append(ChatColor.GOLD);
+            for (Map.Entry<Enchantment, Integer> curEnch : enchMap.entrySet()) {
+                sb.append(curEnch.getKey().getName());
+                sb.append('-');
+                sb.append(curEnch.getValue());
+                sb.append(' ');
+            }
+        }
+
+        return sb.toString();
     }
 
     public static void log(String message, Level level) {
