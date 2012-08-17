@@ -26,6 +26,7 @@ public class PvpRealmEventHandler implements Listener {
     private static boolean checkTeleport = true;
 
     private static final String PERM_KIT_SIGN_PLACE = "pvprealm.kit.placesign";
+    private static final String KIT_LINE = ChatColor.DARK_RED + "[kit]";
 
     public PvpRealmEventHandler(PvpRealm pvpRealm) {
         this.pvpRealm = pvpRealm;
@@ -68,7 +69,7 @@ public class PvpRealmEventHandler implements Listener {
 
     private void handleSignClick(Sign sign, Player player) {
         ObjectManager om = ObjectManager.instance;
-        if (ChatColor.stripColor(sign.getLine(1)).equalsIgnoreCase("[kit]")) {
+        if (sign.getLine(1).equals(KIT_LINE)) {
             String kitName = ChatColor.stripColor(sign.getLine(2).trim());
             ItemsKit kit = om.getKit(kitName);
             if (kit != null) {
@@ -80,12 +81,12 @@ public class PvpRealmEventHandler implements Listener {
 
     @EventHandler(priority = EventPriority.NORMAL, ignoreCancelled = true)
     public void onSignChange(SignChangeEvent event) {
-        if (ChatColor.stripColor(event.getLine(1).trim()).equalsIgnoreCase("[kit]")) {
+        if (ChatColor.stripColor(event.getLine(1)).trim().toLowerCase().contains("[kit]")) {
             Player player = event.getPlayer();
             if (player.hasPermission(PERM_KIT_SIGN_PLACE)) {
-                event.setLine(1, ChatColor.DARK_RED + "[kit]");
+                event.setLine(1, KIT_LINE);
             } else {
-                GUtils.sendMessage(player, ChatColor.DARK_RED + "You have no permissions to place kit signs");
+                GUtils.sendMessage(player, ChatColor.DARK_RED + "You have no permission to place kit signs");
                 event.setCancelled(true);
             }
         }
