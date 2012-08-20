@@ -31,8 +31,14 @@ public class Config {
         if (pvpWorld == null) throw new IllegalWorldException();
 
         deathExpLoss = fileConfig.getBoolean("death-heroes-exp-loss", false);
-        entryLoc = GUtils.deserializeLocation(((ConfigurationSection) fileConfig.get("entry-loc")).getValues(false));
-        defaultReturnLoc = GUtils.deserializeLocation(((ConfigurationSection) fileConfig.get("default-return-loc")).getValues(false));
+        ConfigurationSection entryLocSection = fileConfig.getConfigurationSection("entry-loc");
+        if (entryLocSection != null) {
+            entryLoc = GUtils.deserializeLocation(entryLocSection.getValues(false));
+        }
+        ConfigurationSection defaultReturnLocSection = fileConfig.getConfigurationSection("default-return-loc");
+        if (defaultReturnLocSection != null) {
+            defaultReturnLoc = GUtils.deserializeLocation(defaultReturnLocSection.getValues(false));
+        }
         initDefaults();
     }
 
@@ -51,8 +57,12 @@ public class Config {
 
         fileConfig.set("pvp-world", pvpWorld.getName());
         fileConfig.set("death-heroes-exp-loss", deathExpLoss);
-        fileConfig.set("entry-loc", GUtils.serializeLocation(entryLoc));
-        fileConfig.set("default-return-loc", GUtils.serializeLocation(defaultReturnLoc));
+        if (entryLoc != null) {
+            fileConfig.set("entry-loc", GUtils.serializeLocation(entryLoc));
+        }
+        if (defaultReturnLoc != null) {
+            fileConfig.set("default-return-loc", GUtils.serializeLocation(defaultReturnLoc));
+        }
 
         try {
             fileConfig.save(file);
