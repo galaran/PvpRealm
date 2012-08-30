@@ -22,6 +22,7 @@ import java.util.logging.Level;
 public class PvpPlayer implements ConfigurationSerializable {
 
     private final PvpRealm plugin;
+    private static final String PERM_BYPASS_LOGGER = "pvprealm.bypass.logger";
 
     private final String name;
     private Player player;
@@ -160,7 +161,7 @@ public class PvpPlayer implements ConfigurationSerializable {
     }
 
     public void onPvpLogout(Set<Player> combatPlayers) {
-        if (player.hasPermission("pvprealm.bypass.logger")) return;
+        if (player.hasPermission(PERM_BYPASS_LOGGER)) return;
 
         if (Config.pvpLoggerMessage) {
             StringBuilder playersList = new StringBuilder();
