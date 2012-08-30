@@ -170,6 +170,10 @@ public class GUtils {
         p.sendMessage(chatPrefix + message);
     }
 
+    public static void sendMessage(CommandSender p, String message, ChatColor color) {
+        sendMessage(p, color + message);
+    }
+
     public static void sendMessageSafe(String playerName, String message) {
         Player player = Bukkit.getPlayerExact(playerName);
         if (player != null) {

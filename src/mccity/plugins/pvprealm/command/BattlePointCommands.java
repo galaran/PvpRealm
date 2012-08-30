@@ -32,7 +32,7 @@ public class BattlePointCommands implements SubCommandExecutor {
                     Player senderPlayer = (Player) sender;
                     String pointName = args[1];
                     Location playerLoc = senderPlayer.getLocation();
-                    if (playerLoc.getWorld().equals(Config.getPvpWorld())) {
+                    if (playerLoc.getWorld().equals(Config.pvpWorld)) {
                         BattlePoint newPoint = new BattlePoint(senderPlayer.getLocation(), pointName);
                         om.addBattlePoint(newPoint);
                         GUtils.sendMessage(senderPlayer, "Point " + pointName + " has been added");

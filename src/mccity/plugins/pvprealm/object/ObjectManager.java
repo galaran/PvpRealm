@@ -19,6 +19,7 @@ public class ObjectManager {
     private static final int AUTOSAVE_INTERVAL = 6000;
 
     public static ObjectManager instance;
+    private final PvpRealm plugin;
 
     private final YmlStorage storage;
 
@@ -34,7 +35,8 @@ public class ObjectManager {
     }
 
     private ObjectManager(PvpRealm plugin) {
-        storage = new YmlStorage(plugin.getDataFolder());
+        this.plugin = plugin;
+        storage = new YmlStorage(plugin);
 
         List<BattlePoint> loadedPoints = storage.loadBattlePoints();
         for (BattlePoint battlePoint : loadedPoints) {
@@ -55,7 +57,7 @@ public class ObjectManager {
         if (result == null) {
             result = storage.loadPvpPlayer(player);
             if (result == null) {
-                result = new PvpPlayer(player);
+                result = new PvpPlayer(plugin, player);
             }
             pvpPlayers.put(result.getName(), result);
         }
@@ -105,7 +107,6 @@ public class ObjectManager {
     }
 
     public void shutdown() {
-        Config.save();
         storage.storeBattlePoints(battlePoints.values());
         storage.storeKits(kits.values());
         for (PvpPlayer pvpPlayer : pvpPlayers.values()) {

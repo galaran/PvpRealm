@@ -1,8 +1,12 @@
 package mccity.plugins.pvprealm.object;
 
+import com.herocraftonline.heroes.characters.Hero;
+import com.herocraftonline.heroes.characters.classes.HeroClass;
 import mccity.plugins.pvprealm.Config;
+import mccity.plugins.pvprealm.PvpRealm;
 import mccity.plugins.pvprealm.PvpRealmEventHandler;
 import me.galaran.bukkitutils.pvprealm.GUtils;
+import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.World;
@@ -17,13 +21,16 @@ import java.util.logging.Level;
 
 public class PvpPlayer implements ConfigurationSerializable {
 
+    private final PvpRealm plugin;
+
     private final String name;
     private Player player;
     private Location returnLoc;
 
-    public PvpPlayer(Player player) {
-        name = player.getName();
+    public PvpPlayer(PvpRealm plugin, Player player) {
+        this.plugin = plugin;
         this.player = player;
+        name = player.getName();
         returnLoc = null;
     }
 
@@ -53,8 +60,8 @@ public class PvpPlayer implements ConfigurationSerializable {
 
     public void enterPvpRealm() {
         Location curLoc = player.getLocation();
-        if (curLoc.getWorld().equals(Config.getPvpWorld())) { // no action required
-            GUtils.log("Player " + player.getName() + " entering to pvp world " + Config.getPvpWorld().getName() +
+        if (curLoc.getWorld().equals(Config.pvpWorld)) { // no action required
+            GUtils.log("Player " + player.getName() + " entering to pvp world " + Config.pvpWorld.getName() +
                     " but it already in", Level.WARNING);
             return;
         }
@@ -69,8 +76,8 @@ public class PvpPlayer implements ConfigurationSerializable {
     public void leavePvpRealm() {
         Location curLoc = player.getLocation();
         String playerName = player.getName();
-        if (!curLoc.getWorld().equals(Config.getPvpWorld())) { // no action required
-            GUtils.log("Player " + playerName + " leaving pvp world " + Config.getPvpWorld().getName() +
+        if (!curLoc.getWorld().equals(Config.pvpWorld)) { // no action required
+            GUtils.log("Player " + playerName + " leaving pvp world " + Config.pvpWorld.getName() +
                     " but already out of it at loc " + GUtils.locToStringWorldXYZ(curLoc), Level.WARNING);
             return;
         }
@@ -89,7 +96,7 @@ public class PvpPlayer implements ConfigurationSerializable {
     }
 
     public boolean tpToBattlePoint(String prefix) {
-        if (Config.getPvpWorld().equals(player.getLocation().getWorld())) {
+        if (Config.pvpWorld.equals(player.getLocation().getWorld())) {
             BattlePoint[] points = ObjectManager.instance.getBattlePoints();
             List<BattlePoint> matchedPoints = new ArrayList<BattlePoint>();
             for (BattlePoint curPoint : points) {
@@ -150,5 +157,32 @@ public class PvpPlayer implements ConfigurationSerializable {
             result.put("return-loc", GUtils.serializeLocation(returnLoc));
         }
         return result;
+    }
+
+    public void onPvpLogout(Set<Player> combatPlayers) {
+        if (player.hasPermission("pvprealm.bypass.logger")) return;
+
+        if (Config.pvpLoggerMessage) {
+            StringBuilder playersList = new StringBuilder();
+            Iterator<Player> itr = combatPlayers.iterator();
+            while (itr.hasNext()) {
+                Player player = itr.next();
+                playersList.append(player.getName());
+                if (itr.hasNext()) {
+                    playersList.append(", ");
+                }
+            }
+            String message = Config.pvpLoggerMessageText.replace("$leaver", name).replace("$playerlist", playersList);
+            Bukkit.getServer().dispatchCommand(Bukkit.getConsoleSender(), "say " + message);
+        }
+
+        Hero hero = plugin.getHero(this);
+        if (Config.pvpLoggerExpPenalty > 0) {
+            hero.gainExp(-Config.pvpLoggerExpPenalty, HeroClass.ExperienceType.EXTERNAL, player.getLocation());
+        }
+        if (Config.pvpLoggerKill) {
+            hero.setHealth(0);
+            hero.syncHealth();
+        }
     }
 }

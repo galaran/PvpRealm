@@ -1,5 +1,6 @@
 package mccity.plugins.pvprealm.persistence;
 
+import mccity.plugins.pvprealm.PvpRealm;
 import mccity.plugins.pvprealm.object.BattlePoint;
 import mccity.plugins.pvprealm.object.ItemsKit;
 import mccity.plugins.pvprealm.object.PvpPlayer;
@@ -15,11 +16,15 @@ import java.util.logging.Level;
 
 public class YmlStorage {
 
+    private final PvpRealm plugin;
+
     private final File playersDir;
     private final File battlePointsFile;
     private final File kitsFile;
 
-    public YmlStorage(File pluginDir) {
+    public YmlStorage(PvpRealm plugin) {
+        this.plugin = plugin;
+        File pluginDir = plugin.getDataFolder();
         playersDir = new File(pluginDir, "players");
         if (!playersDir.isDirectory()) {
             playersDir.mkdirs();
@@ -58,7 +63,7 @@ public class YmlStorage {
         File playerProfile = getPlayerFile(player.getName());
         if (playerProfile.isFile()) {
             FileConfiguration config = YamlConfiguration.loadConfiguration(playerProfile);
-            PvpPlayer pvpPlayer = new PvpPlayer(player);
+            PvpPlayer pvpPlayer = new PvpPlayer(plugin, player);
             pvpPlayer.load(config.getConfigurationSection(player.getName()));
             return pvpPlayer;
         } else {

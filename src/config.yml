@@ -1,7 +1,27 @@
-#### Pvp Realm configuration file ####
+#### PvpRealm configuration file ####
 
-# Pvp Realm world name
-pvp-world: my_awesome_pvp_world_name
+pvp-world:
+    world: world_pvp
+    death-heroes-exp-loss: false
+    entry-loc:
+        world: world_pvp
+        x: 10.0
+        y: 64.0
+        z: 10.0
+        pitch: 0.0
+        yaw: 0.0
+    default-return-loc:
+        world: world
+        x: 20.0
+        y: 64.0
+        z: 20.0
+        pitch: 0.0
+        yaw: 0.0
 
-# Whether loss Heroes exp on death in the Pvp Realm
-death-heroes-exp-loss: false
+pvp-logger:
+    enable: true
+    global: true
+    message: true
+    message-text: §4$leaver §8left the game during combat with §5$playerlist
+    heroes-exp-penalty: 0
+    kill: false

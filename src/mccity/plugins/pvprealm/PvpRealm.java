@@ -1,42 +1,45 @@
 package mccity.plugins.pvprealm;
 
+import com.herocraftonline.heroes.Heroes;
+import com.herocraftonline.heroes.characters.Hero;
 import mccity.plugins.pvprealm.command.PvpRealmCommandExecutor;
 import mccity.plugins.pvprealm.object.ObjectManager;
+import mccity.plugins.pvprealm.object.PvpPlayer;
 import me.galaran.bukkitutils.pvprealm.GUtils;
 import org.bukkit.plugin.java.JavaPlugin;
 
 import java.io.File;
-import java.util.logging.Level;
 
 public class PvpRealm extends JavaPlugin {
 
+    private Heroes heroesPlugin;
     private boolean enabled = false;
 
     @Override
     public void onEnable() {
         GUtils.init(getLogger(), "PvpRealm");
 
+        loadConfig();
+
+        ObjectManager.init(this);
+        heroesPlugin = (Heroes) getServer().getPluginManager().getPlugin("Heroes");
+
+        getServer().getPluginManager().registerEvents(new PvpRealmEventHandler(this), this);
+        PvpRealmCommandExecutor commandExecutor = new PvpRealmCommandExecutor(this);
+        getCommand("pvprealm").setExecutor(commandExecutor);
+
+
+
+        GUtils.log("Pvp Realm enabled. World: " + Config.pvpWorld.getName());
+        enabled = true;
+    }
+
+    public boolean loadConfig() {
         File configFile = new File(getDataFolder(), "config.yml");
         if(!configFile.exists()) {
             saveDefaultConfig();
         }
-
-        try {
-            Config.create(configFile);
-        } catch (IllegalWorldException ex) {
-            GUtils.log("Pvp world not loaded. Plugin not enabled.", Level.SEVERE);
-            return;
-        }
-
-        ObjectManager.init(this);
-
-        getServer().getPluginManager().registerEvents(new PvpRealmEventHandler(this), this);
-
-        PvpRealmCommandExecutor commandExecutor = new PvpRealmCommandExecutor();
-        getCommand("pvprealm").setExecutor(commandExecutor);
-
-        GUtils.log("Pvp Realm enabled. World: " + Config.getPvpWorld().getName());
-        enabled = true;
+        return Config.load(configFile);
     }
 
     @Override
@@ -45,5 +48,9 @@ public class PvpRealm extends JavaPlugin {
             ObjectManager.instance.shutdown();
         }
         GUtils.log("Pvp Realm disabled");
+    }
+
+    public Hero getHero(PvpPlayer pvpPlayer) {
+        return heroesPlugin.getCharacterManager().getHero(pvpPlayer.getPlayer());
     }
 }

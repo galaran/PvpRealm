@@ -7,72 +7,53 @@ import org.bukkit.World;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
+import org.bukkit.entity.Player;
 
 import java.io.File;
-import java.io.IOException;
-import java.util.logging.Level;
 
 public class Config {
 
-    private static File file;
-
-    private static World pvpWorld;
+    public static World pvpWorld;
 
     public static Location entryLoc;
     public static Location defaultReturnLoc;
-    public static boolean deathExpLoss;
+    public static boolean deathHeroesExpLoss;
 
-    public static void create(File configFile) throws IllegalWorldException {
-        file = configFile;
-        FileConfiguration fileConfig = YamlConfiguration.loadConfiguration(file);
+    public static boolean pvpLogger;
+    public static boolean pvpLoggerGlobal;
+    public static boolean pvpLoggerMessage;
+    public static String pvpLoggerMessageText;
+    public static int pvpLoggerExpPenalty;
+    public static boolean pvpLoggerKill;
 
-        String pvpWorldName = fileConfig.getString("pvp-world");
+    public static boolean load(File configFile) {
+        FileConfiguration fileConfig = YamlConfiguration.loadConfiguration(configFile);
+
+        ConfigurationSection worldSection = fileConfig.getConfigurationSection("pvp-world");
+
+        String pvpWorldName = worldSection.getString("world");
         pvpWorld = Bukkit.getServer().getWorld(pvpWorldName);
-        if (pvpWorld == null) throw new IllegalWorldException();
+        if (pvpWorld == null) {
+            GUtils.log("Pvp World is null, check world name");
+            return false;
+        }
+        deathHeroesExpLoss = worldSection.getBoolean("death-heroes-exp-loss", false);
+        entryLoc = GUtils.deserializeLocation(worldSection.getConfigurationSection("entry-loc").getValues(false));
+        if (!entryLoc.getWorld().equals(pvpWorld)) {
+            GUtils.log("Entry location must be in the pvp world");
+            return false;
+        }
+        defaultReturnLoc = GUtils.deserializeLocation(worldSection.getConfigurationSection("default-return-loc").getValues(false));
 
-        deathExpLoss = fileConfig.getBoolean("death-heroes-exp-loss", false);
-        ConfigurationSection entryLocSection = fileConfig.getConfigurationSection("entry-loc");
-        if (entryLocSection != null) {
-            entryLoc = GUtils.deserializeLocation(entryLocSection.getValues(false));
-        }
-        ConfigurationSection defaultReturnLocSection = fileConfig.getConfigurationSection("default-return-loc");
-        if (defaultReturnLocSection != null) {
-            defaultReturnLoc = GUtils.deserializeLocation(defaultReturnLocSection.getValues(false));
-        }
-        initDefaults();
-    }
+        ConfigurationSection loggerSection = fileConfig.getConfigurationSection("pvp-logger");
 
-    private static void initDefaults() {
-        if (entryLoc == null) {
-            entryLoc = pvpWorld.getSpawnLocation();
-        }
-        if (defaultReturnLoc == null) {
-            defaultReturnLoc = entryLoc;
-            GUtils.log("Default return location not set, specify it with /pvprealmadmin setreturn", Level.WARNING);
-        }
-    }
+        pvpLogger = loggerSection.getBoolean("enable", true);
+        pvpLoggerGlobal = loggerSection.getBoolean("global", true);
+        pvpLoggerMessage = loggerSection.getBoolean("message", true);
+        pvpLoggerMessageText = loggerSection.getString("message-text");
+        pvpLoggerExpPenalty = loggerSection.getInt("heroes-exp-penalty");
+        pvpLoggerKill = loggerSection.getBoolean("kill", false);
 
-    public static void save() {
-        YamlConfiguration fileConfig = new YamlConfiguration();
-
-        fileConfig.set("pvp-world", pvpWorld.getName());
-        fileConfig.set("death-heroes-exp-loss", deathExpLoss);
-        if (entryLoc != null) {
-            fileConfig.set("entry-loc", GUtils.serializeLocation(entryLoc));
-        }
-        if (defaultReturnLoc != null) {
-            fileConfig.set("default-return-loc", GUtils.serializeLocation(defaultReturnLoc));
-        }
-
-        try {
-            fileConfig.save(file);
-        } catch (IOException ex) {
-            GUtils.log("Failed to save config file", Level.SEVERE);
-            ex.printStackTrace();
-        }
-    }
-
-    public static World getPvpWorld() {
-        return pvpWorld;
+        return true;
     }
 }

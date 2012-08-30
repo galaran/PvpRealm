@@ -1,7 +1,10 @@
 package mccity.plugins.pvprealm;
 
 import com.herocraftonline.heroes.api.events.ExperienceChangeEvent;
+import com.herocraftonline.heroes.api.events.HeroLeaveCombatEvent;
+import com.herocraftonline.heroes.characters.Hero;
 import com.herocraftonline.heroes.characters.classes.HeroClass;
+import com.herocraftonline.heroes.characters.effects.CombatEffect;
 import mccity.plugins.pvprealm.object.ItemsKit;
 import mccity.plugins.pvprealm.object.ObjectManager;
 import mccity.plugins.pvprealm.object.PvpPlayer;
@@ -11,6 +14,7 @@ import org.bukkit.Material;
 import org.bukkit.World;
 import org.bukkit.block.Block;
 import org.bukkit.block.Sign;
+import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
@@ -19,6 +23,10 @@ import org.bukkit.event.block.Action;
 import org.bukkit.event.block.SignChangeEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.event.player.PlayerTeleportEvent;
+
+import java.util.HashSet;
+import java.util.Map;
+import java.util.Set;
 
 public class PvpRealmEventHandler implements Listener {
 
@@ -34,8 +42,8 @@ public class PvpRealmEventHandler implements Listener {
 
     @EventHandler(priority = EventPriority.NORMAL, ignoreCancelled = true)
     public void onHeroExperienceChange(ExperienceChangeEvent event) {
-        if (Config.deathExpLoss && event.getSource() == HeroClass.ExperienceType.DEATH &&
-                event.getLocation().getWorld().equals(Config.getPvpWorld())) {
+        if (!Config.deathHeroesExpLoss && event.getSource() == HeroClass.ExperienceType.DEATH &&
+                event.getLocation().getWorld().equals(Config.pvpWorld)) {
             event.setCancelled(true);
         }
     }
@@ -48,9 +56,9 @@ public class PvpRealmEventHandler implements Listener {
         World to = event.getTo().getWorld();
         if (!from.equals(to)) {
             PvpPlayer pvpPlayer = ObjectManager.instance.getPvpPlayer(event.getPlayer());
-            if (from.equals(Config.getPvpWorld())) {
+            if (from.equals(Config.pvpWorld)) {
                 pvpPlayer.onSideTeleportOut();
-            } else if (to.equals(Config.getPvpWorld())) {
+            } else if (to.equals(Config.pvpWorld)) {
                 pvpPlayer.onSideTeleportIn(event.getFrom());
             }
         }
@@ -94,5 +102,27 @@ public class PvpRealmEventHandler implements Listener {
 
     public static void setCheckTeleport(boolean checkTelep) {
         checkTeleport = checkTelep;
+    }
+
+    @EventHandler(priority = EventPriority.MONITOR)
+    public void onHeroLeaveCombat(HeroLeaveCombatEvent event) {
+        if (event.getReason() != CombatEffect.LeaveCombatReason.LOGOUT) return;
+        if (!Config.pvpLogger) return;
+        Hero hero = event.getHero();
+        if (!Config.pvpLoggerGlobal && !hero.getPlayer().getLocation().getWorld().equals(Config.pvpWorld)) return;
+
+        CombatEffect combat = (CombatEffect) hero.getEffect("Combat");
+        if (combat == null) return;
+
+        Set<Player> combatPlayers = new HashSet<Player>();
+        Map<LivingEntity, CombatEffect.CombatReason> combatants = combat.getCombatants();
+        for (LivingEntity living : combatants.keySet()) {
+            if (living instanceof Player) {
+                combatPlayers.add((Player) living);
+            }
+        }
+        if (combatPlayers.isEmpty()) return;
+
+        ObjectManager.instance.getPvpPlayer(hero.getPlayer()).onPvpLogout(combatPlayers);
     }
 }

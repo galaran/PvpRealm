@@ -1,6 +1,6 @@
 name: PvpRealm
 main: mccity.plugins.pvprealm.PvpRealm
-version: 0.2
+version: 0.3
 author: Galaran
 
 load: POSTWORLD
@@ -12,11 +12,13 @@ commands:
         description: Pvp Realm user command
         permission: pvprealm.command
         permission-message: You do not have permission
-        usage: Syntax error! /<command> help for description
+        usage: Syntax error!
         aliases: [pvpr]
 
 permissions:
     pvprealm.command:
         default: op
     pvprealm.kit.placesign:
+        default: op
+    pvprealm.bypass.logger:
         default: op

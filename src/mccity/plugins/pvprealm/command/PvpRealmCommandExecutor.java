@@ -1,10 +1,10 @@
 package mccity.plugins.pvprealm.command;
 
-import mccity.plugins.pvprealm.Config;
+import mccity.plugins.pvprealm.PvpRealm;
 import mccity.plugins.pvprealm.object.ObjectManager;
 import me.galaran.bukkitutils.pvprealm.GUtils;
 import org.bukkit.Bukkit;
-import org.bukkit.Location;
+import org.bukkit.ChatColor;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
@@ -24,6 +24,12 @@ public class PvpRealmCommandExecutor implements CommandExecutor {
         subCommands.put("kit", new KitCommands());
     }
 
+    private final PvpRealm plugin;
+
+    public PvpRealmCommandExecutor(PvpRealm plugin) {
+        this.plugin = plugin;
+    }
+
     @Override
     public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
         if (args.length >= 1) {
@@ -38,32 +44,11 @@ public class PvpRealmCommandExecutor implements CommandExecutor {
         ObjectManager om = ObjectManager.instance;
 
         if (args.length == 1) {
-            if (args[0].equalsIgnoreCase("setentry")) {
-                if (sender instanceof Player) {
-                    Player senderPlayer = (Player) sender;
-                    Location newEntryLoc = senderPlayer.getLocation();
-                    if (newEntryLoc.getWorld().equals(Config.getPvpWorld())) {
-                        Config.entryLoc = newEntryLoc;
-                        GUtils.sendMessage(sender, "Entry location has been set: "  + GUtils.locToStringWorldXYZ(newEntryLoc));
-                    } else {
-                        GUtils.sendMessage(sender, "You must be in the Pvp World");
-                    }
+            if (args[0].equalsIgnoreCase("reload")) {
+                if (plugin.loadConfig()) {
+                    GUtils.sendMessage(sender, "Configuration reloaded", ChatColor.GREEN);
                 } else {
-                    GUtils.sendMessage(sender, "This command can be executed only by a player");
-                }
-                return true;
-            } else if (args[0].equalsIgnoreCase("setreturn")) {
-                if (sender instanceof Player) {
-                    Player senderPlayer = (Player) sender;
-                    Location newReturnLoc = senderPlayer.getLocation();
-                    if (!newReturnLoc.getWorld().equals(Config.getPvpWorld())) {
-                        Config.defaultReturnLoc = newReturnLoc;
-                        GUtils.sendMessage(sender, "Default return location has been set: " + GUtils.locToStringWorldXYZ(newReturnLoc));
-                    } else {
-                        GUtils.sendMessage(sender, "You must be out of the Pvp World");
-                    }
-                } else {
-                    GUtils.sendMessage(sender, "This command can be executed only by a player");
+                    GUtils.sendMessage(sender, "There is error reloading config, see server console", ChatColor.RED);
                 }
                 return true;
             }
@@ -88,7 +73,6 @@ public class PvpRealmCommandExecutor implements CommandExecutor {
                 return true;
             }
         }
-
         return false;
     }
 }
