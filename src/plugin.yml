@@ -21,4 +21,4 @@ permissions:
     pvprealm.kit.placesign:
         default: op
     pvprealm.bypass.logger:
-        default: false
+        default: op
