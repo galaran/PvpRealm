@@ -20,6 +20,7 @@ public class Config {
     public static boolean deathHeroesExpLoss;
 
     public static boolean pvpLogger;
+    public static boolean pvpLoggerOp;
     public static boolean pvpLoggerGlobal;
     public static boolean pvpLoggerMessage;
     public static String pvpLoggerMessageText;
@@ -48,6 +49,7 @@ public class Config {
         ConfigurationSection loggerSection = fileConfig.getConfigurationSection("pvp-logger");
 
         pvpLogger = loggerSection.getBoolean("enable", true);
+        pvpLoggerOp = loggerSection.getBoolean("enable-op", false);
         pvpLoggerGlobal = loggerSection.getBoolean("global", true);
         pvpLoggerMessage = loggerSection.getBoolean("message", true);
         pvpLoggerMessageText = loggerSection.getString("message-text");

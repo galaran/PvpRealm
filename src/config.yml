@@ -20,6 +20,7 @@ pvp-world:
 
 pvp-logger:
     enable: true
+    enable-op: false
     global: true
     message: true
     message-text: §4$leaver §8left the game during combat with §6$playerlist
