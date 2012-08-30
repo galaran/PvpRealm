@@ -163,19 +163,21 @@ public class PvpPlayer implements ConfigurationSerializable {
     public void onPvpLogout(Set<Player> combatPlayers) {
         if (player.hasPermission(PERM_BYPASS_LOGGER)) return;
 
-        if (Config.pvpLoggerMessage) {
-            StringBuilder playersList = new StringBuilder();
-            Iterator<Player> itr = combatPlayers.iterator();
-            while (itr.hasNext()) {
-                Player player = itr.next();
-                playersList.append(player.getName());
-                if (itr.hasNext()) {
-                    playersList.append(", ");
-                }
+        StringBuilder playerList = new StringBuilder();
+        Iterator<Player> itr = combatPlayers.iterator();
+        while (itr.hasNext()) {
+            Player player = itr.next();
+            playerList.append(player.getName());
+            if (itr.hasNext()) {
+                playerList.append(", ");
             }
-            String message = Config.pvpLoggerMessageText.replace("$leaver", name).replace("$playerlist", playersList);
+        }
+        String message = Config.pvpLoggerMessageText.replace("$leaver", name).replace("$playerlist", playerList);
+        if (Config.pvpLoggerMessage) {
             Bukkit.getServer().dispatchCommand(Bukkit.getConsoleSender(), "say " + message);
         }
+        GUtils.log(message);
+
 
         Hero hero = plugin.getHero(this);
         if (Config.pvpLoggerExpPenalty > 0) {

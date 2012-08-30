@@ -22,6 +22,6 @@ pvp-logger:
     enable: true
     global: true
     message: true
-    message-text: §4$leaver §8left the game during combat with §5$playerlist
+    message-text: §4$leaver §8left the game during combat with §6$playerlist
     heroes-exp-penalty: 0
     kill: false
