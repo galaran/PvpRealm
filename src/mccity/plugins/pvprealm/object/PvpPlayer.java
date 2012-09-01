@@ -175,7 +175,7 @@ public class PvpPlayer implements ConfigurationSerializable {
         if (Config.pvpLoggerMessage) {
             Bukkit.getServer().dispatchCommand(Bukkit.getConsoleSender(), "say " + message);
         }
-        GUtils.log(message);
+        GUtils.log(ChatColor.stripColor(message));
 
 
         Hero hero = plugin.getHero(this);
