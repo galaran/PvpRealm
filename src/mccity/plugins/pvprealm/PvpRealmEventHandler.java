@@ -121,8 +121,10 @@ public class PvpRealmEventHandler implements Listener {
                 combatPlayers.add((Player) living);
             }
         }
-        if (combatPlayers.isEmpty()) return;
+        combatPlayers.remove(hero.getPlayer()); // remove self
 
-        ObjectManager.instance.getPvpPlayer(hero.getPlayer()).onPvpLogout(combatPlayers);
+        if (!combatPlayers.isEmpty()) {
+            ObjectManager.instance.getPvpPlayer(hero.getPlayer()).onPvpLogout(combatPlayers);
+        }
     }
 }
