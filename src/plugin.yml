@@ -1,11 +1,11 @@
 name: PvpRealm
 main: mccity.plugins.pvprealm.PvpRealm
-version: 0.3.1
+version: 0.3.2
 author: Galaran
 
 load: POSTWORLD
 depend: [Heroes]
-softdepend: [Multiverse-Core]
+softdepend: [Multiverse-Core, Towny]
 
 commands:
     pvprealm:

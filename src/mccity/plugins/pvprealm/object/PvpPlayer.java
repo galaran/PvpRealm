@@ -2,6 +2,7 @@ package mccity.plugins.pvprealm.object;
 
 import com.herocraftonline.heroes.characters.Hero;
 import com.herocraftonline.heroes.characters.classes.HeroClass;
+import com.herocraftonline.heroes.characters.party.HeroParty;
 import mccity.plugins.pvprealm.Config;
 import mccity.plugins.pvprealm.PvpRealm;
 import mccity.plugins.pvprealm.PvpRealmEventHandler;
@@ -42,6 +43,7 @@ public class PvpPlayer implements ConfigurationSerializable {
         return player;
     }
 
+    @SuppressWarnings("deprecation")
     public void giveKit(ItemsKit kit, boolean dropIfFull) {
         Inventory inv = player.getInventory();
         HashMap<Integer,ItemStack> ungiven = inv.addItem(kit.getStacks());
@@ -162,6 +164,18 @@ public class PvpPlayer implements ConfigurationSerializable {
     public void onPvpLogout(Set<Player> combatPlayers) {
         if (player.isOp() && !Config.pvpLoggerOp) return;
 
+        if (Config.pvpLoggerBypassFriendly) {
+            Iterator<Player> itr = combatPlayers.iterator();
+            while (itr.hasNext()) {
+                PvpPlayer curCombatPlayer = ObjectManager.instance.getPvpPlayer(itr.next());
+                if (curCombatPlayer.hasFriend(player)) {
+                    itr.remove();
+                }
+            }
+
+            if (combatPlayers.isEmpty()) return;
+        }
+
         StringBuilder playerList = new StringBuilder();
         Iterator<Player> itr = combatPlayers.iterator();
         while (itr.hasNext()) {
@@ -186,5 +200,17 @@ public class PvpPlayer implements ConfigurationSerializable {
             hero.setHealth(0);
             hero.syncHealth();
         }
+    }
+
+    public boolean hasFriend(Player player) {
+        Hero hero = plugin.getHero(this);
+        HeroParty party = hero.getParty();
+        if (party != null && party.isPartyMember(player)) return true;
+
+        if (plugin.isUsingTowny()) {
+            if (plugin.getTowny().isTownyFriendly(this.player, player)) return true;
+        }
+
+        return false;
     }
 }

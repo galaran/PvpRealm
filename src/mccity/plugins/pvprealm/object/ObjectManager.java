@@ -1,6 +1,5 @@
 package mccity.plugins.pvprealm.object;
 
-import mccity.plugins.pvprealm.Config;
 import mccity.plugins.pvprealm.PvpRealm;
 import mccity.plugins.pvprealm.persistence.YmlStorage;
 import org.bukkit.Bukkit;
