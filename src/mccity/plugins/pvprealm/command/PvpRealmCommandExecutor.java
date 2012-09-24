@@ -1,5 +1,6 @@
 package mccity.plugins.pvprealm.command;
 
+import mccity.plugins.pvprealm.Config;
 import mccity.plugins.pvprealm.PvpRealm;
 import mccity.plugins.pvprealm.object.ObjectManager;
 import me.galaran.bukkitutils.pvprealm.GUtils;
@@ -54,21 +55,29 @@ public class PvpRealmCommandExecutor implements CommandExecutor {
             }
         } else if (args.length == 2) {
             if (args[0].equalsIgnoreCase("enter")) {
-                String playerName = args[1];
-                Player player = Bukkit.getServer().getPlayerExact(playerName);
-                if (player != null) {
-                    om.getPvpPlayer(player).enterPvpRealm();
+                if (Config.pvpWorldEnabled) {
+                    String playerName = args[1];
+                    Player player = Bukkit.getServer().getPlayerExact(playerName);
+                    if (player != null) {
+                        om.getPvpPlayer(player).enterPvpRealm();
+                    } else {
+                        GUtils.sendMessage(sender, PLAYER_NOT_FOUND + playerName);
+                    }
                 } else {
-                    GUtils.sendMessage(sender, PLAYER_NOT_FOUND + playerName);
+                    GUtils.sendMessage(sender, "Pvp World disabled", ChatColor.RED);
                 }
                 return true;
             } else if (args[0].equalsIgnoreCase("return")) {
-                String playerName = args[1];
-                Player player = Bukkit.getServer().getPlayerExact(playerName);
-                if (player != null) {
-                    om.getPvpPlayer(player).leavePvpRealm();
+                if (Config.pvpWorldEnabled) {
+                    String playerName = args[1];
+                    Player player = Bukkit.getServer().getPlayerExact(playerName);
+                    if (player != null) {
+                        om.getPvpPlayer(player).leavePvpRealm();
+                    } else {
+                        GUtils.sendMessage(sender, PLAYER_NOT_FOUND + playerName);
+                    }
                 } else {
-                    GUtils.sendMessage(sender, PLAYER_NOT_FOUND + playerName);
+                    GUtils.sendMessage(sender, "Pvp World disabled", ChatColor.RED);
                 }
                 return true;
             }

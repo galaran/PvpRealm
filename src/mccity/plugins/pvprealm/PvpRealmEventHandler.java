@@ -25,25 +25,24 @@ import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.event.player.PlayerTeleportEvent;
 
 import java.util.HashSet;
-import java.util.Iterator;
 import java.util.Map;
 import java.util.Set;
 
 public class PvpRealmEventHandler implements Listener {
 
-    private final PvpRealm pvpRealm;
+    private final PvpRealm plugin;
     private static boolean checkTeleport = true;
 
     private static final String PERM_KIT_SIGN_PLACE = "pvprealm.kit.placesign";
     private static final String KIT_LINE = ChatColor.DARK_RED + "[kit]";
 
     public PvpRealmEventHandler(PvpRealm pvpRealm) {
-        this.pvpRealm = pvpRealm;
+        this.plugin = pvpRealm;
     }
 
     @EventHandler(priority = EventPriority.NORMAL, ignoreCancelled = true)
     public void onHeroExperienceChange(ExperienceChangeEvent event) {
-        if (!Config.deathHeroesExpLoss && event.getSource() == HeroClass.ExperienceType.DEATH &&
+        if (Config.pvpWorldEnabled && !Config.deathHeroesExpLoss && event.getSource() == HeroClass.ExperienceType.DEATH &&
                 event.getLocation().getWorld().equals(Config.pvpWorld)) {
             event.setCancelled(true);
         }
@@ -53,14 +52,16 @@ public class PvpRealmEventHandler implements Listener {
     public void onPlayerTeleport(PlayerTeleportEvent event) {
         if (!checkTeleport) return;
 
-        World from = event.getFrom().getWorld();
-        World to = event.getTo().getWorld();
-        if (!from.equals(to)) {
-            PvpPlayer pvpPlayer = ObjectManager.instance.getPvpPlayer(event.getPlayer());
-            if (from.equals(Config.pvpWorld)) {
-                pvpPlayer.onSideTeleportOut();
-            } else if (to.equals(Config.pvpWorld)) {
-                pvpPlayer.onSideTeleportIn(event.getFrom());
+        if (Config.pvpWorldEnabled) {
+            World from = event.getFrom().getWorld();
+            World to = event.getTo().getWorld();
+            if (!from.equals(to)) {
+                PvpPlayer pvpPlayer = ObjectManager.instance.getPvpPlayer(event.getPlayer());
+                if (from.equals(Config.pvpWorld)) {
+                    pvpPlayer.onSideTeleportOut();
+                } else if (to.equals(Config.pvpWorld)) {
+                    pvpPlayer.onSideTeleportIn(event.getFrom());
+                }
             }
         }
     }

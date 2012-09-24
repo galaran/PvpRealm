@@ -48,7 +48,7 @@ public class ObjectManager {
         }
 
         Bukkit.getScheduler().scheduleAsyncRepeatingTask(plugin, new AutoSaveTask(), AUTOSAVE_INTERVAL, AUTOSAVE_INTERVAL);
-        Bukkit.getPluginManager().registerEvents(new UnloadMarker(), plugin);
+        Bukkit.getPluginManager().registerEvents(new PlayerJoinQuitListener(), plugin);
     }
 
     public PvpPlayer getPvpPlayer(Player player) {
@@ -67,8 +67,8 @@ public class ObjectManager {
         return battlePoints.get(name);
     }
 
-    public BattlePoint[] getBattlePoints() {
-        return battlePoints.values().toArray(new BattlePoint[battlePoints.size()]);
+    public List<BattlePoint> getBattlePoints() {
+        return new ArrayList<BattlePoint>(battlePoints.values());
     }
 
     public boolean removeBattlePoint(String bPointName) {
@@ -97,8 +97,8 @@ public class ObjectManager {
         return removed;
     }
 
-    public ItemsKit[] getKits() {
-        return kits.values().toArray(new ItemsKit[kits.size()]);
+    public List<ItemsKit> getKits() {
+        return new ArrayList<ItemsKit>(kits.values());
     }
 
     public ItemsKit getKit(String kitName) {
@@ -128,7 +128,7 @@ public class ObjectManager {
         }
     }
 
-    private class UnloadMarker implements Listener {
+    private class PlayerJoinQuitListener implements Listener {
 
         @EventHandler(priority = EventPriority.MONITOR)
         public void onPlayerQuit(PlayerQuitEvent event) {

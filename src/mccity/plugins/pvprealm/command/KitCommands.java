@@ -10,6 +10,8 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 
+import java.util.Iterator;
+
 public class KitCommands implements SubCommandExecutor {
 
     public boolean onCommand(CommandSender sender, String label, String[] args) {
@@ -18,9 +20,12 @@ public class KitCommands implements SubCommandExecutor {
         if (args.length == 1) {
             if (args[0].equalsIgnoreCase("list")) {
                 StringBuilder kitList = new StringBuilder();
-                for (ItemsKit curKit : om.getKits()) {
-                    kitList.append(curKit.getName());
-                    kitList.append(' ');
+                Iterator<ItemsKit> itr = om.getKits().iterator();
+                while (itr.hasNext()) {
+                    kitList.append(itr.next().getName());
+                    if (itr.hasNext()) {
+                        kitList.append(", ");
+                    }
                 }
                 GUtils.sendMessage(sender, "Kits: " + kitList.toString());
                 return true;

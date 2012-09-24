@@ -15,10 +15,9 @@ import java.io.File;
 public class PvpRealm extends JavaPlugin {
 
     private Heroes heroesPlugin;
-    private boolean enabled = false;
 
-    private TownyFacade towny;
     private boolean usingTowny = false;
+    private TownyFacade towny;
 
     @Override
     public void onEnable() {
@@ -27,12 +26,13 @@ public class PvpRealm extends JavaPlugin {
         ObjectManager.init(this);
         initDependencies();
 
-        getServer().getPluginManager().registerEvents(new PvpRealmEventHandler(this), this);
+        PluginManager pm = getServer().getPluginManager();
+        pm.registerEvents(new PvpRealmEventHandler(this), this);
+        pm.registerEvents(new ScrollHandler(this), this);
         PvpRealmCommandExecutor commandExecutor = new PvpRealmCommandExecutor(this);
         getCommand("pvprealm").setExecutor(commandExecutor);
 
-        enabled = true;
-        GUtils.log("Pvp Realm enabled. World: " + Config.pvpWorld.getName());
+        GUtils.log("Pvp Realm enabled");
     }
 
     public boolean loadConfig() {
@@ -45,9 +45,7 @@ public class PvpRealm extends JavaPlugin {
 
     @Override
     public void onDisable() {
-        if (enabled) {
-            ObjectManager.instance.shutdown();
-        }
+        ObjectManager.instance.shutdown();
         GUtils.log("Pvp Realm disabled");
     }
 

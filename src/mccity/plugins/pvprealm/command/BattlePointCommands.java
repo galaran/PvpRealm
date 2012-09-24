@@ -1,5 +1,6 @@
 package mccity.plugins.pvprealm.command;
 
+import com.google.common.base.Joiner;
 import mccity.plugins.pvprealm.Config;
 import mccity.plugins.pvprealm.object.BattlePoint;
 import mccity.plugins.pvprealm.object.ObjectManager;
@@ -11,6 +12,9 @@ import org.bukkit.Location;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
+import java.util.Iterator;
+import java.util.List;
+
 public class BattlePointCommands implements SubCommandExecutor {
 
     public boolean onCommand(CommandSender sender, String label, String[] args) {
@@ -18,12 +22,15 @@ public class BattlePointCommands implements SubCommandExecutor {
 
         if (args.length == 1) {
             if (args[0].equalsIgnoreCase("list")) {
-                StringBuilder points = new StringBuilder();
-                for (BattlePoint curBattlePoint : om.getBattlePoints()) {
-                    points.append(curBattlePoint.getName());
-                    points.append(' ');
+                StringBuilder list = new StringBuilder();
+                Iterator<BattlePoint> itr = om.getBattlePoints().iterator();
+                while (itr.hasNext()) {
+                    list.append(itr.next().getName());
+                    if (itr.hasNext()) {
+                        list.append(", ");
+                    }
                 }
-                GUtils.sendMessage(sender, "Battle points: " + points.toString());
+                GUtils.sendMessage(sender, "Battle points: " + list.toString());
                 return true;
             }
         } else if (args.length == 2) {
@@ -31,14 +38,9 @@ public class BattlePointCommands implements SubCommandExecutor {
                 if (sender instanceof Player) {
                     Player senderPlayer = (Player) sender;
                     String pointName = args[1];
-                    Location playerLoc = senderPlayer.getLocation();
-                    if (playerLoc.getWorld().equals(Config.pvpWorld)) {
-                        BattlePoint newPoint = new BattlePoint(senderPlayer.getLocation(), pointName);
-                        om.addBattlePoint(newPoint);
-                        GUtils.sendMessage(senderPlayer, "Point " + pointName + " has been added");
-                    } else {
-                        GUtils.sendMessage(senderPlayer, "You must be in the Pvp World");
-                    }
+                    BattlePoint newPoint = new BattlePoint(senderPlayer.getLocation(), pointName);
+                    om.addBattlePoint(newPoint);
+                    GUtils.sendMessage(senderPlayer, "Point " + pointName + " has been added");
                 } else {
                     GUtils.sendMessage(sender, "This command can be executed only by a player");
                 }

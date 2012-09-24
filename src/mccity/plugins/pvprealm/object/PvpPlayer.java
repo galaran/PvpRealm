@@ -3,6 +3,7 @@ package mccity.plugins.pvprealm.object;
 import com.herocraftonline.heroes.characters.Hero;
 import com.herocraftonline.heroes.characters.classes.HeroClass;
 import com.herocraftonline.heroes.characters.party.HeroParty;
+import com.herocraftonline.heroes.characters.skill.Skill;
 import mccity.plugins.pvprealm.Config;
 import mccity.plugins.pvprealm.PvpRealm;
 import mccity.plugins.pvprealm.PvpRealmEventHandler;
@@ -14,6 +15,7 @@ import org.bukkit.World;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.serialization.ConfigurationSerializable;
 import org.bukkit.entity.Player;
+import org.bukkit.event.entity.EntityDamageEvent;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 
@@ -98,24 +100,20 @@ public class PvpPlayer implements ConfigurationSerializable {
     }
 
     public boolean tpToBattlePoint(String prefix) {
-        if (Config.pvpWorld.equals(player.getLocation().getWorld())) {
-            BattlePoint[] points = ObjectManager.instance.getBattlePoints();
-            List<BattlePoint> matchedPoints = new ArrayList<BattlePoint>();
-            for (BattlePoint curPoint : points) {
-                if (curPoint.getName().startsWith(prefix)) {
-                    matchedPoints.add(curPoint);
-                }
+        List<BattlePoint> points = ObjectManager.instance.getBattlePoints();
+        List<BattlePoint> matchedPoints = new ArrayList<BattlePoint>();
+        for (BattlePoint curPoint : points) {
+            if (curPoint.getName().startsWith(prefix)) {
+                matchedPoints.add(curPoint);
             }
-            if (matchedPoints.isEmpty()) {
-                return false;
-            }
+        }
+        if (matchedPoints.isEmpty()) {
+            return false;
+        }
 
-            BattlePoint targetPoint = matchedPoints.get(GUtils.random.nextInt(matchedPoints.size()));
-            if (!teleportUnchecked(targetPoint.getLoc())) {
-                GUtils.log("Failed to teleport player " + player.getName() + " to tp point " + targetPoint.getName(), Level.WARNING);
-            }
-        } else {
-            GUtils.log("Failed teleport player " + player.getName() + " to battle point: player is not in the pvp world", Level.WARNING);
+        BattlePoint targetPoint = matchedPoints.get(GUtils.random.nextInt(matchedPoints.size()));
+        if (!teleportUnchecked(targetPoint.getLoc())) {
+            GUtils.log("Failed to teleport player " + player.getName() + " to tp point " + targetPoint.getName(), Level.WARNING);
         }
         return true;
     }
@@ -161,11 +159,11 @@ public class PvpPlayer implements ConfigurationSerializable {
         return result;
     }
 
-    public void onPvpLogout(Set<Player> combatPlayers) {
+    public void onPvpLogout(Set<Player> combatWith) {
         if (player.isOp() && !Config.pvpLoggerOp) return;
 
         if (Config.pvpLoggerBypassFriendly) {
-            Iterator<Player> itr = combatPlayers.iterator();
+            Iterator<Player> itr = combatWith.iterator();
             while (itr.hasNext()) {
                 PvpPlayer curCombatPlayer = ObjectManager.instance.getPvpPlayer(itr.next());
                 if (curCombatPlayer.hasFriend(player)) {
@@ -173,11 +171,11 @@ public class PvpPlayer implements ConfigurationSerializable {
                 }
             }
 
-            if (combatPlayers.isEmpty()) return;
+            if (combatWith.isEmpty()) return;
         }
 
         StringBuilder playerList = new StringBuilder();
-        Iterator<Player> itr = combatPlayers.iterator();
+        Iterator<Player> itr = combatWith.iterator();
         while (itr.hasNext()) {
             Player player = itr.next();
             playerList.append(player.getName());
@@ -197,7 +195,7 @@ public class PvpPlayer implements ConfigurationSerializable {
             hero.gainExp(-Config.pvpLoggerExpPenalty, HeroClass.ExperienceType.EXTERNAL, player.getLocation());
         }
         if (Config.pvpLoggerKill) {
-            hero.setHealth(0);
+            Skill.damageEntity(player, combatWith.iterator().next(), 1000000, EntityDamageEvent.DamageCause.MAGIC);
             hero.syncHealth();
         }
     }

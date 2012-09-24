@@ -1,6 +1,7 @@
 #### PvpRealm configuration file ####
 
 pvp-world:
+    enable: true
     world: world_pvp
     death-heroes-exp-loss: false
     entry-loc:
@@ -17,6 +18,11 @@ pvp-world:
         z: 20.0
         pitch: 0.0
         yaw: 0.0
+    enter-scroll:
+        enable: true
+        item: 358-50
+        consume: true
+        delay-sec: 10
 
 pvp-logger:
     enable: true
