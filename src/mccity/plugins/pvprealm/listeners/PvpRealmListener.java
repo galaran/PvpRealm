@@ -1,10 +1,7 @@
 package mccity.plugins.pvprealm.listeners;
 
 import com.herocraftonline.heroes.api.events.ExperienceChangeEvent;
-import com.herocraftonline.heroes.api.events.HeroLeaveCombatEvent;
-import com.herocraftonline.heroes.characters.Hero;
 import com.herocraftonline.heroes.characters.classes.HeroClass;
-import com.herocraftonline.heroes.characters.effects.CombatEffect;
 import mccity.plugins.pvprealm.Config;
 import mccity.plugins.pvprealm.PvpRealm;
 import mccity.plugins.pvprealm.object.ItemsKit;
@@ -12,26 +9,18 @@ import mccity.plugins.pvprealm.object.ObjectManager;
 import mccity.plugins.pvprealm.object.PvpPlayer;
 import me.galaran.bukkitutils.pvprealm.GUtils;
 import org.bukkit.ChatColor;
-import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.World;
 import org.bukkit.block.Block;
 import org.bukkit.block.Sign;
-import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.Action;
 import org.bukkit.event.block.SignChangeEvent;
-import org.bukkit.event.entity.PlayerDeathEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.event.player.PlayerTeleportEvent;
-
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
 
 public class PvpRealmListener implements Listener {
 
@@ -113,29 +102,5 @@ public class PvpRealmListener implements Listener {
 
     public static void setCheckTeleport(boolean checkTelep) {
         checkTeleport = checkTelep;
-    }
-
-    @EventHandler(priority = EventPriority.MONITOR)
-    public void onHeroLeaveCombat(HeroLeaveCombatEvent event) {
-        if (event.getReason() != CombatEffect.LeaveCombatReason.LOGOUT) return;
-        if (!Config.pvpLogger) return;
-        Hero hero = event.getHero();
-        if (!Config.pvpLoggerGlobal && !hero.getPlayer().getLocation().getWorld().equals(Config.pvpWorld)) return;
-
-        CombatEffect combat = (CombatEffect) hero.getEffect("Combat");
-        if (combat == null) return;
-
-        Set<Player> combatPlayers = new HashSet<Player>();
-        Map<LivingEntity, CombatEffect.CombatReason> combatants = combat.getCombatants();
-        for (LivingEntity living : combatants.keySet()) {
-            if (living instanceof Player) {
-                combatPlayers.add((Player) living);
-            }
-        }
-        combatPlayers.remove(hero.getPlayer()); // remove self
-
-        if (!combatPlayers.isEmpty()) {
-            ObjectManager.instance.getPvpPlayer(hero.getPlayer()).onPvpLogout(combatPlayers);
-        }
     }
 }

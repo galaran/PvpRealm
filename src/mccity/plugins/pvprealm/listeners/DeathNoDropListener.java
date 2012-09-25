@@ -43,7 +43,7 @@ import java.util.Map;
                 event.getDrops().clear();
                 itemsDrops.put(player, new PlayerInv(player));
                 if (Config.debug) {
-                    GUtils.log(player.getName() + " dead in dnd region " + regionId +
+                    GUtils.log(player.getName() + " dead in the dnd region " + regionId +
                             "[" + deathLoc.getWorld().getName() + "] and keep inventory");
                 }
                 break;

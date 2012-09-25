@@ -36,7 +36,7 @@ public class ScrollListener implements Listener {
         if (event.getAction() != Action.RIGHT_CLICK_BLOCK && event.getAction() != Action.RIGHT_CLICK_AIR) return;
 
         ItemStack handStack = event.getItem();
-        if (!handStack.getData().equals(Config.scrollItem)) return;
+        if (handStack == null || !handStack.getData().equals(Config.scrollItem)) return;
 
         Player player = event.getPlayer();
         if (!player.hasPermission(PERM_SCROLL)) {
@@ -84,7 +84,7 @@ public class ScrollListener implements Listener {
         public void run() {
             if (player.isOnline()) {
                 ItemStack handStack = player.getItemInHand();
-                if (handStack.getData().equals(Config.scrollItem)) {
+                if (handStack != null && handStack.getData().equals(Config.scrollItem)) {
                     if (Config.consumeScroll) {
                         if (handStack.getAmount() > 1) {
                             handStack.setAmount(handStack.getAmount() - 1);

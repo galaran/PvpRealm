@@ -6,6 +6,7 @@ import com.palmergames.bukkit.towny.Towny;
 import com.sk89q.worldguard.bukkit.WorldGuardPlugin;
 import mccity.plugins.pvprealm.command.PvpRealmCommandExecutor;
 import mccity.plugins.pvprealm.listeners.DeathNoDropListener;
+import mccity.plugins.pvprealm.listeners.PvpLoggerListener;
 import mccity.plugins.pvprealm.listeners.PvpRealmListener;
 import mccity.plugins.pvprealm.listeners.ScrollListener;
 import mccity.plugins.pvprealm.object.ObjectManager;
@@ -18,7 +19,7 @@ import java.io.File;
 
 public class PvpRealm extends JavaPlugin {
 
-    private Heroes heroesPlugin;
+    private Heroes heroes;
 
     private boolean usingTowny = false;
     private TownyFacade towny;
@@ -35,6 +36,7 @@ public class PvpRealm extends JavaPlugin {
 
         PluginManager pm = getServer().getPluginManager();
         pm.registerEvents(new PvpRealmListener(this), this);
+        pm.registerEvents(new PvpLoggerListener(this), this);
         pm.registerEvents(new ScrollListener(this), this);
         if (usingWorldGuard) {
             pm.registerEvents(new DeathNoDropListener(this), this);
@@ -61,7 +63,7 @@ public class PvpRealm extends JavaPlugin {
 
     private void initDependencies() {
         PluginManager pm = getServer().getPluginManager();
-        heroesPlugin = (Heroes) pm.getPlugin("Heroes");
+        heroes = (Heroes) pm.getPlugin("Heroes");
 
         Towny townyplugin = (Towny) pm.getPlugin("Towny");
         if (townyplugin != null) {
@@ -79,7 +81,7 @@ public class PvpRealm extends JavaPlugin {
     }
 
     public Hero getHero(PvpPlayer pvpPlayer) {
-        return heroesPlugin.getCharacterManager().getHero(pvpPlayer.getPlayer());
+        return heroes.getCharacterManager().getHero(pvpPlayer.getPlayer());
     }
 
     public boolean isUsingTowny() {

@@ -1,13 +1,11 @@
 package mccity.plugins.pvprealm.object;
 
 import com.herocraftonline.heroes.characters.Hero;
-import com.herocraftonline.heroes.characters.classes.HeroClass;
 import com.herocraftonline.heroes.characters.party.HeroParty;
 import mccity.plugins.pvprealm.Config;
 import mccity.plugins.pvprealm.PvpRealm;
 import mccity.plugins.pvprealm.listeners.PvpRealmListener;
 import me.galaran.bukkitutils.pvprealm.GUtils;
-import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.World;
@@ -157,53 +155,6 @@ public class PvpPlayer implements ConfigurationSerializable {
         return result;
     }
 
-    public void onPvpLogout(Set<Player> combatWith) {
-        if (player.isOp() && !Config.pvpLoggerOp) return;
-
-        if (Config.pvpLoggerBypassFriendly) {
-            if (Config.debug) {
-                GUtils.log(name + " logged out of pvp. Before friend check: " + combatWith.toString());
-            }
-            Iterator<Player> itr = combatWith.iterator();
-            while (itr.hasNext()) {
-                PvpPlayer curCombatPlayer = ObjectManager.instance.getPvpPlayer(itr.next());
-                if (curCombatPlayer.hasFriend(player)) {
-                    itr.remove();
-                    if (Config.debug) {
-                        GUtils.log(curCombatPlayer.getName() + " has friend " + name);
-                    }
-                }
-            }
-
-            if (combatWith.isEmpty()) return;
-        }
-
-        StringBuilder playerList = new StringBuilder();
-        Iterator<Player> itr = combatWith.iterator();
-        while (itr.hasNext()) {
-            Player player = itr.next();
-            playerList.append(player.getName());
-            if (itr.hasNext()) {
-                playerList.append(", ");
-            }
-        }
-        String message = Config.pvpLoggerMessageText.replace("$leaver", name).replace("$playerlist", playerList);
-        if (Config.pvpLoggerMessage) {
-            Bukkit.getServer().dispatchCommand(Bukkit.getConsoleSender(), "say " + message);
-        }
-        GUtils.log(ChatColor.stripColor(message));
-
-
-        Hero hero = plugin.getHero(this);
-        if (Config.pvpLoggerExpPenalty > 0) {
-            hero.gainExp(-Config.pvpLoggerExpPenalty, HeroClass.ExperienceType.EXTERNAL, player.getLocation());
-        }
-        if (Config.pvpLoggerKill) {
-            hero.setHealth(0);
-            hero.syncHealth();
-        }
-    }
-
     public boolean hasFriend(Player player) {
         Hero hero = plugin.getHero(this);
         HeroParty party = hero.getParty();
@@ -214,5 +165,22 @@ public class PvpPlayer implements ConfigurationSerializable {
         }
 
         return false;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+
+        PvpPlayer pvpPlayer = (PvpPlayer) o;
+
+        if (name != null ? !name.equals(pvpPlayer.name) : pvpPlayer.name != null) return false;
+
+        return true;
+    }
+
+    @Override
+    public int hashCode() {
+        return name != null ? name.hashCode() : 0;
     }
 }
