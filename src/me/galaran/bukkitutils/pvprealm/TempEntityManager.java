@@ -11,7 +11,7 @@ public class TempEntityManager {
 
     private final List<Pair<Entity, Integer>> managedEntities = new ArrayList<Pair<Entity, Integer>>();
 
-    public <T extends Entity> T spawn(Location loc, Class<T> clazz, int lifetimeLimit) throws IllegalArgumentException {
+    public <T extends Entity> T spawn(Location loc, Class<T> clazz, int lifetimeLimit) {
         T spawned = loc.getWorld().spawn(loc, clazz);
         add(spawned, lifetimeLimit);
         return spawned;

@@ -12,25 +12,14 @@ import java.util.Map;
 
 public class PlayersAroundChecker {
 
-    private final Plugin plugin;
-    private final int period;
-    private int taskId;
-
     private final List<Location> playersLoc = new ArrayList<Location>();
-
     private final Map<Location, Integer> minDistanceCache = new HashMap<Location, Integer>();
 
     public PlayersAroundChecker(Plugin plugin, int period) {
-        this.plugin = plugin;
-        this.period = period;
-        taskId = -1;
-    }
+        PlayersLocPoller poller = new PlayersLocPoller();
+        poller.run(); // immediately
 
-    public void startPolling(int delay) throws IllegalStateException {
-        if (taskId != -1) {
-            throw new IllegalStateException("Already started");
-        }
-        taskId = Bukkit.getScheduler().scheduleSyncRepeatingTask(plugin, new PlayersLocPoller(), delay, period);
+        Bukkit.getScheduler().scheduleSyncRepeatingTask(plugin, poller, period, period);
     }
 
     /** Thread unsafe */

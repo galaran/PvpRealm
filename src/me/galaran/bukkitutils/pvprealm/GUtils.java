@@ -63,6 +63,19 @@ public class GUtils {
         return result;
     }
 
+    public static String matDataToStringReadable(MaterialData matData, ChatColor color) {
+        StringBuilder sb = new StringBuilder();
+        sb.append(color);
+        sb.append(matData.getItemType().name().toLowerCase().replace('_', ' '));
+        if (matData.getData() != 0) {
+            sb.append(ChatColor.GRAY);
+            sb.append(':');
+            sb.append(color);
+            sb.append(matData.getData());
+        }
+        return sb.toString();
+    }
+
     public static Map<String, Object> serializeLocation(Location loc) {
         if (loc == null) return null;
 
