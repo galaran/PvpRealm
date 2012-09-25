@@ -17,7 +17,11 @@
         <mkdir dir="src/${utils.package}"/>
         <mkdir dir="src/${utils.package}/${utils.suffix}"/>
         <copy todir="src/${utils.package}/${utils.suffix}">
-            <fileset dir="${utils.srcroot}/${utils.package}/${utils.placeholder}"/>
+            <fileset dir="${utils.srcroot}/${utils.package}/${utils.placeholder}">
+                <include name="GUtils.java"/>
+                <include name="Pair.java"/>
+                <include name="StringUtils.java"/>
+            </fileset>
         </copy>
         <replace dir="src/${utils.package}/${utils.suffix}" token="${utils.placeholder}" value="${utils.suffix}"/>
     </target>
