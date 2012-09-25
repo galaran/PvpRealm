@@ -4,7 +4,9 @@ import mccity.plugins.pvprealm.Config;
 import mccity.plugins.pvprealm.PvpRealm;
 import mccity.plugins.pvprealm.object.ObjectManager;
 import me.galaran.bukkitutils.pvprealm.GUtils;
+import me.galaran.bukkitutils.pvprealm.Pair;
 import org.bukkit.Bukkit;
+import org.bukkit.Location;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
@@ -23,7 +25,8 @@ public class ScrollListener implements Listener {
 
     private final PvpRealm plugin;
 
-    private final Map<Player, Integer> playersUsingScroll = new HashMap<Player, Integer>();
+    // Player -> Task id, Initial location
+    private final Map<Player, Pair<Integer, Location>> playersUsingScroll = new HashMap<Player, Pair<Integer, Location>>();
 
     public ScrollListener(PvpRealm plugin) {
         this.plugin = plugin;
@@ -53,8 +56,8 @@ public class ScrollListener implements Listener {
             return;
         }
 
-        playersUsingScroll.put(player, Bukkit.getScheduler().scheduleSyncDelayedTask(plugin,
-                new ScrollTask(player), Config.scrollDelaySec * 20));
+        int taskId = Bukkit.getScheduler().scheduleSyncDelayedTask(plugin, new ScrollTask(player), Config.scrollDelaySec * 20);
+        playersUsingScroll.put(player, new Pair<Integer, Location>(taskId, player.getLocation()));
         GUtils.sendTranslated(player, "scroll.using", Config.scrollDelaySec);
     }
 
@@ -63,9 +66,12 @@ public class ScrollListener implements Listener {
         if (!Config.scroll) return;
 
         Player player = event.getPlayer();
-        Integer taskId = playersUsingScroll.remove(player);
-        if (taskId != null) {
-            Bukkit.getScheduler().cancelTask(taskId);
+        Pair<Integer, Location> taskLoc = playersUsingScroll.get(player);
+        if (taskLoc == null) return;
+
+        if (!GUtils.isPositionsEquals(player.getLocation(), taskLoc.getRight(), 0.1)) {
+            playersUsingScroll.remove(player);
+            Bukkit.getScheduler().cancelTask(taskLoc.getLeft());
             GUtils.sendTranslated(player, "scroll.aborted");
         }
     }

@@ -1,0 +1,40 @@
+# PvpRealm translation file
+
+utils.no-player: &cИгрок с именем $1 не найден
+utils.no-world: &cМир $1 не загружен
+utils.cs-not-player: &cЭта команда недоступна из консоли
+
+reload.ok: &aКонфигурация перезагружена
+reload.error: &cОшибка перезагрузки конфигурации, см. консоль сервера
+
+world.disabled: &cPvp мир отключен
+world.side-teleport-in: $suppress
+world.side-teleport-out: $suppress
+
+kit.list: Наборы: $1
+kit.saved-as: &fВаш инвентарь сохранен, как набор &6$1
+kit.removed: &fНабор &6$1&f удален
+kit.no-such: &cНет такого набора: &6$1
+kit.content-header: &fСодержимое набора &6$1&f ($2):
+kit.disabled-out-of-pvp-world: &cТаблички для получения наборов разрешено использовать только в Pvp-мире
+kit.sign-place-no-perm: &cУ вас нет доступа устанавливать такие таблички
+kit.no-slots: &5Недостаточно места в инвентаре для выдачи набора
+kit.obtained: &fВы получили набор &6$1
+
+bp.list: Точки боя: &1
+bp.added: &fТочка боя &5$1&f добавлена
+bp.removed: &fТочка боя &5$1&f удалена
+bp.no-such: &cНет такой точки боя: &5$1
+bp.info: &fТочка боя &5$1&f: &2$2
+bp.no-match: &cНет точек боя, начинающихся на &7$1
+
+logger.message: &4$1&5 выходит из игры во время боя с &6$2
+
+scroll.no-perm: &cВы не можете использовать это
+scroll.already-in-pvp-world: &5Вы уже в Pvp-мире
+scroll.already-use: &eВы уже используете схему телепорта
+scroll.using: &aИспользование схемы телепорта на Pvp-арену.. &eНе двигайтесь в течение $1 секунд
+scroll.aborted: &cИспользование схемы телепорта прервано
+scroll.not-in-hand: &cВы должны держать схему телепорта в руках во время использования
+
+dnd.nodrop: &aВы погибли на Pvp-арене и сохранили инвентарь

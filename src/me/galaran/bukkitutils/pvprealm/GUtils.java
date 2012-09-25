@@ -171,6 +171,12 @@ public class GUtils {
         return sb.toString();
     }
 
+    public static boolean isPositionsEquals(Location loc1, Location loc2, double eps) {
+        return Math.abs(loc1.getX() - loc2.getX()) <= eps &&
+                Math.abs(loc1.getZ() - loc2.getZ()) <= eps &&
+                Math.abs(loc1.getY() - loc2.getY()) <= eps;
+    }
+
     public static void log(String message, Level level, Object... params) {
         String finalString = StringUtils.parameterizeString(message, params);
         log.log(level, ChatColor.stripColor(finalString));
@@ -181,8 +187,10 @@ public class GUtils {
     }
 
     public static void sendMessage(CommandSender p, String message, Object... params) {
-        String parameterized = StringUtils.parameterizeString(message, params);
-        p.sendMessage(chatPrefix + StringUtils.colorizeAmps(parameterized));
+        String finalString = StringUtils.colorizeAmps(StringUtils.parameterizeString(message, params));
+        if (!finalString.equals("$suppress")) {
+            p.sendMessage(chatPrefix + finalString);
+        }
     }
 
     public static void sendMessageSafe(String playerName, String message, Object... params) {

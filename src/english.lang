@@ -1,6 +1,8 @@
-﻿utils.no-player: No player with name $1
-utils.no-world: World $1 not loaded
-utils.cs-not-player: This command can be executed only by a player
+# PvpRealm translation file
+
+utils.no-player: &cNo player with name $1
+utils.no-world: &cWorld $1 not loaded
+utils.cs-not-player: &cThis command can be executed only by a player
 
 reload.ok: &aConfiguration reloaded
 reload.error: &cThere is error reloading config, see server console
@@ -12,7 +14,7 @@ world.side-teleport-out: &3You has been side-teleported out of the Pvp World
 kit.list: Kits: $1
 kit.saved-as: &fYour inventory content saved as kit &6$1
 kit.removed: &fKit &6$1&f has been removed
-kit.no-such: &fNo such kit: &6$1
+kit.no-such: &cNo such kit: &6$1
 kit.content-header: &fKit &6$1&f content ($2):
 kit.disabled-out-of-pvp-world: &cKit signs disabled out of the Pvp World
 kit.sign-place-no-perm: &cYou have no permission to place kit signs
@@ -22,11 +24,11 @@ kit.obtained: &fYou have obtain kit &6$1
 bp.list: Battle points: &1
 bp.added: &fBattle point &5$1&f has been added
 bp.removed: &fBattle point &5$1&f has been removed
-bp.no-such: &fNo such battle point: &5$1
+bp.no-such: &cNo such battle point: &5$1
 bp.info: &fBattle point &5$1&f: &2$2
-bp.no-match: &fThere is no battle point matching &7$1
+bp.no-match: &cThere is no battle point matching &7$1
 
-logger.message: &4$1&8 left the game during combat with &6$2
+logger.message: &4$1&5 left the game during combat with &6$2
 
 scroll.no-perm: &cYou don't have permission to use pvp realm enter scroll
 scroll.already-in-pvp-world: &5You are already in the pvp world
@@ -34,3 +36,5 @@ scroll.already-use: &eYou are already using scroll, wait
 scroll.using: &aUsing pvp realm teleport scroll.. &eDon't move for $1 seconds
 scroll.aborted: &cTeleport scroll aborted
 scroll.not-in-hand: &cHold scroll in the hands after start using it
+
+dnd.nodrop: &aYou died in safe region and keep your inventory
