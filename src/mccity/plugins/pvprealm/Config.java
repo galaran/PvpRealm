@@ -17,6 +17,7 @@ import java.util.logging.Level;
 public class Config {
 
     public static boolean debug;
+    public static String lang;
 
     public static boolean pvpWorldEnabled;
     public static World pvpWorld;
@@ -46,6 +47,7 @@ public class Config {
         FileConfiguration root = YamlConfiguration.loadConfiguration(configFile);
 
         debug = root.getBoolean("debug", false);
+        lang = root.getString("lang", "english");
 
         // Pvp World
         ConfigurationSection worldSection = root.getConfigurationSection("pvp-world");

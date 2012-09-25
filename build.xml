@@ -21,6 +21,9 @@
                 <include name="GUtils.java"/>
                 <include name="Pair.java"/>
                 <include name="StringUtils.java"/>
+                <include name="Lang.java"/>
+                <include name="DoOrNotify.java"/>
+                <include name="ToStringer.java"/>
             </fileset>
         </copy>
         <replace dir="src/${utils.package}/${utils.suffix}" token="${utils.placeholder}" value="${utils.suffix}"/>

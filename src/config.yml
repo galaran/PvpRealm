@@ -1,6 +1,8 @@
 #### PvpRealm configuration file ####
 
 debug: true
+lang: english
+
 pvp-world:
     enable: true
     world: world_pvp
@@ -21,7 +23,7 @@ pvp-world:
         yaw: 0.0
     enter-scroll:
         enable: true
-        item: 358-50
+        item: 358-0
         consume: true
         delay-sec: 10
 
@@ -31,7 +33,6 @@ pvp-logger:
     bypass-friendly: true
     global: true
     message: true
-    message-text: §4$leaver §8left the game during combat with §6$playerlist
     heroes-exp-penalty: 0
     kill: false
 

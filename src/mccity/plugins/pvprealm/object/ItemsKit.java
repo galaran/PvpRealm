@@ -57,4 +57,9 @@ public class ItemsKit implements ConfigurationSerializable {
             stacks[idx++] = ItemStack.deserialize((Map<String, Object>) stackData);
         }
     }
+
+    @Override
+    public String toString() {
+        return name;
+    }
 }

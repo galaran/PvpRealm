@@ -12,6 +12,7 @@ import mccity.plugins.pvprealm.listeners.ScrollListener;
 import mccity.plugins.pvprealm.object.ObjectManager;
 import mccity.plugins.pvprealm.object.PvpPlayer;
 import me.galaran.bukkitutils.pvprealm.GUtils;
+import me.galaran.bukkitutils.pvprealm.Lang;
 import org.bukkit.plugin.PluginManager;
 import org.bukkit.plugin.java.JavaPlugin;
 
@@ -49,10 +50,18 @@ public class PvpRealm extends JavaPlugin {
 
     public boolean loadConfig() {
         File configFile = new File(getDataFolder(), "config.yml");
-        if(!configFile.exists()) {
-            saveDefaultConfig();
+        saveDefaultConfig();
+        boolean configOk = Config.load(configFile);
+
+        boolean langOk = true;
+        try {
+            Lang.initLang(Config.lang, this);
+        } catch (Exception ex) {
+            langOk = false;
+            ex.printStackTrace();
         }
-        return Config.load(configFile);
+
+        return configOk && langOk;
     }
 
     @Override

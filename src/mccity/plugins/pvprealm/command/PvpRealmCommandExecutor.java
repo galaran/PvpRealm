@@ -3,8 +3,8 @@ package mccity.plugins.pvprealm.command;
 import mccity.plugins.pvprealm.Config;
 import mccity.plugins.pvprealm.PvpRealm;
 import mccity.plugins.pvprealm.object.ObjectManager;
+import me.galaran.bukkitutils.pvprealm.DoOrNotify;
 import me.galaran.bukkitutils.pvprealm.GUtils;
-import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
@@ -15,8 +15,6 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class PvpRealmCommandExecutor implements CommandExecutor {
-
-    public static final String PLAYER_NOT_FOUND = "No player with name: ";
 
     public static final Map<String, SubCommandExecutor> subCommands = new HashMap<String, SubCommandExecutor>();
 
@@ -47,37 +45,31 @@ public class PvpRealmCommandExecutor implements CommandExecutor {
         if (args.length == 1) {
             if (args[0].equalsIgnoreCase("reload")) {
                 if (plugin.loadConfig()) {
-                    GUtils.sendMessage(sender, "Configuration reloaded", ChatColor.GREEN);
+                    GUtils.sendTranslated(sender, "reload.ok");
                 } else {
-                    GUtils.sendMessage(sender, "There is error reloading config, see server console", ChatColor.RED);
+                    GUtils.sendTranslated(sender, "reload.error");
                 }
                 return true;
             }
         } else if (args.length == 2) {
             if (args[0].equalsIgnoreCase("enter")) {
                 if (Config.pvpWorldEnabled) {
-                    String playerName = args[1];
-                    Player player = Bukkit.getServer().getPlayerExact(playerName);
+                    Player player = DoOrNotify.getPlayer(args[1], true, sender);
                     if (player != null) {
                         om.getPvpPlayer(player).enterPvpRealm();
-                    } else {
-                        GUtils.sendMessage(sender, PLAYER_NOT_FOUND + playerName);
                     }
                 } else {
-                    GUtils.sendMessage(sender, "Pvp World disabled", ChatColor.RED);
+                    GUtils.sendTranslated(sender, "world.disabled");
                 }
                 return true;
             } else if (args[0].equalsIgnoreCase("return")) {
                 if (Config.pvpWorldEnabled) {
-                    String playerName = args[1];
-                    Player player = Bukkit.getServer().getPlayerExact(playerName);
+                    Player player = DoOrNotify.getPlayer(args[1], true, sender);
                     if (player != null) {
                         om.getPvpPlayer(player).leavePvpRealm();
-                    } else {
-                        GUtils.sendMessage(sender, PLAYER_NOT_FOUND + playerName);
                     }
                 } else {
-                    GUtils.sendMessage(sender, "Pvp World disabled", ChatColor.RED);
+                    GUtils.sendTranslated(sender, "world.disabled");
                 }
                 return true;
             }

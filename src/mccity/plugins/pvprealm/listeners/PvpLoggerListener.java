@@ -9,8 +9,10 @@ import mccity.plugins.pvprealm.PvpRealm;
 import mccity.plugins.pvprealm.object.ObjectManager;
 import mccity.plugins.pvprealm.object.PvpPlayer;
 import me.galaran.bukkitutils.pvprealm.GUtils;
+import me.galaran.bukkitutils.pvprealm.Lang;
+import me.galaran.bukkitutils.pvprealm.StringUtils;
+import me.galaran.bukkitutils.pvprealm.ToStringer;
 import org.bukkit.Bukkit;
-import org.bukkit.ChatColor;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -76,21 +78,17 @@ public class PvpLoggerListener implements Listener {
             if (combatWith.isEmpty()) return;
         }
 
-        StringBuilder playerList = new StringBuilder();
-        Iterator<Player> itr = combatWith.iterator();
-        while (itr.hasNext()) {
-            Player curCombatPlayer = itr.next();
-            playerList.append(curCombatPlayer.getName());
-            if (itr.hasNext()) {
-                playerList.append(", ");
+        String playerList = StringUtils.join(combatWith, ", ", new ToStringer<Player>() {
+            @Override
+            public String toString(Player obj) {
+                return obj.getName();
             }
-        }
-        String message = Config.pvpLoggerMessageText.replace("$leaver", player.getName()).replace("$playerlist", playerList);
+        });
+        String pvpLogMessage = StringUtils.parameterizeString(Lang.getTranslation("logger.message"), player.getName(), playerList);
+        GUtils.log(pvpLogMessage);
         if (Config.pvpLoggerMessage) {
-            Bukkit.getServer().dispatchCommand(Bukkit.getConsoleSender(), "say " + message);
+            Bukkit.getServer().dispatchCommand(Bukkit.getConsoleSender(), "say " + pvpLogMessage);
         }
-        GUtils.log(ChatColor.stripColor(message));
-
 
         Hero hero = plugin.getHero(pvpPlayer);
         if (Config.pvpLoggerExpPenalty > 0) {

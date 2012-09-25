@@ -6,7 +6,6 @@ import mccity.plugins.pvprealm.Config;
 import mccity.plugins.pvprealm.PvpRealm;
 import mccity.plugins.pvprealm.listeners.PvpRealmListener;
 import me.galaran.bukkitutils.pvprealm.GUtils;
-import org.bukkit.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.World;
 import org.bukkit.configuration.ConfigurationSection;
@@ -46,7 +45,7 @@ public class PvpPlayer implements ConfigurationSerializable {
         Inventory inv = player.getInventory();
         HashMap<Integer,ItemStack> ungiven = inv.addItem(kit.getStacks());
         if (ungiven != null && !ungiven.isEmpty()) {
-            GUtils.sendMessage(player, "You have not enought slots in the inventory");
+            GUtils.sendTranslated(player, "kit.no-slots");
             if (dropIfFull) {
                 World world = player.getWorld();
                 for (ItemStack ungivenStack : ungiven.values()) {
@@ -55,7 +54,7 @@ public class PvpPlayer implements ConfigurationSerializable {
             }
         }
         player.updateInventory();
-        GUtils.sendMessage(player, "You have obtain kit " + ChatColor.GOLD + kit.getName());
+        GUtils.sendTranslated(player, "kit.obtained", kit.getName());
     }
 
     public void enterPvpRealm() {
@@ -95,11 +94,11 @@ public class PvpPlayer implements ConfigurationSerializable {
         }
     }
 
-    public boolean tpToBattlePoint(String prefix) {
+    public boolean tpToBattlePoint(String bpPrefix) {
         List<BattlePoint> points = ObjectManager.instance.getBattlePoints();
         List<BattlePoint> matchedPoints = new ArrayList<BattlePoint>();
         for (BattlePoint curPoint : points) {
-            if (curPoint.getName().startsWith(prefix)) {
+            if (curPoint.getName().startsWith(bpPrefix)) {
                 matchedPoints.add(curPoint);
             }
         }
@@ -123,14 +122,14 @@ public class PvpPlayer implements ConfigurationSerializable {
         }
     }
 
-    public void onSideTeleportOut() {
-        returnLoc = null;
-        GUtils.sendMessage(player, "You has been side-teleported out of the Pvp World");
-    }
-
     public void onSideTeleportIn(Location from) {
         returnLoc = from;
-        GUtils.sendMessage(player, "You has been side-teleported to the Pvp World");
+        GUtils.sendTranslated(player, "world.side-teleport-in");
+    }
+
+    public void onSideTeleportOut() {
+        returnLoc = null;
+        GUtils.sendTranslated(player, "world.side-teleport-out");
     }
 
     public String getName() {

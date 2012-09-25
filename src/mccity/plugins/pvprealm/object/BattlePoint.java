@@ -39,4 +39,9 @@ public class BattlePoint implements ConfigurationSerializable {
         result.put("location", GUtils.serializeLocation(loc));
         return result;
     }
+
+    @Override
+    public String toString() {
+        return name;
+    }
 }

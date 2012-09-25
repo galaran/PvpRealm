@@ -5,7 +5,6 @@ import mccity.plugins.pvprealm.PvpRealm;
 import mccity.plugins.pvprealm.object.ObjectManager;
 import me.galaran.bukkitutils.pvprealm.GUtils;
 import org.bukkit.Bukkit;
-import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
@@ -40,24 +39,23 @@ public class ScrollListener implements Listener {
 
         Player player = event.getPlayer();
         if (!player.hasPermission(PERM_SCROLL)) {
-            GUtils.sendMessage(player, "You don't have permission to use pvp realm enter scroll", ChatColor.RED);
+            GUtils.sendTranslated(player, "scroll.no-perm");
             return;
         }
 
         if (player.getLocation().getWorld().equals(Config.pvpWorld)) {
-            GUtils.sendMessage(player, "You are already in the pvp world", ChatColor.DARK_PURPLE);
+            GUtils.sendTranslated(player, "scroll.already-in-pvp-world");
             return;
         }
 
         if (playersUsingScroll.containsKey(player)) {
-            GUtils.sendMessage(player, "You are already using scroll, wait", ChatColor.YELLOW);
+            GUtils.sendTranslated(player, "scroll.already-use");
             return;
         }
 
         playersUsingScroll.put(player, Bukkit.getScheduler().scheduleSyncDelayedTask(plugin,
                 new ScrollTask(player), Config.scrollDelaySec * 20));
-        GUtils.sendMessage(player, "Using pvp realm teleport scroll.. " + ChatColor.YELLOW + "Don't move for "
-                + Config.scrollDelaySec + " sec", ChatColor.GREEN);
+        GUtils.sendTranslated(player, "scroll.using", Config.scrollDelaySec);
     }
 
     @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
@@ -68,7 +66,7 @@ public class ScrollListener implements Listener {
         Integer taskId = playersUsingScroll.remove(player);
         if (taskId != null) {
             Bukkit.getScheduler().cancelTask(taskId);
-            GUtils.sendMessage(player, "Teleport scroll aborted", ChatColor.RED);
+            GUtils.sendTranslated(player, "scroll.aborted");
         }
     }
 
@@ -94,7 +92,7 @@ public class ScrollListener implements Listener {
                     }
                     ObjectManager.instance.getPvpPlayer(player).enterPvpRealm();
                 } else {
-                    GUtils.sendMessage(player, "Hold scroll in the hands after start using it", ChatColor.RED);
+                    GUtils.sendTranslated(player, "scroll.not-in-hand");
                 }
             }
             playersUsingScroll.remove(player);

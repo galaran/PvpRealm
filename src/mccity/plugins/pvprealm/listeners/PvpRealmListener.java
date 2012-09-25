@@ -82,7 +82,7 @@ public class PvpRealmListener implements Listener {
                     pvpPlayer.giveKit(kit, false);
                 }
             } else {
-                GUtils.sendMessage(player, "Kit signs disabled out of the Pvp World", ChatColor.RED);
+                GUtils.sendTranslated(player, "kit.disabled-out-of-pvp-world");
             }
         }
     }
@@ -94,7 +94,7 @@ public class PvpRealmListener implements Listener {
             if (player.hasPermission(PERM_KIT_SIGN_PLACE)) {
                 event.setLine(1, KIT_LINE);
             } else {
-                GUtils.sendMessage(player, ChatColor.DARK_RED + "You have no permission to place kit signs");
+                GUtils.sendTranslated(player, "kit.sign-place-no-perm");
                 event.setCancelled(true);
             }
         }

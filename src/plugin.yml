@@ -1,6 +1,6 @@
 name: PvpRealm
 main: mccity.plugins.pvprealm.PvpRealm
-version: 0.5.1
+version: 0.5.5
 author: Galaran
 
 load: POSTWORLD
