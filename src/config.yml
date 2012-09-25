@@ -1,5 +1,6 @@
 #### PvpRealm configuration file ####
 
+debug: true
 pvp-world:
     enable: true
     world: world_pvp
@@ -33,3 +34,9 @@ pvp-logger:
     message-text: §4$leaver §8left the game during combat with §6$playerlist
     heroes-exp-penalty: 0
     kill: false
+
+kit-signs-global: false
+
+death-nodrop-regions:
+  - id: pvp_main
+    world: world_pvp

@@ -1,6 +1,7 @@
 package mccity.plugins.pvprealm;
 
 import me.galaran.bukkitutils.pvprealm.GUtils;
+import me.galaran.bukkitutils.pvprealm.Pair;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.World;
@@ -10,8 +11,12 @@ import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.material.MaterialData;
 
 import java.io.File;
+import java.util.*;
+import java.util.logging.Level;
 
 public class Config {
+
+    public static boolean debug;
 
     public static boolean pvpWorldEnabled;
     public static World pvpWorld;
@@ -33,11 +38,17 @@ public class Config {
     public static int pvpLoggerExpPenalty;
     public static boolean pvpLoggerKill;
 
+    public static boolean kitSignsGlobal;
+
+    private static Set<Pair<String, World>> deathNoDropRegions = new HashSet<Pair<String, World>>();
+
     public static boolean load(File configFile) {
-        FileConfiguration fileConfig = YamlConfiguration.loadConfiguration(configFile);
+        FileConfiguration root = YamlConfiguration.loadConfiguration(configFile);
+
+        debug = root.getBoolean("debug", false);
 
         // Pvp World
-        ConfigurationSection worldSection = fileConfig.getConfigurationSection("pvp-world");
+        ConfigurationSection worldSection = root.getConfigurationSection("pvp-world");
         pvpWorldEnabled = worldSection.getBoolean("enable", false);
         if (pvpWorldEnabled) {
             String pvpWorldName = worldSection.getString("world");
@@ -66,7 +77,7 @@ public class Config {
         }
 
         // Pvp Logger
-        ConfigurationSection loggerSection = fileConfig.getConfigurationSection("pvp-logger");
+        ConfigurationSection loggerSection = root.getConfigurationSection("pvp-logger");
 
         pvpLogger = loggerSection.getBoolean("enable", false);
         if (pvpLogger) {
@@ -79,6 +90,26 @@ public class Config {
             pvpLoggerKill = loggerSection.getBoolean("kill", false);
         }
 
+        kitSignsGlobal = root.getBoolean("kit-signs-global", false);
+
+        List<Map<?, ?>> dndRegions = root.getMapList("death-nodrop-regions");
+        for (Map<?, ?> dndRegion : dndRegions) {
+            String id = (String) dndRegion.get("id");
+            String worldName = (String) dndRegion.get("world");
+            World world = Bukkit.getWorld(worldName);
+            if (world == null) {
+                GUtils.log("dnd region " + id + " skipped: world " + worldName + " not loaded", Level.SEVERE);
+            } else {
+                Pair<String, World> entry = new Pair<String, World>(id.toLowerCase(), world);
+                deathNoDropRegions.add(entry);
+            }
+        }
+        GUtils.log(deathNoDropRegions.size() + " dnd regions");
+
         return true;
+    }
+
+    public static boolean isDndRegion(String id, World world) {
+        return deathNoDropRegions.contains(new Pair<String, World>(id, world));
     }
 }

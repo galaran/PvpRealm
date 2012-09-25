@@ -3,7 +3,11 @@ package mccity.plugins.pvprealm;
 import com.herocraftonline.heroes.Heroes;
 import com.herocraftonline.heroes.characters.Hero;
 import com.palmergames.bukkit.towny.Towny;
+import com.sk89q.worldguard.bukkit.WorldGuardPlugin;
 import mccity.plugins.pvprealm.command.PvpRealmCommandExecutor;
+import mccity.plugins.pvprealm.listeners.DeathNoDropListener;
+import mccity.plugins.pvprealm.listeners.PvpRealmListener;
+import mccity.plugins.pvprealm.listeners.ScrollListener;
 import mccity.plugins.pvprealm.object.ObjectManager;
 import mccity.plugins.pvprealm.object.PvpPlayer;
 import me.galaran.bukkitutils.pvprealm.GUtils;
@@ -19,6 +23,9 @@ public class PvpRealm extends JavaPlugin {
     private boolean usingTowny = false;
     private TownyFacade towny;
 
+    private boolean usingWorldGuard = false;
+    private WorldGuardFacade worldGuard;
+
     @Override
     public void onEnable() {
         GUtils.init(getLogger(), "PvpRealm");
@@ -27,8 +34,11 @@ public class PvpRealm extends JavaPlugin {
         initDependencies();
 
         PluginManager pm = getServer().getPluginManager();
-        pm.registerEvents(new PvpRealmEventHandler(this), this);
-        pm.registerEvents(new ScrollHandler(this), this);
+        pm.registerEvents(new PvpRealmListener(this), this);
+        pm.registerEvents(new ScrollListener(this), this);
+        if (usingWorldGuard) {
+            pm.registerEvents(new DeathNoDropListener(this), this);
+        }
         PvpRealmCommandExecutor commandExecutor = new PvpRealmCommandExecutor(this);
         getCommand("pvprealm").setExecutor(commandExecutor);
 
@@ -59,6 +69,13 @@ public class PvpRealm extends JavaPlugin {
             usingTowny = true;
             GUtils.log("Linked with Towny");
         }
+
+        WorldGuardPlugin worldGuardPlugin = (WorldGuardPlugin) pm.getPlugin("WorldGuard");
+        if (worldGuardPlugin != null) {
+            worldGuard = new WorldGuardFacade(worldGuardPlugin);
+            usingWorldGuard = true;
+            GUtils.log("Linked with WorldGuard");
+        }
     }
 
     public Hero getHero(PvpPlayer pvpPlayer) {
@@ -73,7 +90,19 @@ public class PvpRealm extends JavaPlugin {
         if (usingTowny) {
             return towny;
         } else {
-            throw new RuntimeException("Not linked with towny");
+            throw new RuntimeException("Not linked with Towny");
+        }
+    }
+
+    public boolean isUsingWorldGuard() {
+        return usingWorldGuard;
+    }
+
+    public WorldGuardFacade getWorldGuard() {
+        if (usingWorldGuard) {
+            return worldGuard;
+        } else {
+            throw new RuntimeException("Not linked with WorldGuard");
         }
     }
 }

@@ -3,10 +3,9 @@ package mccity.plugins.pvprealm.object;
 import com.herocraftonline.heroes.characters.Hero;
 import com.herocraftonline.heroes.characters.classes.HeroClass;
 import com.herocraftonline.heroes.characters.party.HeroParty;
-import com.herocraftonline.heroes.characters.skill.Skill;
 import mccity.plugins.pvprealm.Config;
 import mccity.plugins.pvprealm.PvpRealm;
-import mccity.plugins.pvprealm.PvpRealmEventHandler;
+import mccity.plugins.pvprealm.listeners.PvpRealmListener;
 import me.galaran.bukkitutils.pvprealm.GUtils;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
@@ -15,7 +14,6 @@ import org.bukkit.World;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.serialization.ConfigurationSerializable;
 import org.bukkit.entity.Player;
-import org.bukkit.event.entity.EntityDamageEvent;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 
@@ -119,22 +117,22 @@ public class PvpPlayer implements ConfigurationSerializable {
     }
 
     private boolean teleportUnchecked(Location loc) {
-        PvpRealmEventHandler.setCheckTeleport(false);
+        PvpRealmListener.setCheckTeleport(false);
         try {
             return player.teleport(loc);
         } finally {
-            PvpRealmEventHandler.setCheckTeleport(true);
+            PvpRealmListener.setCheckTeleport(true);
         }
     }
 
     public void onSideTeleportOut() {
         returnLoc = null;
-        GUtils.sendMessage(player, "You has been side-teleported out of Pvp Realm");
+        GUtils.sendMessage(player, "You has been side-teleported out of the Pvp World");
     }
 
     public void onSideTeleportIn(Location from) {
         returnLoc = from;
-        GUtils.sendMessage(player, "You has been side-teleported to Pvp Realm");
+        GUtils.sendMessage(player, "You has been side-teleported to the Pvp World");
     }
 
     public String getName() {
@@ -163,11 +161,17 @@ public class PvpPlayer implements ConfigurationSerializable {
         if (player.isOp() && !Config.pvpLoggerOp) return;
 
         if (Config.pvpLoggerBypassFriendly) {
+            if (Config.debug) {
+                GUtils.log(name + " logged out of pvp. Before friend check: " + combatWith.toString());
+            }
             Iterator<Player> itr = combatWith.iterator();
             while (itr.hasNext()) {
                 PvpPlayer curCombatPlayer = ObjectManager.instance.getPvpPlayer(itr.next());
                 if (curCombatPlayer.hasFriend(player)) {
                     itr.remove();
+                    if (Config.debug) {
+                        GUtils.log(curCombatPlayer.getName() + " has friend " + name);
+                    }
                 }
             }
 
@@ -195,7 +199,7 @@ public class PvpPlayer implements ConfigurationSerializable {
             hero.gainExp(-Config.pvpLoggerExpPenalty, HeroClass.ExperienceType.EXTERNAL, player.getLocation());
         }
         if (Config.pvpLoggerKill) {
-            Skill.damageEntity(player, combatWith.iterator().next(), 1000000, EntityDamageEvent.DamageCause.MAGIC);
+            hero.setHealth(0);
             hero.syncHealth();
         }
     }

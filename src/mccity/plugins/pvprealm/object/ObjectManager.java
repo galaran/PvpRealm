@@ -2,6 +2,7 @@ package mccity.plugins.pvprealm.object;
 
 import mccity.plugins.pvprealm.PvpRealm;
 import mccity.plugins.pvprealm.persistence.YmlStorage;
+import me.galaran.bukkitutils.pvprealm.GUtils;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -41,11 +42,13 @@ public class ObjectManager {
         for (BattlePoint battlePoint : loadedPoints) {
             battlePoints.put(battlePoint.getName(), battlePoint);
         }
+        GUtils.log(loadedPoints.size() + " battle points");
 
         List<ItemsKit> loadedKits = storage.loadKits();
         for (ItemsKit loadedKit : loadedKits) {
             kits.put(loadedKit.getName(), loadedKit);
         }
+        GUtils.log(loadedKits.size() + " kits");
 
         Bukkit.getScheduler().scheduleAsyncRepeatingTask(plugin, new AutoSaveTask(), AUTOSAVE_INTERVAL, AUTOSAVE_INTERVAL);
         Bukkit.getPluginManager().registerEvents(new PlayerJoinQuitListener(), plugin);

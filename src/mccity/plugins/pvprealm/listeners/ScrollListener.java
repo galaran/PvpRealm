@@ -1,5 +1,7 @@
-package mccity.plugins.pvprealm;
+package mccity.plugins.pvprealm.listeners;
 
+import mccity.plugins.pvprealm.Config;
+import mccity.plugins.pvprealm.PvpRealm;
 import mccity.plugins.pvprealm.object.ObjectManager;
 import me.galaran.bukkitutils.pvprealm.GUtils;
 import org.bukkit.Bukkit;
@@ -16,7 +18,7 @@ import org.bukkit.inventory.ItemStack;
 import java.util.HashMap;
 import java.util.Map;
 
-public class ScrollHandler implements Listener {
+public class ScrollListener implements Listener {
 
     private static final String PERM_SCROLL = "pvprealm.enterscroll";
 
@@ -24,7 +26,7 @@ public class ScrollHandler implements Listener {
 
     private final Map<Player, Integer> playersUsingScroll = new HashMap<Player, Integer>();
 
-    public ScrollHandler(PvpRealm plugin) {
+    public ScrollListener(PvpRealm plugin) {
         this.plugin = plugin;
     }
 

@@ -1,15 +1,18 @@
-package mccity.plugins.pvprealm;
+package mccity.plugins.pvprealm.listeners;
 
 import com.herocraftonline.heroes.api.events.ExperienceChangeEvent;
 import com.herocraftonline.heroes.api.events.HeroLeaveCombatEvent;
 import com.herocraftonline.heroes.characters.Hero;
 import com.herocraftonline.heroes.characters.classes.HeroClass;
 import com.herocraftonline.heroes.characters.effects.CombatEffect;
+import mccity.plugins.pvprealm.Config;
+import mccity.plugins.pvprealm.PvpRealm;
 import mccity.plugins.pvprealm.object.ItemsKit;
 import mccity.plugins.pvprealm.object.ObjectManager;
 import mccity.plugins.pvprealm.object.PvpPlayer;
 import me.galaran.bukkitutils.pvprealm.GUtils;
 import org.bukkit.ChatColor;
+import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.World;
 import org.bukkit.block.Block;
@@ -21,14 +24,16 @@ import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.Action;
 import org.bukkit.event.block.SignChangeEvent;
+import org.bukkit.event.entity.PlayerDeathEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.event.player.PlayerTeleportEvent;
 
 import java.util.HashSet;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-public class PvpRealmEventHandler implements Listener {
+public class PvpRealmListener implements Listener {
 
     private final PvpRealm plugin;
     private static boolean checkTeleport = true;
@@ -36,7 +41,7 @@ public class PvpRealmEventHandler implements Listener {
     private static final String PERM_KIT_SIGN_PLACE = "pvprealm.kit.placesign";
     private static final String KIT_LINE = ChatColor.DARK_RED + "[kit]";
 
-    public PvpRealmEventHandler(PvpRealm pvpRealm) {
+    public PvpRealmListener(PvpRealm pvpRealm) {
         this.plugin = pvpRealm;
     }
 
@@ -80,11 +85,15 @@ public class PvpRealmEventHandler implements Listener {
     private void handleSignClick(Sign sign, Player player) {
         ObjectManager om = ObjectManager.instance;
         if (sign.getLine(1).equals(KIT_LINE)) {
-            String kitName = ChatColor.stripColor(sign.getLine(2).trim());
-            ItemsKit kit = om.getKit(kitName);
-            if (kit != null) {
-                PvpPlayer pvpPlayer = om.getPvpPlayer(player);
-                pvpPlayer.giveKit(kit, false);
+            if (Config.kitSignsGlobal || (Config.pvpWorldEnabled && sign.getWorld().equals(Config.pvpWorld))) {
+                String kitName = ChatColor.stripColor(sign.getLine(2).trim());
+                ItemsKit kit = om.getKit(kitName);
+                if (kit != null) {
+                    PvpPlayer pvpPlayer = om.getPvpPlayer(player);
+                    pvpPlayer.giveKit(kit, false);
+                }
+            } else {
+                GUtils.sendMessage(player, "Kit signs disabled out of the Pvp World", ChatColor.RED);
             }
         }
     }
