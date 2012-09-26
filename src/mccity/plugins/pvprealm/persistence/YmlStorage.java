@@ -1,5 +1,6 @@
 package mccity.plugins.pvprealm.persistence;
 
+import mccity.plugins.pvprealm.Config;
 import mccity.plugins.pvprealm.PvpRealm;
 import mccity.plugins.pvprealm.object.BattlePoint;
 import mccity.plugins.pvprealm.object.ItemsKit;
@@ -65,6 +66,9 @@ public class YmlStorage {
             FileConfiguration config = YamlConfiguration.loadConfiguration(playerProfile);
             PvpPlayer pvpPlayer = new PvpPlayer(plugin, player);
             pvpPlayer.load(config.getConfigurationSection(player.getName()));
+            if (Config.debug) {
+                GUtils.log("Pvp player $1 loaded", pvpPlayer.getName());
+            }
             return pvpPlayer;
         } else {
             return null;
@@ -75,6 +79,9 @@ public class YmlStorage {
         FileConfiguration config = new YamlConfiguration();
         config.set(pvpPlayer.getName(), pvpPlayer.serialize());
         saveYml(config, getPlayerFile(pvpPlayer.getName()));
+        if (Config.debug) {
+            GUtils.log("Pvp player $1 stored", pvpPlayer.getName());
+        }
     }
 
     private File getPlayerFile(String name) {

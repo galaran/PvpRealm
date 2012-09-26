@@ -80,6 +80,9 @@ public class PvpRealmListener implements Listener {
                 if (kit != null) {
                     PvpPlayer pvpPlayer = om.getPvpPlayer(player);
                     pvpPlayer.giveKit(kit, false);
+                } else if (Config.debug) {
+                    GUtils.log("$1 tried to obtain non-existent kit $2 with kit sign $3", player.getName(), kitName,
+                            GUtils.locToStringWorldXYZ(sign.getLocation()));
                 }
             } else {
                 GUtils.sendTranslated(player, "kit.disabled-out-of-pvp-world");

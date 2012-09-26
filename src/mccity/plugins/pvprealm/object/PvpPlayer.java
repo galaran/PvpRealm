@@ -13,6 +13,7 @@ import org.bukkit.configuration.serialization.ConfigurationSerializable;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.potion.PotionEffectType;
 
 import java.util.*;
 import java.util.logging.Level;
@@ -23,7 +24,10 @@ public class PvpPlayer implements ConfigurationSerializable {
 
     private final String name;
     private Player player;
-    private Location returnLoc;
+
+    private volatile Location returnLoc;
+
+    private static final String PERM_BYPASS_REMOVE_EFFECTS = "pvprealm.bypass.removeeffects";
 
     public PvpPlayer(PvpRealm plugin, Player player) {
         this.plugin = plugin;
@@ -38,6 +42,10 @@ public class PvpPlayer implements ConfigurationSerializable {
 
     public Player getPlayer() {
         return player;
+    }
+
+    public String getName() {
+        return name;
     }
 
     @SuppressWarnings("deprecation")
@@ -89,6 +97,12 @@ public class PvpPlayer implements ConfigurationSerializable {
 
         if (teleportUnchecked(returnLoc)) {
             this.returnLoc = null;
+
+            if (!player.hasPermission(PERM_BYPASS_REMOVE_EFFECTS)) {
+                for (PotionEffectType effectType : PotionEffectType.values()) {
+                    player.removePotionEffect(effectType);
+                }
+            }
         } else {
             GUtils.log("Failed to teleport player " + playerName + " out of the pvp world ", Level.WARNING);
         }
@@ -130,10 +144,6 @@ public class PvpPlayer implements ConfigurationSerializable {
     public void onSideTeleportOut() {
         returnLoc = null;
         GUtils.sendTranslated(player, "world.side-teleport-out");
-    }
-
-    public String getName() {
-        return name;
     }
 
     public void load(ConfigurationSection section) {

@@ -1,5 +1,6 @@
 package mccity.plugins.pvprealm.object;
 
+import mccity.plugins.pvprealm.Config;
 import mccity.plugins.pvprealm.PvpRealm;
 import mccity.plugins.pvprealm.persistence.YmlStorage;
 import me.galaran.bukkitutils.pvprealm.GUtils;
@@ -16,7 +17,7 @@ import java.util.concurrent.ConcurrentHashMap;
 
 public class ObjectManager {
 
-    private static final int AUTOSAVE_INTERVAL = 6000;
+    private static final int AUTOSAVE_PERIOD = 300 * 20;
 
     public static ObjectManager instance;
     private final PvpRealm plugin;
@@ -50,7 +51,7 @@ public class ObjectManager {
         }
         GUtils.log(loadedKits.size() + " kits");
 
-        Bukkit.getScheduler().scheduleAsyncRepeatingTask(plugin, new AutoSaveTask(), AUTOSAVE_INTERVAL, AUTOSAVE_INTERVAL);
+        Bukkit.getScheduler().scheduleAsyncRepeatingTask(plugin, new AutoSaveTask(), AUTOSAVE_PERIOD, AUTOSAVE_PERIOD);
         Bukkit.getPluginManager().registerEvents(new PlayerJoinQuitListener(), plugin);
     }
 
@@ -60,6 +61,9 @@ public class ObjectManager {
             result = storage.loadPvpPlayer(player);
             if (result == null) {
                 result = new PvpPlayer(plugin, player);
+                if (Config.debug) {
+                    GUtils.log("New Pvp player: $1", result.getName());
+                }
             }
             pvpPlayers.put(result.getName(), result);
         }
