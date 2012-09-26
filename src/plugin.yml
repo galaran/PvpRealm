@@ -22,5 +22,5 @@ permissions:
         default: op
     pvprealm.enterscroll:
         default: op
-    pvprealm.bypass.removeeffects
+    pvprealm.bypass.removeeffects:
         default: op
