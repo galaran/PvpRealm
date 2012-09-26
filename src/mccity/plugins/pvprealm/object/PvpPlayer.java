@@ -13,6 +13,7 @@ import org.bukkit.configuration.serialization.ConfigurationSerializable;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
 
 import java.util.*;
@@ -91,7 +92,7 @@ public class PvpPlayer implements ConfigurationSerializable {
 
         Location returnLoc = this.returnLoc;
         if (returnLoc == null) {
-            GUtils.log("Return loc not found for player " + playerName, Level.WARNING);
+            GUtils.log("No return loc for player " + playerName, Level.WARNING);
             returnLoc = Config.defaultReturnLoc;
         }
 
@@ -99,8 +100,8 @@ public class PvpPlayer implements ConfigurationSerializable {
             this.returnLoc = null;
 
             if (!player.hasPermission(PERM_BYPASS_REMOVE_EFFECTS)) {
-                for (PotionEffectType effectType : PotionEffectType.values()) {
-                    player.removePotionEffect(effectType);
+                for (PotionEffect effect : player.getActivePotionEffects()) {
+                    player.removePotionEffect(effect.getType());
                 }
             }
         } else {

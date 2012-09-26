@@ -9,6 +9,7 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.material.MaterialData;
 
 import java.util.LinkedHashMap;
+import java.util.Locale;
 import java.util.Map;
 import java.util.Random;
 import java.util.logging.Level;
@@ -116,16 +117,12 @@ public class GUtils {
         return loc.getWorld().isChunkLoaded(loc.getBlockX() >> 4, loc.getBlockZ() >> 4);
     }
 
+    public static String locToString(Location loc) {
+        return String.format(Locale.US, "%s, pitch: %.2f, yaw: %.2f", locToStringWorldXYZ(loc), loc.getPitch(), loc.getYaw());
+    }
+
     public static String locToStringXYZ(Location loc) {
-        StringBuilder sb = new StringBuilder();
-        sb.append('[');
-        sb.append(loc.getBlockX());
-        sb.append(' ');
-        sb.append(loc.getBlockY());
-        sb.append(' ');
-        sb.append(loc.getBlockZ());
-        sb.append(']');
-        return sb.toString();
+        return String.format(Locale.US, "[%.2f %.2f %.2f]", loc.getX(), loc.getY(), loc.getZ());
     }
 
     public static String locToStringWorldXYZ(Location loc) {
@@ -186,8 +183,13 @@ public class GUtils {
         log(message, Level.INFO, params);
     }
 
+    /** Parameterized + colorized */
+    public static String getProcessed(String string, Object... params) {
+        return StringUtils.colorizeAmps(StringUtils.parameterizeString(string, params));
+    }
+
     public static void sendMessage(CommandSender p, String message, Object... params) {
-        String finalString = StringUtils.colorizeAmps(StringUtils.parameterizeString(message, params));
+        String finalString = getProcessed(message, params);
         if (!finalString.equals("$suppress")) {
             p.sendMessage(chatPrefix + finalString);
         }
@@ -200,12 +202,20 @@ public class GUtils {
         }
     }
 
+    public static String getProcessedTranslation(String key, Object... params) {
+        return getProcessed(Lang.getTranslation(key));
+    }
+
     public static void sendTranslated(CommandSender p, String key, Object... params) {
         sendMessage(p, Lang.getTranslation(key), params);
     }
 
     public static void sendTranslatedSafe(String playerName, String key, Object... params) {
         sendMessageSafe(playerName, Lang.getTranslation(key), params);
+    }
+
+    public static void serverBroadcast(String message) {
+        Bukkit.getServer().dispatchCommand(Bukkit.getConsoleSender(), "say " + message);
     }
 
     public static String enabledDisabled(boolean state) {

@@ -26,6 +26,7 @@ pvp-world:
         item: 358-0
         consume: true
         delay-sec: 10
+        broadcast-arrival: true
 
 pvp-logger:
     enable: true

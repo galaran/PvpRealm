@@ -29,13 +29,13 @@ public class Config {
     public static MaterialData scrollItem;
     public static boolean consumeScroll;
     public static int scrollDelaySec;
+    public static boolean scrollBroadcastArrival;
 
     public static boolean pvpLogger;
     public static boolean pvpLoggerOp;
     public static boolean pvpLoggerBypassFriendly;
     public static boolean pvpLoggerGlobal;
     public static boolean pvpLoggerMessage;
-    public static String pvpLoggerMessageText;
     public static int pvpLoggerExpPenalty;
     public static boolean pvpLoggerKill;
 
@@ -73,6 +73,7 @@ public class Config {
                 scrollItem = GUtils.parseMatData(worldSection.getString("enter-scroll.item", "369"), "-");
                 consumeScroll = worldSection.getBoolean("enter-scroll.consume", true);
                 scrollDelaySec = worldSection.getInt("enter-scroll.delay-sec", 10);
+                scrollBroadcastArrival = worldSection.getBoolean("enter-scroll.broadcast-arrival", true);
             }
         } else {
             scroll = false;
@@ -87,7 +88,6 @@ public class Config {
             pvpLoggerBypassFriendly = loggerSection.getBoolean("bypass-friendly", true);
             pvpLoggerGlobal = loggerSection.getBoolean("global", true);
             pvpLoggerMessage = loggerSection.getBoolean("message", true);
-            pvpLoggerMessageText = loggerSection.getString("message-text");
             pvpLoggerExpPenalty = loggerSection.getInt("heroes-exp-penalty");
             pvpLoggerKill = loggerSection.getBoolean("kill", false);
         }

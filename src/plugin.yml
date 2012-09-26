@@ -5,7 +5,7 @@ author: Galaran
 
 load: POSTWORLD
 depend: [Heroes]
-softdepend: [Multiverse-Core, Towny, WorldEdit, WorldGuard]
+softdepend: [Multiverse-Core, Towny, WorldGuard]
 
 commands:
     pvprealm:
@@ -23,4 +23,4 @@ permissions:
     pvprealm.enterscroll:
         default: op
     pvprealm.bypass.removeeffects:
-        default: op
+        default: false

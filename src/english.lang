@@ -36,5 +36,6 @@ scroll.already-use: &eYou are already using scroll, wait
 scroll.using: &aUsing pvp realm teleport scroll.. &eDon't move for $1 seconds
 scroll.aborted: &cTeleport scroll aborted
 scroll.not-in-hand: &cHold scroll in the hands after start using it
+scroll.arrival-message: &6$1&5 arrives to the pvp world
 
 dnd.nodrop: &aYou died in safe region and keep your inventory

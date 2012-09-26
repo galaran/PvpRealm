@@ -22,6 +22,8 @@ import org.bukkit.event.block.SignChangeEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.event.player.PlayerTeleportEvent;
 
+import java.util.logging.Level;
+
 public class PvpRealmListener implements Listener {
 
     private final PvpRealm plugin;
@@ -81,8 +83,8 @@ public class PvpRealmListener implements Listener {
                     PvpPlayer pvpPlayer = om.getPvpPlayer(player);
                     pvpPlayer.giveKit(kit, false);
                 } else if (Config.debug) {
-                    GUtils.log("$1 tried to obtain non-existent kit $2 with kit sign $3", player.getName(), kitName,
-                            GUtils.locToStringWorldXYZ(sign.getLocation()));
+                    GUtils.log("$1 tried to obtain non-existent kit $2 with kit sign $3", Level.WARNING,
+                            player.getName(), kitName, GUtils.locToStringWorldXYZ(sign.getLocation()));
                 }
             } else {
                 GUtils.sendTranslated(player, "kit.disabled-out-of-pvp-world");

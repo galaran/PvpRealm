@@ -84,10 +84,11 @@ public class PvpLoggerListener implements Listener {
                 return obj.getName();
             }
         });
-        String pvpLogMessage = StringUtils.parameterizeString(Lang.getTranslation("logger.message"), player.getName(), playerList);
+
+        String pvpLogMessage = GUtils.getProcessedTranslation("logger.message");
         GUtils.log(pvpLogMessage);
         if (Config.pvpLoggerMessage) {
-            Bukkit.getServer().dispatchCommand(Bukkit.getConsoleSender(), "say " + pvpLogMessage);
+            GUtils.serverBroadcast(pvpLogMessage);
         }
 
         Hero hero = plugin.getHero(pvpPlayer);

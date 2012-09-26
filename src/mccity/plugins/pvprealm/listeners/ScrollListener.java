@@ -97,6 +97,9 @@ public class ScrollListener implements Listener {
                         }
                     }
                     ObjectManager.instance.getPvpPlayer(player).enterPvpRealm();
+                    if (Config.scrollBroadcastArrival) {
+                        GUtils.serverBroadcast(GUtils.getProcessedTranslation("scroll.arrival-message", player.getName()));
+                    }
                 } else {
                     GUtils.sendTranslated(player, "scroll.not-in-hand");
                 }
