@@ -203,7 +203,7 @@ public class GUtils {
     }
 
     public static String getProcessedTranslation(String key, Object... params) {
-        return getProcessed(Lang.getTranslation(key));
+        return getProcessed(Lang.getTranslation(key), params);
     }
 
     public static void sendTranslated(CommandSender p, String key, Object... params) {
