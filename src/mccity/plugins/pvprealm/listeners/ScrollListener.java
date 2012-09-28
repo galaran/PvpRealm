@@ -1,6 +1,6 @@
 package mccity.plugins.pvprealm.listeners;
 
-import mccity.plugins.pvprealm.Config;
+import mccity.plugins.pvprealm.Settings;
 import mccity.plugins.pvprealm.PvpRealm;
 import mccity.plugins.pvprealm.object.ObjectManager;
 import me.galaran.bukkitutils.pvprealm.GUtils;
@@ -34,11 +34,11 @@ public class ScrollListener implements Listener {
 
     @EventHandler(priority = EventPriority.MONITOR)
     public void onPlayerInteract(PlayerInteractEvent event) {
-        if (!Config.scroll) return;
+        if (!Settings.scroll) return;
         if (event.getAction() != Action.RIGHT_CLICK_BLOCK && event.getAction() != Action.RIGHT_CLICK_AIR) return;
 
         ItemStack handStack = event.getItem();
-        if (handStack == null || !handStack.getData().equals(Config.scrollItem)) return;
+        if (handStack == null || !handStack.getData().equals(Settings.scrollItem)) return;
 
         Player player = event.getPlayer();
         if (!player.hasPermission(PERM_SCROLL)) {
@@ -46,7 +46,7 @@ public class ScrollListener implements Listener {
             return;
         }
 
-        if (player.getLocation().getWorld().equals(Config.pvpWorld)) {
+        if (player.getLocation().getWorld().equals(Settings.pvpWorld)) {
             GUtils.sendTranslated(player, "scroll.already-in-pvp-world");
             return;
         }
@@ -56,14 +56,14 @@ public class ScrollListener implements Listener {
             return;
         }
 
-        int taskId = Bukkit.getScheduler().scheduleSyncDelayedTask(plugin, new ScrollTask(player), Config.scrollDelaySec * 20);
+        int taskId = Bukkit.getScheduler().scheduleSyncDelayedTask(plugin, new ScrollTask(player), Settings.scrollDelaySec * 20);
         playersUsingScroll.put(player, new Pair<Integer, Location>(taskId, player.getLocation()));
-        GUtils.sendTranslated(player, "scroll.using", Config.scrollDelaySec);
+        GUtils.sendTranslated(player, "scroll.using", Settings.scrollDelaySec);
     }
 
     @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
     public void onPlayerMove(PlayerMoveEvent event) {
-        if (!Config.scroll) return;
+        if (!Settings.scroll) return;
 
         Player player = event.getPlayer();
         Pair<Integer, Location> taskLoc = playersUsingScroll.get(player);
@@ -88,8 +88,8 @@ public class ScrollListener implements Listener {
         public void run() {
             if (player.isOnline()) {
                 ItemStack handStack = player.getItemInHand();
-                if (handStack != null && handStack.getData().equals(Config.scrollItem)) {
-                    if (Config.consumeScroll) {
+                if (handStack != null && handStack.getData().equals(Settings.scrollItem)) {
+                    if (Settings.consumeScroll) {
                         if (handStack.getAmount() > 1) {
                             handStack.setAmount(handStack.getAmount() - 1);
                         } else {
@@ -97,7 +97,7 @@ public class ScrollListener implements Listener {
                         }
                     }
                     ObjectManager.instance.getPvpPlayer(player).enterPvpRealm();
-                    if (Config.scrollBroadcastArrival) {
+                    if (Settings.scrollBroadcastArrival) {
                         GUtils.serverBroadcast(GUtils.getProcessedTranslation("scroll.arrival-message", player.getName()));
                     }
                 } else {

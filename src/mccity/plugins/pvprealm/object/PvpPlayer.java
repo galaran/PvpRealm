@@ -2,7 +2,7 @@ package mccity.plugins.pvprealm.object;
 
 import com.herocraftonline.heroes.characters.Hero;
 import com.herocraftonline.heroes.characters.party.HeroParty;
-import mccity.plugins.pvprealm.Config;
+import mccity.plugins.pvprealm.Settings;
 import mccity.plugins.pvprealm.PvpRealm;
 import mccity.plugins.pvprealm.listeners.PvpRealmListener;
 import me.galaran.bukkitutils.pvprealm.GUtils;
@@ -14,7 +14,6 @@ import org.bukkit.entity.Player;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.potion.PotionEffect;
-import org.bukkit.potion.PotionEffectType;
 
 import java.util.*;
 import java.util.logging.Level;
@@ -68,13 +67,13 @@ public class PvpPlayer implements ConfigurationSerializable {
 
     public void enterPvpRealm() {
         Location curLoc = player.getLocation();
-        if (curLoc.getWorld().equals(Config.pvpWorld)) { // no action required
-            GUtils.log("Player " + player.getName() + " entering to pvp world " + Config.pvpWorld.getName() +
+        if (curLoc.getWorld().equals(Settings.pvpWorld)) { // no action required
+            GUtils.log("Player " + player.getName() + " entering to pvp world " + Settings.pvpWorld.getName() +
                     " but it already in", Level.WARNING);
             return;
         }
 
-        if (teleportUnchecked(Config.entryLoc)) {
+        if (teleportUnchecked(Settings.pvpwEntryLoc)) {
             returnLoc = curLoc;
         } else {
             GUtils.log("Failed to teleport player " + player.getName() + " into pvp world ", Level.WARNING);
@@ -84,8 +83,8 @@ public class PvpPlayer implements ConfigurationSerializable {
     public void leavePvpRealm() {
         Location curLoc = player.getLocation();
         String playerName = player.getName();
-        if (!curLoc.getWorld().equals(Config.pvpWorld)) { // no action required
-            GUtils.log("Player " + playerName + " leaving pvp world " + Config.pvpWorld.getName() +
+        if (!curLoc.getWorld().equals(Settings.pvpWorld)) { // no action required
+            GUtils.log("Player " + playerName + " leaving pvp world " + Settings.pvpWorld.getName() +
                     " but already out of it at loc " + GUtils.locToStringWorldXYZ(curLoc), Level.WARNING);
             return;
         }
@@ -93,7 +92,7 @@ public class PvpPlayer implements ConfigurationSerializable {
         Location returnLoc = this.returnLoc;
         if (returnLoc == null) {
             GUtils.log("No return loc for player " + playerName, Level.WARNING);
-            returnLoc = Config.defaultReturnLoc;
+            returnLoc = Settings.pvpwDefaultReturnLoc;
         }
 
         if (teleportUnchecked(returnLoc)) {

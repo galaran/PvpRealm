@@ -1,11 +1,10 @@
 package mccity.plugins.pvprealm.command;
 
-import mccity.plugins.pvprealm.Config;
+import mccity.plugins.pvprealm.Settings;
 import mccity.plugins.pvprealm.PvpRealm;
 import mccity.plugins.pvprealm.object.ObjectManager;
 import me.galaran.bukkitutils.pvprealm.DoOrNotify;
 import me.galaran.bukkitutils.pvprealm.GUtils;
-import org.bukkit.ChatColor;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
@@ -53,7 +52,7 @@ public class PvpRealmCommandExecutor implements CommandExecutor {
             }
         } else if (args.length == 2) {
             if (args[0].equalsIgnoreCase("enter")) {
-                if (Config.pvpWorldEnabled) {
+                if (Settings.pvpwEnabled) {
                     Player player = DoOrNotify.getPlayer(args[1], true, sender);
                     if (player != null) {
                         om.getPvpPlayer(player).enterPvpRealm();
@@ -63,7 +62,7 @@ public class PvpRealmCommandExecutor implements CommandExecutor {
                 }
                 return true;
             } else if (args[0].equalsIgnoreCase("return")) {
-                if (Config.pvpWorldEnabled) {
+                if (Settings.pvpwEnabled) {
                     Player player = DoOrNotify.getPlayer(args[1], true, sender);
                     if (player != null) {
                         om.getPvpPlayer(player).leavePvpRealm();

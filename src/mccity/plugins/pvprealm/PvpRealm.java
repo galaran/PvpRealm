@@ -51,11 +51,11 @@ public class PvpRealm extends JavaPlugin {
     public boolean loadConfig() {
         File configFile = new File(getDataFolder(), "config.yml");
         saveDefaultConfig();
-        boolean configOk = Config.load(configFile);
+        boolean configOk = Settings.load(configFile);
 
         boolean langOk = true;
         try {
-            Lang.initLang(Config.lang, this);
+            Lang.initLang(Settings.lang, this);
         } catch (Exception ex) {
             langOk = false;
             ex.printStackTrace();

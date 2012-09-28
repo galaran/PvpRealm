@@ -4,15 +4,13 @@ import com.herocraftonline.heroes.api.events.HeroLeaveCombatEvent;
 import com.herocraftonline.heroes.characters.Hero;
 import com.herocraftonline.heroes.characters.classes.HeroClass;
 import com.herocraftonline.heroes.characters.effects.CombatEffect;
-import mccity.plugins.pvprealm.Config;
+import mccity.plugins.pvprealm.Settings;
 import mccity.plugins.pvprealm.PvpRealm;
 import mccity.plugins.pvprealm.object.ObjectManager;
 import mccity.plugins.pvprealm.object.PvpPlayer;
 import me.galaran.bukkitutils.pvprealm.GUtils;
-import me.galaran.bukkitutils.pvprealm.Lang;
 import me.galaran.bukkitutils.pvprealm.StringUtils;
 import me.galaran.bukkitutils.pvprealm.ToStringer;
-import org.bukkit.Bukkit;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -35,9 +33,9 @@ public class PvpLoggerListener implements Listener {
     @EventHandler(priority = EventPriority.MONITOR)
     public void onHeroLeaveCombat(HeroLeaveCombatEvent event) {
         if (event.getReason() != CombatEffect.LeaveCombatReason.LOGOUT) return;
-        if (!Config.pvpLogger) return;
+        if (!Settings.pvpLogger) return;
         Hero hero = event.getHero();
-        if (!Config.pvpLoggerGlobal && !hero.getPlayer().getLocation().getWorld().equals(Config.pvpWorld)) return;
+        if (!Settings.pvpLoggerGlobal && !hero.getPlayer().getLocation().getWorld().equals(Settings.pvpWorld)) return;
 
         CombatEffect combat = (CombatEffect) hero.getEffect("Combat");
         if (combat == null) return;
@@ -58,10 +56,10 @@ public class PvpLoggerListener implements Listener {
 
     public void onPvpLogout(PvpPlayer pvpPlayer, Set<Player> combatWith) {
         Player player = pvpPlayer.getPlayer();
-        if (!Config.pvpLoggerOp && player.isOp()) return;
+        if (!Settings.pvpLoggerOp && player.isOp()) return;
 
-        if (Config.pvpLoggerBypassFriendly) {
-            if (Config.debug) {
+        if (Settings.pvpLoggerBypassFriendly) {
+            if (Settings.debug) {
                 GUtils.log(player.getName() + " logged out of pvp. Before friend check: " + combatWith.toString());
             }
             Iterator<Player> itr = combatWith.iterator();
@@ -69,7 +67,7 @@ public class PvpLoggerListener implements Listener {
                 PvpPlayer curCombatPlayer = ObjectManager.instance.getPvpPlayer(itr.next());
                 if (curCombatPlayer.hasFriend(player)) {
                     itr.remove();
-                    if (Config.debug) {
+                    if (Settings.debug) {
                         GUtils.log(curCombatPlayer.getName() + " has friend " + player.getName());
                     }
                 }
@@ -85,17 +83,17 @@ public class PvpLoggerListener implements Listener {
             }
         });
 
-        String pvpLogMessage = GUtils.getProcessedTranslation("logger.message");
+        String pvpLogMessage = GUtils.getProcessedTranslation("logger.message", pvpPlayer.getName(), playerList);
         GUtils.log(pvpLogMessage);
-        if (Config.pvpLoggerMessage) {
+        if (Settings.pvpLoggerMessage) {
             GUtils.serverBroadcast(pvpLogMessage);
         }
 
         Hero hero = plugin.getHero(pvpPlayer);
-        if (Config.pvpLoggerExpPenalty > 0) {
-            hero.gainExp(-Config.pvpLoggerExpPenalty, HeroClass.ExperienceType.EXTERNAL, player.getLocation());
+        if (Settings.pvpLoggerExpPenalty > 0) {
+            hero.gainExp(-Settings.pvpLoggerExpPenalty, HeroClass.ExperienceType.EXTERNAL, player.getLocation());
         }
-        if (Config.pvpLoggerKill) {
+        if (Settings.pvpLoggerKill) {
             hero.setHealth(0);
             hero.syncHealth();
         }

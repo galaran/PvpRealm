@@ -1,5 +1,6 @@
 package mccity.plugins.pvprealm;
 
+import me.galaran.bukkitutils.pvprealm.DoOrNotify;
 import me.galaran.bukkitutils.pvprealm.GUtils;
 import me.galaran.bukkitutils.pvprealm.Pair;
 import org.bukkit.Bukkit;
@@ -14,16 +15,18 @@ import java.io.File;
 import java.util.*;
 import java.util.logging.Level;
 
-public class Config {
+public class Settings {
 
     public static boolean debug;
     public static String lang;
 
-    public static boolean pvpWorldEnabled;
+    public static boolean pvpwEnabled;
     public static World pvpWorld;
-    public static boolean deathHeroesExpLoss;
-    public static Location entryLoc;
-    public static Location defaultReturnLoc;
+    public static Location pvpwEntryLoc;
+    public static Location pvpwDefaultReturnLoc;
+    public static boolean pvpwDisableHeroesDeathExpLoss;
+    public static boolean pvpwDisableHeroesMobExp;
+    public static boolean pvpwDisableWeather;
 
     public static boolean scroll;
     public static MaterialData scrollItem;
@@ -51,21 +54,27 @@ public class Config {
 
         // Pvp World
         ConfigurationSection worldSection = root.getConfigurationSection("pvp-world");
-        pvpWorldEnabled = worldSection.getBoolean("enable", false);
-        if (pvpWorldEnabled) {
+        pvpwEnabled = worldSection.getBoolean("enable", false);
+        if (pvpwEnabled) {
             String pvpWorldName = worldSection.getString("world");
-            pvpWorld = Bukkit.getServer().getWorld(pvpWorldName);
+            pvpWorld = DoOrNotify.getWorld(pvpWorldName, Bukkit.getConsoleSender());
             if (pvpWorld == null) {
-                GUtils.log("Pvp World is null, check world name");
                 return false;
             }
-            deathHeroesExpLoss = worldSection.getBoolean("death-heroes-exp-loss", false);
-            entryLoc = GUtils.deserializeLocation(worldSection.getConfigurationSection("entry-loc").getValues(false));
-            if (!entryLoc.getWorld().equals(pvpWorld)) {
-                GUtils.log("Entry location must be in the pvp world");
+            pvpwEntryLoc = GUtils.deserializeLocation(worldSection.getConfigurationSection("entry-loc").getValues(false));
+            if (!pvpwEntryLoc.getWorld().equals(pvpWorld)) {
+                GUtils.log("Entry location must be in the Pvp World");
                 return false;
             }
-            defaultReturnLoc = GUtils.deserializeLocation(worldSection.getConfigurationSection("default-return-loc").getValues(false));
+            pvpwDefaultReturnLoc = GUtils.deserializeLocation(worldSection.getConfigurationSection("default-return-loc").getValues(false));
+            if (pvpwDefaultReturnLoc.getWorld().equals(pvpWorld)) {
+                GUtils.log("Entry location must be out of the Pvp World");
+                return false;
+            }
+
+            pvpwDisableHeroesDeathExpLoss = worldSection.getBoolean("disable-heroes-death-exp-loss", true);
+            pvpwDisableHeroesMobExp = worldSection.getBoolean("disable-heroes-mob-exp", true);
+            pvpwDisableWeather = worldSection.getBoolean("disable-weather", true);
 
             // Enter Scroll
             scroll = worldSection.getBoolean("enter-scroll.enable", false);

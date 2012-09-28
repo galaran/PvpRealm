@@ -215,7 +215,9 @@ public class GUtils {
     }
 
     public static void serverBroadcast(String message) {
-        Bukkit.getServer().dispatchCommand(Bukkit.getConsoleSender(), "say " + message);
+        if (!message.equals("$suppress")) {
+            Bukkit.getServer().dispatchCommand(Bukkit.getConsoleSender(), "say " + message);
+        }
     }
 
     public static String enabledDisabled(boolean state) {

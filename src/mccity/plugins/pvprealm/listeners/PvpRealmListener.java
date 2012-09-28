@@ -2,7 +2,7 @@ package mccity.plugins.pvprealm.listeners;
 
 import com.herocraftonline.heroes.api.events.ExperienceChangeEvent;
 import com.herocraftonline.heroes.characters.classes.HeroClass;
-import mccity.plugins.pvprealm.Config;
+import mccity.plugins.pvprealm.Settings;
 import mccity.plugins.pvprealm.PvpRealm;
 import mccity.plugins.pvprealm.object.ItemsKit;
 import mccity.plugins.pvprealm.object.ObjectManager;
@@ -21,6 +21,8 @@ import org.bukkit.event.block.Action;
 import org.bukkit.event.block.SignChangeEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.event.player.PlayerTeleportEvent;
+import org.bukkit.event.weather.ThunderChangeEvent;
+import org.bukkit.event.weather.WeatherChangeEvent;
 
 import java.util.logging.Level;
 
@@ -36,11 +38,32 @@ public class PvpRealmListener implements Listener {
         this.plugin = pvpRealm;
     }
 
+    @EventHandler(priority = EventPriority.HIGH, ignoreCancelled = true)
+    public void onWeatherChange(WeatherChangeEvent event) {
+        if (Settings.pvpwEnabled && event.getWorld().equals(Settings.pvpWorld)) {
+            if (event.toWeatherState()) { // cancel if set to raining
+                event.setCancelled(true);
+            }
+        }
+    }
+
+    @EventHandler(priority = EventPriority.HIGH, ignoreCancelled = true)
+    public void onThunderChange(ThunderChangeEvent event) {
+        if (Settings.pvpwEnabled && event.getWorld().equals(Settings.pvpWorld)) {
+            if (event.toThunderState()) { // cancel if set to thundering
+                event.setCancelled(true);
+            }
+        }
+    }
+
     @EventHandler(priority = EventPriority.NORMAL, ignoreCancelled = true)
     public void onHeroExperienceChange(ExperienceChangeEvent event) {
-        if (Config.pvpWorldEnabled && !Config.deathHeroesExpLoss && event.getSource() == HeroClass.ExperienceType.DEATH &&
-                event.getLocation().getWorld().equals(Config.pvpWorld)) {
-            event.setCancelled(true);
+        if (Settings.pvpwEnabled && event.getLocation().getWorld().equals(Settings.pvpWorld)) {
+            if (event.getSource() == HeroClass.ExperienceType.DEATH && Settings.pvpwDisableHeroesDeathExpLoss) {
+                event.setCancelled(true);
+            } else if (event.getSource() == HeroClass.ExperienceType.KILLING && Settings.pvpwDisableHeroesMobExp) {
+                event.setCancelled(true);
+            }
         }
     }
 
@@ -48,14 +71,14 @@ public class PvpRealmListener implements Listener {
     public void onPlayerTeleport(PlayerTeleportEvent event) {
         if (!checkTeleport) return;
 
-        if (Config.pvpWorldEnabled) {
+        if (Settings.pvpwEnabled) {
             World from = event.getFrom().getWorld();
             World to = event.getTo().getWorld();
             if (!from.equals(to)) {
                 PvpPlayer pvpPlayer = ObjectManager.instance.getPvpPlayer(event.getPlayer());
-                if (from.equals(Config.pvpWorld)) {
+                if (from.equals(Settings.pvpWorld)) {
                     pvpPlayer.onSideTeleportOut();
-                } else if (to.equals(Config.pvpWorld)) {
+                } else if (to.equals(Settings.pvpWorld)) {
                     pvpPlayer.onSideTeleportIn(event.getFrom());
                 }
             }
@@ -76,13 +99,13 @@ public class PvpRealmListener implements Listener {
     private void handleSignClick(Sign sign, Player player) {
         ObjectManager om = ObjectManager.instance;
         if (sign.getLine(1).equals(KIT_LINE)) {
-            if (Config.kitSignsGlobal || (Config.pvpWorldEnabled && sign.getWorld().equals(Config.pvpWorld))) {
+            if (Settings.kitSignsGlobal || (Settings.pvpwEnabled && sign.getWorld().equals(Settings.pvpWorld))) {
                 String kitName = ChatColor.stripColor(sign.getLine(2).trim());
                 ItemsKit kit = om.getKit(kitName);
                 if (kit != null) {
                     PvpPlayer pvpPlayer = om.getPvpPlayer(player);
                     pvpPlayer.giveKit(kit, false);
-                } else if (Config.debug) {
+                } else if (Settings.debug) {
                     GUtils.log("$1 tried to obtain non-existent kit $2 with kit sign $3", Level.WARNING,
                             player.getName(), kitName, GUtils.locToStringWorldXYZ(sign.getLocation()));
                 }

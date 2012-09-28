@@ -1,6 +1,6 @@
 package mccity.plugins.pvprealm.object;
 
-import mccity.plugins.pvprealm.Config;
+import mccity.plugins.pvprealm.Settings;
 import mccity.plugins.pvprealm.PvpRealm;
 import mccity.plugins.pvprealm.persistence.YmlStorage;
 import me.galaran.bukkitutils.pvprealm.GUtils;
@@ -61,7 +61,7 @@ public class ObjectManager {
             result = storage.loadPvpPlayer(player);
             if (result == null) {
                 result = new PvpPlayer(plugin, player);
-                if (Config.debug) {
+                if (Settings.debug) {
                     GUtils.log("New Pvp player: $1", result.getName());
                 }
             }

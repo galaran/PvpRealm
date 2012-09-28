@@ -1,6 +1,6 @@
 package mccity.plugins.pvprealm.listeners;
 
-import mccity.plugins.pvprealm.Config;
+import mccity.plugins.pvprealm.Settings;
 import mccity.plugins.pvprealm.PvpRealm;
 import me.galaran.bukkitutils.pvprealm.GUtils;
 import net.minecraft.server.EntityPlayer;
@@ -39,11 +39,11 @@ import java.util.Map;
         Location deathLoc = player.getLocation();
         List<String> regions = plugin.getWorldGuard().getRegions(deathLoc);
         for (String regionId : regions) {
-            if (Config.isDndRegion(regionId, deathLoc.getWorld())) {
+            if (Settings.isDndRegion(regionId, deathLoc.getWorld())) {
                 event.getDrops().clear();
                 itemsDrops.put(player, new PlayerInv(player));
                 GUtils.sendTranslated(player, "dnd.nodrop");
-                if (Config.debug) {
+                if (Settings.debug) {
                     GUtils.log(player.getName() + " dead in the dnd region " + regionId +
                             "[" + deathLoc.getWorld().getName() + "] and keep inventory");
                 }

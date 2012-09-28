@@ -6,7 +6,9 @@ lang: english
 pvp-world:
     enable: true
     world: world_pvp
-    death-heroes-exp-loss: false
+    disable-heroes-death-exp-loss: true
+    disable-heroes-mob-exp: true
+    disable-weather: true
     entry-loc:
         world: world_pvp
         x: 10.0
