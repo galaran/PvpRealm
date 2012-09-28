@@ -2,8 +2,8 @@ package mccity.plugins.pvprealm.listeners;
 
 import com.herocraftonline.heroes.api.events.ExperienceChangeEvent;
 import com.herocraftonline.heroes.characters.classes.HeroClass;
-import mccity.plugins.pvprealm.Settings;
 import mccity.plugins.pvprealm.PvpRealm;
+import mccity.plugins.pvprealm.Settings;
 import mccity.plugins.pvprealm.object.ItemsKit;
 import mccity.plugins.pvprealm.object.ObjectManager;
 import mccity.plugins.pvprealm.object.PvpPlayer;
@@ -38,21 +38,17 @@ public class PvpRealmListener implements Listener {
         this.plugin = pvpRealm;
     }
 
-    @EventHandler(priority = EventPriority.HIGH, ignoreCancelled = true)
+    @EventHandler(priority = EventPriority.HIGH)
     public void onWeatherChange(WeatherChangeEvent event) {
-        if (Settings.pvpwEnabled && event.getWorld().equals(Settings.pvpWorld)) {
-            if (event.toWeatherState()) { // cancel if set to raining
-                event.setCancelled(true);
-            }
+        if (Settings.pvpwEnabled && Settings.pvpwDisableWeather && event.getWorld().equals(Settings.pvpWorld)) {
+            event.setCancelled(event.toWeatherState()); // cancel if set to raining
         }
     }
 
-    @EventHandler(priority = EventPriority.HIGH, ignoreCancelled = true)
+    @EventHandler(priority = EventPriority.HIGH)
     public void onThunderChange(ThunderChangeEvent event) {
-        if (Settings.pvpwEnabled && event.getWorld().equals(Settings.pvpWorld)) {
-            if (event.toThunderState()) { // cancel if set to thundering
-                event.setCancelled(true);
-            }
+        if (Settings.pvpwEnabled && Settings.pvpwDisableWeather && event.getWorld().equals(Settings.pvpWorld)) {
+            event.setCancelled(event.toThunderState()); // cancel if set to thundering
         }
     }
 
