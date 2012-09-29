@@ -26,7 +26,11 @@ public class ItemsKit implements ConfigurationSerializable {
     }
 
     public ItemStack[] getStacks() {
-        return stacks;
+        ItemStack[] deepCopy = new ItemStack[stacks.length];
+        for (int i = 0; i < stacks.length; i++) {
+            deepCopy[i] = stacks[i].clone();
+        }
+        return deepCopy;
     }
 
     public String getName() {

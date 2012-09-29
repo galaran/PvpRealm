@@ -17,7 +17,7 @@ kit.removed: &fKit &6$1&f has been removed
 kit.no-such: &cNo such kit: &6$1
 kit.content-header: &fKit &6$1&f content ($2):
 kit.disabled-out-of-pvp-world: &cKit signs disabled out of the Pvp World
-kit.sign-place-no-perm: &cYou have no permission to place kit signs
+kit.signplace.no-perm: &cYou have no permission to place kit signs
 kit.no-slots: &5You have not enought slots in the inventory
 kit.obtained: &fYou have obtain kit &6$1
 
@@ -39,3 +39,9 @@ scroll.not-in-hand: &cHold scroll in the hands after start using it
 scroll.arrival-message: &6$1&5 arrives to the pvp world
 
 dnd.nodrop: &aYou died in safe region and keep your inventory
+
+rmeffects.signplace.no-perm: &cYou have no permission to place effect remover signs
+rmeffects.cleared-message: &eAll potion effects removed
+
+countdown.cooldown: &bCountdown already started, wait
+countdown.signplace.no-perm: &cYou have no permission to place countdown signs

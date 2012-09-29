@@ -7,6 +7,7 @@ import mccity.plugins.pvprealm.Settings;
 import mccity.plugins.pvprealm.object.ItemsKit;
 import mccity.plugins.pvprealm.object.ObjectManager;
 import mccity.plugins.pvprealm.object.PvpPlayer;
+import mccity.plugins.pvprealm.tasks.CountdownTask;
 import me.galaran.bukkitutils.pvprealm.GUtils;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
@@ -31,8 +32,14 @@ public class PvpRealmListener implements Listener {
     private final PvpRealm plugin;
     private static boolean checkTeleport = true;
 
-    private static final String PERM_KIT_SIGN_PLACE = "pvprealm.kit.placesign";
-    private static final String KIT_LINE = ChatColor.DARK_RED + "[kit]";
+    private static final String PERM_SIGN_PLACE_KIT = "pvprealm.placesign.kit";
+    private static final String LINE_KIT = ChatColor.DARK_RED + "[kit]";
+
+    private static final String PERM_SIGN_PLACE_RMEFFECTS = "pvprealm.placesign.rmeffects";
+    private static final String LINE_RMEFFECTS = ChatColor.BLUE + "[rmeffects]";
+
+    private static final String PERM_SIGN_PLACE_COUNTDOWN = "pvprealm.placesign.countdown";
+    private static final String LINE_COUNTDOWN = ChatColor.AQUA + "[countdown]";
 
     public PvpRealmListener(PvpRealm pvpRealm) {
         this.plugin = pvpRealm;
@@ -94,7 +101,7 @@ public class PvpRealmListener implements Listener {
 
     private void handleSignClick(Sign sign, Player player) {
         ObjectManager om = ObjectManager.instance;
-        if (sign.getLine(1).equals(KIT_LINE)) {
+        if (sign.getLine(1).equals(LINE_KIT)) {
             if (Settings.kitSignsGlobal || (Settings.pvpwEnabled && sign.getWorld().equals(Settings.pvpWorld))) {
                 String kitName = ChatColor.stripColor(sign.getLine(2).trim());
                 ItemsKit kit = om.getKit(kitName);
@@ -108,17 +115,37 @@ public class PvpRealmListener implements Listener {
             } else {
                 GUtils.sendTranslated(player, "kit.disabled-out-of-pvp-world");
             }
+        } else if (sign.getLine(1).equals(LINE_RMEFFECTS)) {
+            PvpPlayer pvpPlayer = om.getPvpPlayer(player);
+            pvpPlayer.clearEffects();
+        } else if (sign.getLine(1).equals(LINE_COUNTDOWN)) {
+            CountdownTask cdownTask = new CountdownTask(plugin, om.getPvpPlayer(player));
+            cdownTask.start();
         }
     }
 
-    @EventHandler(priority = EventPriority.NORMAL, ignoreCancelled = true)
+    @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
     public void onSignChange(SignChangeEvent event) {
-        if (ChatColor.stripColor(event.getLine(1)).trim().toLowerCase().contains("[kit]")) {
-            Player player = event.getPlayer();
-            if (player.hasPermission(PERM_KIT_SIGN_PLACE)) {
-                event.setLine(1, KIT_LINE);
+        Player player = event.getPlayer();
+        if (GUtils.stringContainsIgnoreCaseAndColor(event.getLine(1), LINE_KIT)) {
+            if (player.hasPermission(PERM_SIGN_PLACE_KIT)) {
+                event.setLine(1, LINE_KIT);
             } else {
-                GUtils.sendTranslated(player, "kit.sign-place-no-perm");
+                GUtils.sendTranslated(player, "kit.signplace.no-perm");
+                event.setCancelled(true);
+            }
+        } else if (GUtils.stringContainsIgnoreCaseAndColor(event.getLine(1), LINE_RMEFFECTS)) {
+            if (player.hasPermission(PERM_SIGN_PLACE_RMEFFECTS)) {
+                event.setLine(1, LINE_RMEFFECTS);
+            } else {
+                GUtils.sendTranslated(player, "rmeffects.signplace.no-perm");
+                event.setCancelled(true);
+            }
+        } else if (GUtils.stringContainsIgnoreCaseAndColor(event.getLine(1), LINE_COUNTDOWN)) {
+            if (player.hasPermission(PERM_SIGN_PLACE_COUNTDOWN)) {
+                event.setLine(1, LINE_COUNTDOWN);
+            } else {
+                GUtils.sendTranslated(player, "countdown.signplace.no-perm");
                 event.setCancelled(true);
             }
         }

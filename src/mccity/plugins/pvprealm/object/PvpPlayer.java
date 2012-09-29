@@ -27,7 +27,7 @@ public class PvpPlayer implements ConfigurationSerializable {
 
     private volatile Location returnLoc;
 
-    private static final String PERM_BYPASS_REMOVE_EFFECTS = "pvprealm.bypass.removeeffects";
+    private static final String PERM_BYPASS_RETURN_RMEFFECTS = "pvprealm.bypass.returnrmeffects";
 
     public PvpPlayer(PvpRealm plugin, Player player) {
         this.plugin = plugin;
@@ -98,10 +98,8 @@ public class PvpPlayer implements ConfigurationSerializable {
         if (teleportUnchecked(returnLoc)) {
             this.returnLoc = null;
 
-            if (!player.hasPermission(PERM_BYPASS_REMOVE_EFFECTS)) {
-                for (PotionEffect effect : player.getActivePotionEffects()) {
-                    player.removePotionEffect(effect.getType());
-                }
+            if (!player.hasPermission(PERM_BYPASS_RETURN_RMEFFECTS)) {
+                clearEffects();
             }
         } else {
             GUtils.log("Failed to teleport player " + playerName + " out of the pvp world ", Level.WARNING);
@@ -191,5 +189,16 @@ public class PvpPlayer implements ConfigurationSerializable {
     @Override
     public int hashCode() {
         return name != null ? name.hashCode() : 0;
+    }
+
+    public void clearEffects() {
+        boolean cleared = false;
+        for (PotionEffect effect : player.getActivePotionEffects()) {
+            player.removePotionEffect(effect.getType());
+            cleared = true;
+        }
+        if (cleared) {
+            GUtils.sendTranslated(player, "rmeffects.cleared-message");
+        }
     }
 }

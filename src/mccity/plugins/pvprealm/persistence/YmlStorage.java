@@ -39,35 +39,35 @@ public class YmlStorage {
     }
 
     public List<BattlePoint> loadBattlePoints() {
-        FileConfiguration bPointsConfig = YamlConfiguration.loadConfiguration(battlePointsFile);
-        Set<String> keys = bPointsConfig.getKeys(false);
+        FileConfiguration bpsRoot = YamlConfiguration.loadConfiguration(battlePointsFile);
+        Set<String> keys = bpsRoot.getKeys(false);
 
         List<BattlePoint> results = new ArrayList<BattlePoint>();
         for (String key : keys) {
-            results.add(new BattlePoint(bPointsConfig.getConfigurationSection(key)));
+            results.add(new BattlePoint(bpsRoot.getConfigurationSection(key)));
         }
         return results;
     }
 
     public void storeBattlePoints(Collection<BattlePoint> points) {
-        FileConfiguration config = new YamlConfiguration();
+        FileConfiguration bpsRoot = new YamlConfiguration();
 
         int idx = 0;
         for (BattlePoint curPoint : points) {
-            config.set(String.valueOf(idx++), curPoint.serialize());
+            bpsRoot.set(String.valueOf(idx++), curPoint.serialize());
         }
 
-        saveYml(config, battlePointsFile);
+        saveYml(bpsRoot, battlePointsFile);
     }
 
     public PvpPlayer loadPvpPlayer(Player player) {
         File playerProfile = getPlayerFile(player.getName());
         if (playerProfile.isFile()) {
-            FileConfiguration config = YamlConfiguration.loadConfiguration(playerProfile);
+            FileConfiguration playerRoot = YamlConfiguration.loadConfiguration(playerProfile);
             PvpPlayer pvpPlayer = new PvpPlayer(plugin, player);
-            pvpPlayer.load(config.getConfigurationSection(player.getName()));
+            pvpPlayer.load(playerRoot.getConfigurationSection(player.getName()));
             if (Settings.debug) {
-                GUtils.log("Pvp player $1 loaded", pvpPlayer.getName());
+                GUtils.log("Pvp player $1 loaded (id: $2)", pvpPlayer.getName(), player.getEntityId());
             }
             return pvpPlayer;
         } else {
@@ -76,9 +76,9 @@ public class YmlStorage {
     }
 
     public void storePvpPlayer(PvpPlayer pvpPlayer) {
-        FileConfiguration config = new YamlConfiguration();
-        config.set(pvpPlayer.getName(), pvpPlayer.serialize());
-        saveYml(config, getPlayerFile(pvpPlayer.getName()));
+        FileConfiguration playerRoot = new YamlConfiguration();
+        playerRoot.set(pvpPlayer.getName(), pvpPlayer.serialize());
+        saveYml(playerRoot, getPlayerFile(pvpPlayer.getName()));
         if (Settings.debug) {
             GUtils.log("Pvp player $1 stored", pvpPlayer.getName());
         }
@@ -90,25 +90,25 @@ public class YmlStorage {
     }
 
     public List<ItemsKit> loadKits() {
-        FileConfiguration kitsConfig = YamlConfiguration.loadConfiguration(kitsFile);
-        Set<String> keys = kitsConfig.getKeys(false);
+        FileConfiguration kitsRoot = YamlConfiguration.loadConfiguration(kitsFile);
+        Set<String> keys = kitsRoot.getKeys(false);
 
         List<ItemsKit> results = new ArrayList<ItemsKit>();
         for (String curKey : keys) {
-            results.add(new ItemsKit(kitsConfig.getConfigurationSection(curKey)));
+            results.add(new ItemsKit(kitsRoot.getConfigurationSection(curKey)));
         }
         return results;
     }
 
     public void storeKits(Collection<ItemsKit> kits) {
-        FileConfiguration config = new YamlConfiguration();
+        FileConfiguration kitsRoot = new YamlConfiguration();
 
         int idx = 0;
         for (ItemsKit kit : kits) {
-            config.set(String.valueOf(idx++), kit.serialize());
+            kitsRoot.set(String.valueOf(idx++), kit.serialize());
         }
 
-        saveYml(config, kitsFile);
+        saveYml(kitsRoot, kitsFile);
     }
 
     private void saveYml(FileConfiguration config, File file) {

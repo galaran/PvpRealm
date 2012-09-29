@@ -223,4 +223,10 @@ public class GUtils {
     public static String enabledDisabled(boolean state) {
         return state ? ENABLELD : DISABLED;
     }
+
+    public static boolean stringContainsIgnoreCaseAndColor(String line, String matchingString) {
+        String lineRaw = ChatColor.stripColor(StringUtils.colorizeAmps(line)).trim().toLowerCase();
+        String matchingStringRaw = ChatColor.stripColor(matchingString).trim().toLowerCase();
+        return lineRaw.contains(matchingStringRaw);
+    }
 }

@@ -153,6 +153,9 @@ public class ObjectManager {
             PvpPlayer joined = pvpPlayers.get(playerName);
             if (joined != null) {
                 joined.updateEntity(event.getPlayer());
+                if (Settings.debug) {
+                    GUtils.log("Updated entity (id $1) for Pvp player $2", event.getPlayer().getEntityId(), joined.getName());
+                }
             }
         }
     }
