@@ -31,7 +31,7 @@ public class PvpRealm extends JavaPlugin {
     @Override
     public void onEnable() {
         GUtils.init(getLogger(), "PvpRealm");
-        loadConfig();
+        reloadSettings();
         ObjectManager.init(this);
         initDependencies();
 
@@ -48,10 +48,10 @@ public class PvpRealm extends JavaPlugin {
         GUtils.log("Pvp Realm enabled");
     }
 
-    public boolean loadConfig() {
+    public boolean reloadSettings() {
         File configFile = new File(getDataFolder(), "config.yml");
         saveDefaultConfig();
-        boolean configOk = Settings.load(configFile);
+        boolean settingsOk = Settings.load(configFile);
 
         boolean langOk = true;
         try {
@@ -61,7 +61,7 @@ public class PvpRealm extends JavaPlugin {
             ex.printStackTrace();
         }
 
-        return configOk && langOk;
+        return settingsOk && langOk;
     }
 
     @Override

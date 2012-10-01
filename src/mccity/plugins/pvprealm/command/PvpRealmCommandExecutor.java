@@ -43,7 +43,7 @@ public class PvpRealmCommandExecutor implements CommandExecutor {
 
         if (args.length == 1) {
             if (args[0].equalsIgnoreCase("reload")) {
-                if (plugin.loadConfig()) {
+                if (plugin.reloadSettings()) {
                     GUtils.sendTranslated(sender, "reload.ok");
                 } else {
                     GUtils.sendTranslated(sender, "reload.error");

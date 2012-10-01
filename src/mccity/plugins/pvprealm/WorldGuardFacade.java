@@ -17,7 +17,7 @@ public class WorldGuardFacade {
     }
 
     /**
-     * @return to Lower case
+     * @return low case regions id at location
      */
     public List<String> getRegions(Location loc) {
         List<String> applicableRegions = new ArrayList<String>();

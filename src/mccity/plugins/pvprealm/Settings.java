@@ -44,7 +44,7 @@ public class Settings {
 
     public static boolean kitSignsGlobal;
 
-    private static Set<Pair<String, World>> deathNoDropRegions = new HashSet<Pair<String, World>>();
+    private static final Set<Pair<String, World>> deathNoDropRegions = new HashSet<Pair<String, World>>();
 
     public static boolean load(File configFile) {
         FileConfiguration root = YamlConfiguration.loadConfiguration(configFile);
@@ -103,6 +103,7 @@ public class Settings {
 
         kitSignsGlobal = root.getBoolean("kit-signs-global", false);
 
+        deathNoDropRegions.clear();
         List<Map<?, ?>> dndRegions = root.getMapList("death-nodrop-regions");
         for (Map<?, ?> dndRegion : dndRegions) {
             String id = (String) dndRegion.get("id");
