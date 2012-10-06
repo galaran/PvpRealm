@@ -214,9 +214,21 @@ public class GUtils {
         sendMessageSafe(playerName, Lang.getTranslation(key), params);
     }
 
-    public static void serverBroadcast(String message) {
-        if (!message.equals("$suppress")) {
-            Bukkit.getServer().dispatchCommand(Bukkit.getConsoleSender(), "say " + message);
+    public static void serverBroadcast(String rawMessage) {
+        if (!rawMessage.equals("$suppress")) {
+            Bukkit.getServer().dispatchCommand(Bukkit.getConsoleSender(), "say " + rawMessage);
+        }
+    }
+
+    public static void broadcast(String rawMessage, Location loc, double radius) {
+        if (rawMessage.equals("$suppress")) return;
+
+        for (Player curPlayer : Bukkit.getOnlinePlayers()) {
+            Location curPlayerLoc = curPlayer.getLocation();
+            if (!curPlayerLoc.getWorld().equals(loc.getWorld())) continue;
+            if (curPlayerLoc.distance(loc) <= radius) {
+                sendMessage(curPlayer, rawMessage);
+            }
         }
     }
 

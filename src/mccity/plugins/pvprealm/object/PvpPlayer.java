@@ -2,12 +2,12 @@ package mccity.plugins.pvprealm.object;
 
 import com.herocraftonline.heroes.characters.Hero;
 import com.herocraftonline.heroes.characters.party.HeroParty;
-import mccity.plugins.pvprealm.Settings;
 import mccity.plugins.pvprealm.PvpRealm;
+import mccity.plugins.pvprealm.Settings;
 import mccity.plugins.pvprealm.listeners.PvpRealmListener;
+import me.galaran.bukkitutils.pvprealm.CbUtils;
 import me.galaran.bukkitutils.pvprealm.GUtils;
 import org.bukkit.Location;
-import org.bukkit.World;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.serialization.ConfigurationSerializable;
 import org.bukkit.entity.Player;
@@ -15,7 +15,9 @@ import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.potion.PotionEffect;
 
-import java.util.*;
+import java.util.HashMap;
+import java.util.LinkedHashMap;
+import java.util.Map;
 import java.util.logging.Level;
 
 public class PvpPlayer implements ConfigurationSerializable {
@@ -49,20 +51,21 @@ public class PvpPlayer implements ConfigurationSerializable {
     }
 
     @SuppressWarnings("deprecation")
-    public void giveKit(ItemsKit kit, boolean dropIfFull) {
+    public void giveKit(ItemsKit kit, boolean dropIfFull, boolean silent) {
         Inventory inv = player.getInventory();
         HashMap<Integer,ItemStack> ungiven = inv.addItem(kit.getStacks());
         if (ungiven != null && !ungiven.isEmpty()) {
             GUtils.sendTranslated(player, "kit.no-slots");
             if (dropIfFull) {
-                World world = player.getWorld();
                 for (ItemStack ungivenStack : ungiven.values()) {
-                    world.dropItem(player.getLocation().add(0, 2, 0), ungivenStack);
+                    CbUtils.dropStackSafe(ungivenStack, player.getEyeLocation());
                 }
             }
         }
         player.updateInventory();
-        GUtils.sendTranslated(player, "kit.obtained", kit.getName());
+        if (!silent) {
+            GUtils.sendTranslated(player, "kit.obtained", kit.getName());
+        }
     }
 
     public void enterPvpRealm() {
@@ -106,21 +109,9 @@ public class PvpPlayer implements ConfigurationSerializable {
         }
     }
 
-    public boolean tpToBattlePoint(String bpPrefix) {
-        List<BattlePoint> points = ObjectManager.instance.getBattlePoints();
-        List<BattlePoint> matchedPoints = new ArrayList<BattlePoint>();
-        for (BattlePoint curPoint : points) {
-            if (curPoint.getName().startsWith(bpPrefix)) {
-                matchedPoints.add(curPoint);
-            }
-        }
-        if (matchedPoints.isEmpty()) {
-            return false;
-        }
-
-        BattlePoint targetPoint = matchedPoints.get(GUtils.random.nextInt(matchedPoints.size()));
-        if (!teleportUnchecked(targetPoint.getLoc())) {
-            GUtils.log("Failed to teleport player " + player.getName() + " to tp point " + targetPoint.getName(), Level.WARNING);
+    public boolean tpToBattlePoint(BattlePoint battlePoint) {
+        if (!teleportUnchecked(battlePoint.getLoc())) {
+            GUtils.log("Failed to teleport player " + player.getName() + " to tp point " + battlePoint.getName(), Level.WARNING);
         }
         return true;
     }
@@ -198,7 +189,19 @@ public class PvpPlayer implements ConfigurationSerializable {
             cleared = true;
         }
         if (cleared) {
-            GUtils.sendTranslated(player, "rmeffects.cleared-message");
+            GUtils.sendTranslated(player, "signs.rmeffects.cleared-message");
         }
+    }
+
+    public Hero getHero() {
+        return plugin.getHero(this);
+    }
+
+    public void restore() {
+        Hero hero = getHero();
+        hero.setHealth(hero.getMaxHealth());
+        hero.setMana(hero.getMaxMana());
+        player.setFoodLevel(20);
+        player.setSaturation(5.0f);
     }
 }

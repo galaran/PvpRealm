@@ -70,12 +70,23 @@ public class ObjectManager {
         return result;
     }
 
-    public BattlePoint getBattlePoint(String name) {
-        return battlePoints.get(name);
-    }
-
     public List<BattlePoint> getBattlePoints() {
         return new ArrayList<BattlePoint>(battlePoints.values());
+    }
+
+    public BattlePoint getBattlePoint(String bpName) {
+        return battlePoints.get(bpName);
+    }
+
+    public BattlePoint getRandomBattlePoint(String bpPrefix) {
+        List<BattlePoint> matchedBps = new ArrayList<BattlePoint>();
+        for (BattlePoint curBp : getBattlePoints()) {
+            if (curBp.getName().startsWith(bpPrefix)) {
+                matchedBps.add(curBp);
+            }
+        }
+        if (matchedBps.isEmpty()) return null;
+        return matchedBps.get(GUtils.random.nextInt(matchedBps.size()));
     }
 
     public boolean removeBattlePoint(String bPointName) {
@@ -110,6 +121,17 @@ public class ObjectManager {
 
     public ItemsKit getKit(String kitName) {
         return kits.get(kitName);
+    }
+
+    public ItemsKit getRandomKit(String kitPrefix) {
+        List<ItemsKit> matchedKits = new ArrayList<ItemsKit>();
+        for (ItemsKit curKit : getKits()) {
+            if (curKit.getName().startsWith(kitPrefix)) {
+                matchedKits.add(curKit);
+            }
+        }
+        if (matchedKits.isEmpty()) return null;
+        return matchedKits.get(GUtils.random.nextInt(matchedKits.size()));
     }
 
     public void shutdown() {

@@ -5,7 +5,6 @@ import mccity.plugins.pvprealm.object.ObjectManager;
 import mccity.plugins.pvprealm.object.PvpPlayer;
 import me.galaran.bukkitutils.pvprealm.DoOrNotify;
 import me.galaran.bukkitutils.pvprealm.GUtils;
-import me.galaran.bukkitutils.pvprealm.Lang;
 import me.galaran.bukkitutils.pvprealm.StringUtils;
 import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
@@ -52,10 +51,26 @@ public class BattlePointCommands implements SubCommandExecutor {
             if (args[0].equalsIgnoreCase("tp")) {
                 Player player = DoOrNotify.getPlayer(args[1], true, sender);
                 if (player != null) {
-                    String bpPrefix = args[2];
-                    PvpPlayer pvpPlayer = om.getPvpPlayer(player);
-                    if (!pvpPlayer.tpToBattlePoint(bpPrefix)) {
-                        GUtils.sendTranslated(sender, "bp.no-match", bpPrefix);
+                    String bPointName = args[2];
+                    BattlePoint bPoint = om.getBattlePoint(bPointName);
+                    if (bPoint != null) {
+                        PvpPlayer pvpPlayer = om.getPvpPlayer(player);
+                        pvpPlayer.tpToBattlePoint(bPoint);
+                    } else {
+                        GUtils.sendTranslated(sender, "bp.no-such", bPointName);
+                    }
+                }
+                return true;
+            } else if (args[0].equalsIgnoreCase("tpprefix")) {
+                Player player = DoOrNotify.getPlayer(args[1], true, sender);
+                if (player != null) {
+                    String bPointPrefix = args[2];
+                    BattlePoint bPoint = om.getRandomBattlePoint(bPointPrefix);
+                    if (bPoint != null) {
+                        PvpPlayer pvpPlayer = om.getPvpPlayer(player);
+                        pvpPlayer.tpToBattlePoint(bPoint);
+                    } else {
+                        GUtils.sendTranslated(sender, "bp.no-match", bPointPrefix);
                     }
                 }
                 return true;

@@ -10,6 +10,7 @@ import java.io.InputStreamReader;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Properties;
+import java.util.logging.Level;
 
 public class Lang {
 
@@ -44,7 +45,7 @@ public class Lang {
         String val = langMap.get(key);
         if (val == null) {
             val = ChatColor.RED + "Missing translation for key " + ChatColor.DARK_RED + key + ChatColor.RED + ", lang: " + lang;
-            GUtils.log(val);
+            GUtils.log(val, Level.WARNING);
         }
         return val;
     }

@@ -1,6 +1,6 @@
 name: PvpRealm
 main: mccity.plugins.pvprealm.PvpRealm
-version: 0.7
+version: 0.8
 author: Galaran
 
 load: POSTWORLD
@@ -25,6 +25,8 @@ permissions:
     pvprealm.placesign.rmeffects:
         default: op
     pvprealm.placesign.countdown:
+        default: op
+    pvprealm.placesign.restore:
         default: op
     pvprealm.bypass.returnrmeffects:
         default: false

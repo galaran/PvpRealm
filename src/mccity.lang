@@ -15,13 +15,14 @@ kit.list: Наборы: $1
 kit.saved-as: &fВаш инвентарь сохранен, как набор &6$1
 kit.removed: &fНабор &6$1&f удален
 kit.no-such: &cНет такого набора: &6$1
+kit.no-match: &cНет наборов, начинающихся на &6$1
 kit.content-header: &fСодержимое набора &6$1&f ($2):
 kit.disabled-out-of-pvp-world: &cТаблички для получения наборов разрешено использовать только в Pvp-мире
-kit.signplace.no-perm: &cУ вас нет доступа устанавливать такие таблички
+kit.signplace.no-perm: &cВы не можете создавать такие таблички
 kit.no-slots: &5Недостаточно места в инвентаре для выдачи набора
 kit.obtained: &fВы получили набор &6$1
 
-bp.list: Точки боя: &1
+bp.list: Точки боя: &5$1
 bp.added: &fТочка боя &5$1&f добавлена
 bp.removed: &fТочка боя &5$1&f удалена
 bp.no-such: &cНет такой точки боя: &5$1
@@ -40,8 +41,11 @@ scroll.arrival-message: &6$1&d прибывает на Pvp арену
 
 dnd.nodrop: &aПри смерти на pvp арене вы сохраняете инвентарь
 
-rmeffects.signplace.no-perm: &cУ вас нет доступа устанавливать такие таблички
-rmeffects.cleared-message: &eВы очищены от всех эффектов зелий
+signs.rmeffects.place-no-perm: &cВы не можете создавать такие таблички
+signs.rmeffects.cleared-message: &eВы очищены от всех эффектов зелий
 
-countdown.cooldown: &bОтсчет уже начался
-countdown.signplace.no-perm: &cУ вас нет доступа устанавливать такие таблички
+signs.countdown.place-no-perm: &cВы не можете создавать такие таблички
+signs.countdown.cooldown: &bОтсчет уже начался
+
+signs.restore.place-no-perm: &cВы не можете создавать такие таблички
+signs.restore.restored: &a$1&d использовал знак восстановления

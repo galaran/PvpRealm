@@ -15,18 +15,19 @@ kit.list: Kits: $1
 kit.saved-as: &fYour inventory content saved as kit &6$1
 kit.removed: &fKit &6$1&f has been removed
 kit.no-such: &cNo such kit: &6$1
+kit.no-match: &cThere is no kits matching &6$1
 kit.content-header: &fKit &6$1&f content ($2):
 kit.disabled-out-of-pvp-world: &cKit signs disabled out of the Pvp World
 kit.signplace.no-perm: &cYou have no permission to place kit signs
 kit.no-slots: &5You have not enought slots in the inventory
 kit.obtained: &fYou have obtain kit &6$1
 
-bp.list: Battle points: &1
+bp.list: Battle points: &5$1
 bp.added: &fBattle point &5$1&f has been added
 bp.removed: &fBattle point &5$1&f has been removed
-bp.no-such: &cNo such battle point: &5$1
 bp.info: &fBattle point &5$1&f: &2$2
-bp.no-match: &cThere is no battle point matching &7$1
+bp.no-such: &cNo such battle point: &5$1
+bp.no-match: &cThere is no battle points matching &7$1
 
 logger.message: &4$1&5 left the game during combat with &6$2
 
@@ -40,8 +41,12 @@ scroll.arrival-message: &6$1&5 arrives to the pvp world
 
 dnd.nodrop: &aYou died in safe region and keep your inventory
 
-rmeffects.signplace.no-perm: &cYou have no permission to place effect remover signs
-rmeffects.cleared-message: &eAll potion effects removed
+signs.rmeffects.place-no-perm: &cYou have no permission to place effect remover signs
+signs.rmeffects.cleared-message: &eAll potion effects removed
 
-countdown.cooldown: &bCountdown already started, wait
-countdown.signplace.no-perm: &cYou have no permission to place countdown signs
+signs.countdown.place-no-perm: &cYou have no permission to place countdown signs
+signs.countdown.cooldown: &bCountdown already started, wait
+
+signs.restore.place-no-perm: &cYou have no permission to place restore signs
+signs.restore.restored: &a$1&d used restore sign
+

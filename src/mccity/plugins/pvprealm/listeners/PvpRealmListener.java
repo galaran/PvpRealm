@@ -41,6 +41,9 @@ public class PvpRealmListener implements Listener {
     private static final String PERM_SIGN_PLACE_COUNTDOWN = "pvprealm.placesign.countdown";
     private static final String LINE_COUNTDOWN = ChatColor.AQUA + "[countdown]";
 
+    private static final String PERM_SIGN_PLACE_RESTORE = "pvprealm.placesign.restore";
+    private static final String LINE_RESTORE = ChatColor.BLUE + "[restore]";
+
     public PvpRealmListener(PvpRealm pvpRealm) {
         this.plugin = pvpRealm;
     }
@@ -107,7 +110,7 @@ public class PvpRealmListener implements Listener {
                 ItemsKit kit = om.getKit(kitName);
                 if (kit != null) {
                     PvpPlayer pvpPlayer = om.getPvpPlayer(player);
-                    pvpPlayer.giveKit(kit, false);
+                    pvpPlayer.giveKit(kit, false, false);
                 } else if (Settings.debug) {
                     GUtils.log("$1 tried to obtain non-existent kit $2 with kit sign $3", Level.WARNING,
                             player.getName(), kitName, GUtils.locToStringWorldXYZ(sign.getLocation()));
@@ -121,6 +124,10 @@ public class PvpRealmListener implements Listener {
         } else if (sign.getLine(1).equals(LINE_COUNTDOWN)) {
             CountdownTask cdownTask = new CountdownTask(plugin, om.getPvpPlayer(player));
             cdownTask.start();
+        } else if (sign.getLine(1).equals(LINE_RESTORE)) {
+            om.getPvpPlayer(player).restore();
+            GUtils.broadcast(GUtils.getProcessedTranslation("signs.restore.restored", player.getName()),
+                    player.getLocation(), 30);
         }
     }
 
@@ -138,14 +145,21 @@ public class PvpRealmListener implements Listener {
             if (player.hasPermission(PERM_SIGN_PLACE_RMEFFECTS)) {
                 event.setLine(1, LINE_RMEFFECTS);
             } else {
-                GUtils.sendTranslated(player, "rmeffects.signplace.no-perm");
+                GUtils.sendTranslated(player, "signs.rmeffects.place-no-perm");
                 event.setCancelled(true);
             }
         } else if (GUtils.stringContainsIgnoreCaseAndColor(event.getLine(1), LINE_COUNTDOWN)) {
             if (player.hasPermission(PERM_SIGN_PLACE_COUNTDOWN)) {
                 event.setLine(1, LINE_COUNTDOWN);
             } else {
-                GUtils.sendTranslated(player, "countdown.signplace.no-perm");
+                GUtils.sendTranslated(player, "signs.countdown.place-no-perm");
+                event.setCancelled(true);
+            }
+        } else if (GUtils.stringContainsIgnoreCaseAndColor(event.getLine(1), LINE_RESTORE)) {
+            if (player.hasPermission(PERM_SIGN_PLACE_RESTORE)) {
+                event.setLine(1, LINE_RESTORE);
+            } else {
+                GUtils.sendTranslated(player, "signs.restore.place-no-perm");
                 event.setCancelled(true);
             }
         }

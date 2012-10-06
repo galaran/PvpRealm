@@ -5,7 +5,6 @@ import mccity.plugins.pvprealm.object.ObjectManager;
 import mccity.plugins.pvprealm.object.PvpPlayer;
 import me.galaran.bukkitutils.pvprealm.DoOrNotify;
 import me.galaran.bukkitutils.pvprealm.GUtils;
-import me.galaran.bukkitutils.pvprealm.Lang;
 import me.galaran.bukkitutils.pvprealm.StringUtils;
 import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
@@ -53,7 +52,7 @@ public class KitCommands implements SubCommandExecutor {
                 }
                 return true;
             }
-        } else if (args.length == 3) {
+        } else if (args.length == 4) {
             if (args[0].equalsIgnoreCase("give")) {
                 Player player = DoOrNotify.getPlayer(args[1], true, sender);
                 if (player != null) {
@@ -61,9 +60,22 @@ public class KitCommands implements SubCommandExecutor {
                     ItemsKit kit = om.getKit(kitName);
                     if (kit != null) {
                         PvpPlayer pvpPlayer = om.getPvpPlayer(player);
-                        pvpPlayer.giveKit(kit, true);
+                        pvpPlayer.giveKit(kit, true, Boolean.parseBoolean(args[3]));
                     } else {
                         GUtils.sendTranslated(sender, "kit.no-such", kitName);
+                    }
+                }
+                return true;
+            } else if (args[0].equalsIgnoreCase("giveprefix")) {
+                Player player = DoOrNotify.getPlayer(args[1], true, sender);
+                if (player != null) {
+                    String kitPrefix = args[2];
+                    ItemsKit kit = om.getRandomKit(kitPrefix);
+                    if (kit != null) {
+                        PvpPlayer pvpPlayer = om.getPvpPlayer(player);
+                        pvpPlayer.giveKit(kit, true, Boolean.parseBoolean(args[3]));
+                    } else {
+                        GUtils.sendTranslated(sender, "kit.no-match", kitPrefix);
                     }
                 }
                 return true;
