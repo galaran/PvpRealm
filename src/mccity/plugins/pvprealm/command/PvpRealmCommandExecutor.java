@@ -20,6 +20,7 @@ public class PvpRealmCommandExecutor implements CommandExecutor {
     static {
         subCommands.put("bpoint", new BattlePointCommands());
         subCommands.put("kit", new KitCommands());
+        subCommands.put("lootset", new LootSetCommands());
     }
 
     private final PvpRealm plugin;

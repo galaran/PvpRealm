@@ -11,6 +11,8 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 
+import java.util.List;
+
 public class KitCommands implements SubCommandExecutor {
 
     public boolean onCommand(CommandSender sender, String label, String[] args) {
@@ -19,7 +21,7 @@ public class KitCommands implements SubCommandExecutor {
         if (args.length == 1) {
             if (args[0].equalsIgnoreCase("list")) {
                 GUtils.sendTranslated(sender, "kit.list",
-                        StringUtils.join(om.getKits(), ChatColor.GOLD, ", ", ChatColor.GRAY, null));
+                        StringUtils.join(om.listKits(), ChatColor.GOLD, ", ", ChatColor.GRAY, null));
                 return true;
             }
         } else if (args.length == 2) {
@@ -42,8 +44,8 @@ public class KitCommands implements SubCommandExecutor {
             } else if (args[0].equalsIgnoreCase("info")) {
                 ItemsKit kit = om.getKit(args[1]);
                 if (kit != null) {
-                    ItemStack[] stacks = kit.getStacks();
-                    GUtils.sendTranslated(sender, "kit.content-header", kit.getName(), stacks.length);
+                    List<ItemStack> stacks = kit.getContent();
+                    GUtils.sendTranslated(sender, "kit.content-header", kit.getName(), stacks.size());
                     for (ItemStack curStack : stacks) {
                         GUtils.sendMessage(sender, ChatColor.RED + "- " + ChatColor.WHITE + GUtils.stackToString(curStack));
                     }
@@ -63,19 +65,6 @@ public class KitCommands implements SubCommandExecutor {
                         pvpPlayer.giveKit(kit, true, Boolean.parseBoolean(args[3]));
                     } else {
                         GUtils.sendTranslated(sender, "kit.no-such", kitName);
-                    }
-                }
-                return true;
-            } else if (args[0].equalsIgnoreCase("giveprefix")) {
-                Player player = DoOrNotify.getPlayer(args[1], true, sender);
-                if (player != null) {
-                    String kitPrefix = args[2];
-                    ItemsKit kit = om.getRandomKit(kitPrefix);
-                    if (kit != null) {
-                        PvpPlayer pvpPlayer = om.getPvpPlayer(player);
-                        pvpPlayer.giveKit(kit, true, Boolean.parseBoolean(args[3]));
-                    } else {
-                        GUtils.sendTranslated(sender, "kit.no-match", kitPrefix);
                     }
                 }
                 return true;

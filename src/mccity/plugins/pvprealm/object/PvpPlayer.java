@@ -50,10 +50,10 @@ public class PvpPlayer implements ConfigurationSerializable {
         return name;
     }
 
-    @SuppressWarnings("deprecation")
+    @SuppressWarnings({ "deprecation" })
     public void giveKit(ItemsKit kit, boolean dropIfFull, boolean silent) {
         Inventory inv = player.getInventory();
-        HashMap<Integer,ItemStack> ungiven = inv.addItem(kit.getStacks());
+        HashMap<Integer,ItemStack> ungiven = inv.addItem(kit.getContentArray());
         if (ungiven != null && !ungiven.isEmpty()) {
             GUtils.sendTranslated(player, "kit.no-slots");
             if (dropIfFull) {
@@ -71,15 +71,15 @@ public class PvpPlayer implements ConfigurationSerializable {
     public void enterPvpRealm() {
         Location curLoc = player.getLocation();
         if (curLoc.getWorld().equals(Settings.pvpWorld)) { // no action required
-            GUtils.log("Player " + player.getName() + " entering to pvp world " + Settings.pvpWorld.getName() +
-                    " but it already in", Level.WARNING);
+            GUtils.log(Level.WARNING, "Player " + player.getName() + " entering to pvp world " + Settings.pvpWorld.getName() +
+                    " but it already in");
             return;
         }
 
         if (teleportUnchecked(Settings.pvpwEntryLoc)) {
             returnLoc = curLoc;
         } else {
-            GUtils.log("Failed to teleport player " + player.getName() + " into pvp world ", Level.WARNING);
+            GUtils.log(Level.WARNING, "Failed to teleport player " + player.getName() + " into pvp world ");
         }
     }
 
@@ -87,14 +87,14 @@ public class PvpPlayer implements ConfigurationSerializable {
         Location curLoc = player.getLocation();
         String playerName = player.getName();
         if (!curLoc.getWorld().equals(Settings.pvpWorld)) { // no action required
-            GUtils.log("Player " + playerName + " leaving pvp world " + Settings.pvpWorld.getName() +
-                    " but already out of it at loc " + GUtils.locToStringWorldXYZ(curLoc), Level.WARNING);
+            GUtils.log(Level.WARNING, "Player " + playerName + " leaving pvp world " + Settings.pvpWorld.getName() +
+                    " but already out of it at loc " + GUtils.locToStringWorldXYZ(curLoc));
             return;
         }
 
         Location returnLoc = this.returnLoc;
         if (returnLoc == null) {
-            GUtils.log("No return loc for player " + playerName, Level.WARNING);
+            GUtils.log(Level.WARNING, "No return loc for player " + playerName);
             returnLoc = Settings.pvpwDefaultReturnLoc;
         }
 
@@ -105,13 +105,13 @@ public class PvpPlayer implements ConfigurationSerializable {
                 clearEffects();
             }
         } else {
-            GUtils.log("Failed to teleport player " + playerName + " out of the pvp world ", Level.WARNING);
+            GUtils.log(Level.SEVERE, "Failed to teleport player " + playerName + " out of the pvp world ");
         }
     }
 
     public boolean tpToBattlePoint(BattlePoint battlePoint) {
         if (!teleportUnchecked(battlePoint.getLoc())) {
-            GUtils.log("Failed to teleport player " + player.getName() + " to tp point " + battlePoint.getName(), Level.WARNING);
+            GUtils.log(Level.SEVERE, "Failed to teleport player " + player.getName() + " to tp point " + battlePoint.getName());
         }
         return true;
     }
@@ -200,6 +200,7 @@ public class PvpPlayer implements ConfigurationSerializable {
     public void restore() {
         Hero hero = getHero();
         hero.setHealth(hero.getMaxHealth());
+        hero.syncHealth();
         hero.setMana(hero.getMaxMana());
         player.setFoodLevel(20);
         player.setSaturation(5.0f);

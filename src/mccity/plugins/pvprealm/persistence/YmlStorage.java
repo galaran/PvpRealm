@@ -4,6 +4,7 @@ import mccity.plugins.pvprealm.Settings;
 import mccity.plugins.pvprealm.PvpRealm;
 import mccity.plugins.pvprealm.object.BattlePoint;
 import mccity.plugins.pvprealm.object.ItemsKit;
+import mccity.plugins.pvprealm.object.LootSet;
 import mccity.plugins.pvprealm.object.PvpPlayer;
 import me.galaran.bukkitutils.pvprealm.GUtils;
 import org.bukkit.configuration.file.FileConfiguration;
@@ -20,8 +21,10 @@ public class YmlStorage {
     private final PvpRealm plugin;
 
     private final File playersDir;
+
     private final File battlePointsFile;
     private final File kitsFile;
+    private final File lootSetsFile;
 
     public YmlStorage(PvpRealm plugin) {
         this.plugin = plugin;
@@ -36,6 +39,9 @@ public class YmlStorage {
 
         kitsFile = new File(pluginDir, "kits.yml");
         createFileIfNotExists(kitsFile);
+
+        lootSetsFile = new File(pluginDir, "lootsets.yml");
+        createFileIfNotExists(lootSetsFile);
     }
 
     public List<BattlePoint> loadBattlePoints() {
@@ -111,11 +117,33 @@ public class YmlStorage {
         saveYml(kitsRoot, kitsFile);
     }
 
+    public List<LootSet> loadLootSets() {
+        FileConfiguration lootSetsRoot = YamlConfiguration.loadConfiguration(lootSetsFile);
+        Set<String> keys = lootSetsRoot.getKeys(false);
+
+        List<LootSet> results = new ArrayList<LootSet>();
+        for (String curKey : keys) {
+            results.add(new LootSet(lootSetsRoot.getConfigurationSection(curKey)));
+        }
+        return results;
+    }
+
+    public void storeLootSets(Collection<LootSet> lootSets) {
+        FileConfiguration lootSetsRoot = new YamlConfiguration();
+
+        int idx = 0;
+        for (LootSet lootSet : lootSets) {
+            lootSetsRoot.set(String.valueOf(idx++), lootSet.serialize());
+        }
+
+        saveYml(lootSetsRoot, lootSetsFile);
+    }
+
     private void saveYml(FileConfiguration config, File file) {
         try {
             config.save(file);
         } catch (IOException ex) {
-            GUtils.log("Failed to save " + file.getAbsolutePath(), Level.SEVERE);
+            GUtils.log(Level.SEVERE, "Failed to save " + file.getAbsolutePath());
             ex.printStackTrace();
         }
     }

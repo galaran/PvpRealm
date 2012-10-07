@@ -174,13 +174,13 @@ public class GUtils {
                 Math.abs(loc1.getY() - loc2.getY()) <= eps;
     }
 
-    public static void log(String message, Level level, Object... params) {
+    public static void log(Level level, String message, Object... params) {
         String finalString = StringUtils.parameterizeString(message, params);
         log.log(level, ChatColor.stripColor(finalString));
     }
 
     public static void log(String message, Object... params) {
-        log(message, Level.INFO, params);
+        log(Level.INFO, message, params);
     }
 
     /** Parameterized + colorized */

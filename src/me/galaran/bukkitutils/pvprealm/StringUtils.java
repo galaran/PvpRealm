@@ -3,6 +3,7 @@ package me.galaran.bukkitutils.pvprealm;
 import org.bukkit.ChatColor;
 
 import java.util.Iterator;
+import java.util.Locale;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -61,5 +62,13 @@ public class StringUtils {
             }
         }
         return result;
+    }
+
+    public static String formatDouble(double val) {
+        return formatDouble(val, 1);
+    }
+
+    public static String formatDouble(double val, int decimalPlaces) {
+        return String.format(Locale.US, "%." + decimalPlaces + "f", val);
     }
 }

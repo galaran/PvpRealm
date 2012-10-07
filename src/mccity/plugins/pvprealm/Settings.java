@@ -110,7 +110,7 @@ public class Settings {
             String worldName = (String) dndRegion.get("world");
             World world = Bukkit.getWorld(worldName);
             if (world == null) {
-                GUtils.log("dnd region " + id + " skipped: world " + worldName + " not loaded", Level.SEVERE);
+                GUtils.log(Level.SEVERE, "dnd region " + id + " skipped: world " + worldName + " not loaded");
             } else {
                 Pair<String, World> entry = new Pair<String, World>(id.toLowerCase(), world);
                 deathNoDropRegions.add(entry);

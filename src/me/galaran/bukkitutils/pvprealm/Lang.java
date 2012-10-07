@@ -45,7 +45,7 @@ public class Lang {
         String val = langMap.get(key);
         if (val == null) {
             val = ChatColor.RED + "Missing translation for key " + ChatColor.DARK_RED + key + ChatColor.RED + ", lang: " + lang;
-            GUtils.log(val, Level.WARNING);
+            GUtils.log(Level.WARNING, val);
         }
         return val;
     }

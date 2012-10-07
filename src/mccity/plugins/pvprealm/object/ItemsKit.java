@@ -1,64 +1,73 @@
 package mccity.plugins.pvprealm.object;
 
+import org.bukkit.Material;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.serialization.ConfigurationSerializable;
 import org.bukkit.inventory.ItemStack;
 
-import java.util.ArrayList;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 public class ItemsKit implements ConfigurationSerializable {
 
     private final String name;
-    private final ItemStack[] stacks;
+    private final List<ItemStack> stacks = new ArrayList<ItemStack>();
 
-    public ItemsKit(String name, ItemStack[] slots) {
+    /**
+     * @param content may contains null values
+     */
+    public ItemsKit(String name, List<ItemStack> content) {
         this.name = name;
-
-        List<ItemStack> content = new ArrayList<ItemStack>();
-        for (ItemStack curSlot : slots) {
-            if (curSlot == null) continue;
-            content.add(curSlot);
+        for (ItemStack curStack : content) {
+            if (curStack == null || curStack.getType() == Material.AIR) continue;
+            stacks.add(curStack.clone());
         }
-        stacks = content.toArray(new ItemStack[content.size()]);
     }
 
-    public ItemStack[] getStacks() {
-        ItemStack[] deepCopy = new ItemStack[stacks.length];
-        for (int i = 0; i < stacks.length; i++) {
-            deepCopy[i] = stacks[i].clone();
-        }
-        return deepCopy;
+    /**
+     * @param content may contains null values
+     */
+    public ItemsKit(String name, ItemStack[] content) {
+        this(name, Arrays.asList(content));
     }
 
     public String getName() {
         return name;
     }
 
+    public List<ItemStack> getContent() {
+        List<ItemStack> deepCopy = new ArrayList<ItemStack>();
+        for (ItemStack stack : stacks) {
+            deepCopy.add(stack.clone());
+        }
+        return deepCopy;
+    }
+
+    public ItemStack[] getContentArray() {
+        List<ItemStack> result = getContent();
+        return result.toArray(new ItemStack[result.size()]);
+    }
+
     @Override
     public Map<String, Object> serialize() {
-        List<Map<String, Object>> stacksData = new ArrayList<Map<String, Object>>();
+        Map<String, Object> result = new LinkedHashMap<String, Object>();
+        result.put("name", name);
 
+        List<Map<String, Object>> stacksData = new ArrayList<Map<String, Object>>();
         for (ItemStack curStack : stacks) {
             stacksData.add(curStack.serialize());
         }
-
-        Map<String, Object> result = new LinkedHashMap<String, Object>();
-        result.put("name", name);
         result.put("content", stacksData);
+
         return result;
     }
 
+    @SuppressWarnings("unchecked")
     public ItemsKit(ConfigurationSection section) {
         name = section.getString("name");
 
         List<Map<?, ?>> curKitData = section.getMapList("content");
-        stacks = new ItemStack[curKitData.size()];
-        int idx = 0;
         for (Map<?, ?> stackData : curKitData) {
-            stacks[idx++] = ItemStack.deserialize((Map<String, Object>) stackData);
+            stacks.add(ItemStack.deserialize((Map<String, Object>) stackData));
         }
     }
 

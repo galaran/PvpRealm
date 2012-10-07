@@ -18,7 +18,7 @@ public class BattlePointCommands implements SubCommandExecutor {
         if (args.length == 1) {
             if (args[0].equalsIgnoreCase("list")) {
                 GUtils.sendTranslated(sender, "bp.list",
-                        StringUtils.join(om.getBattlePoints(), ChatColor.DARK_PURPLE, ", ", ChatColor.GRAY, null));
+                        StringUtils.join(om.listBattlePoints(), ChatColor.DARK_PURPLE, ", ", ChatColor.GRAY, null));
                 return true;
             }
         } else if (args.length == 2) {

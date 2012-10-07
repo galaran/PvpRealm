@@ -112,7 +112,7 @@ public class PvpRealmListener implements Listener {
                     PvpPlayer pvpPlayer = om.getPvpPlayer(player);
                     pvpPlayer.giveKit(kit, false, false);
                 } else if (Settings.debug) {
-                    GUtils.log("$1 tried to obtain non-existent kit $2 with kit sign $3", Level.WARNING,
+                    GUtils.log(Level.WARNING, "$1 tried to obtain non-existent kit $2 with kit sign $3",
                             player.getName(), kitName, GUtils.locToStringWorldXYZ(sign.getLocation()));
                 }
             } else {
