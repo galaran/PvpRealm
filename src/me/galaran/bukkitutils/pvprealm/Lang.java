@@ -3,10 +3,7 @@ package me.galaran.bukkitutils.pvprealm;
 import org.bukkit.ChatColor;
 import org.bukkit.plugin.Plugin;
 
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.InputStreamReader;
+import java.io.*;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Properties;
@@ -26,7 +23,9 @@ public class Lang {
         }
 
         Properties prop = new Properties();
-        prop.load(new InputStreamReader(new FileInputStream(langFile), "utf-8"));
+        Reader reader = new InputStreamReader(new FileInputStream(langFile), "utf-8");
+        prop.load(reader);
+        reader.close();
 
         lang = language;
         langMap.clear();
@@ -44,8 +43,8 @@ public class Lang {
     public static String getTranslation(String key) {
         String val = langMap.get(key);
         if (val == null) {
-            val = ChatColor.RED + "Missing translation for key " + ChatColor.DARK_RED + key + ChatColor.RED + ", lang: " + lang;
-            GUtils.log(Level.WARNING, val);
+            String warningMessage = ChatColor.RED + "Missing translation for key " + ChatColor.DARK_RED + key + ChatColor.RED + ", lang: " + lang;
+            GUtils.log(Level.WARNING, warningMessage);
         }
         return val;
     }
