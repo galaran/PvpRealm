@@ -43,8 +43,8 @@ public class Lang {
     public static String getTranslation(String key) {
         String val = langMap.get(key);
         if (val == null) {
-            String warningMessage = ChatColor.RED + "Missing translation for key " + ChatColor.DARK_RED + key + ChatColor.RED + ", lang: " + lang;
-            GUtils.log(Level.WARNING, warningMessage);
+            val = ChatColor.RED + "Missing translation for key " + ChatColor.DARK_RED + key + ChatColor.RED + ", lang: " + lang;
+            GUtils.log(Level.WARNING, val);
         }
         return val;
     }
