@@ -17,16 +17,17 @@ import java.util.logging.Logger;
 
 public class GUtils {
 
-    private static Logger log;
-    private static String chatPrefix = ChatColor.RED + "NO_PREFIX " + ChatColor.WHITE;
     private static final String ENABLELD = ChatColor.DARK_GREEN + "enabled";
     private static final String DISABLED = ChatColor.DARK_RED + "disabled";
+
+    private static Logger log;
+    private static String chatPrefix;
 
     public static final Random random = new Random();
 
     public static void init(Logger logger, String chatPrefixx) {
         log = logger;
-        chatPrefix = StringUtils.surroundString("[", chatPrefixx, "] ", ChatColor.GRAY, ChatColor.DARK_PURPLE);
+        chatPrefix = StringUtils.surroundString("[", chatPrefixx, "] ", ChatColor.GRAY, ChatColor.DARK_PURPLE) + ChatColor.GRAY;
     }
 
     public static String enabledDisabled(boolean state) {
