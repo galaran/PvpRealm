@@ -9,6 +9,7 @@ import mccity.plugins.pvprealm.object.ObjectManager;
 import mccity.plugins.pvprealm.object.PvpPlayer;
 import mccity.plugins.pvprealm.tasks.CountdownTask;
 import me.galaran.bukkitutils.pvprealm.GUtils;
+import me.galaran.bukkitutils.pvprealm.StringUtils;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.World;
@@ -126,7 +127,7 @@ public class PvpRealmListener implements Listener {
             cdownTask.start();
         } else if (sign.getLine(1).equals(LINE_RESTORE)) {
             om.getPvpPlayer(player).restore();
-            GUtils.broadcast(GUtils.getProcessedTranslation("signs.restore.restored", player.getName()),
+            GUtils.broadcast(GUtils.getDecoratedTranslation("signs.restore.restored", player.getName()),
                     player.getLocation(), 30);
         }
     }
@@ -134,28 +135,28 @@ public class PvpRealmListener implements Listener {
     @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
     public void onSignChange(SignChangeEvent event) {
         Player player = event.getPlayer();
-        if (GUtils.stringContainsIgnoreCaseAndColor(event.getLine(1), LINE_KIT)) {
+        if (StringUtils.stringContainsIgnoreCaseAndColor(event.getLine(1), LINE_KIT)) {
             if (player.hasPermission(PERM_SIGN_PLACE_KIT)) {
                 event.setLine(1, LINE_KIT);
             } else {
                 GUtils.sendTranslated(player, "kit.signplace.no-perm");
                 event.setCancelled(true);
             }
-        } else if (GUtils.stringContainsIgnoreCaseAndColor(event.getLine(1), LINE_RMEFFECTS)) {
+        } else if (StringUtils.stringContainsIgnoreCaseAndColor(event.getLine(1), LINE_RMEFFECTS)) {
             if (player.hasPermission(PERM_SIGN_PLACE_RMEFFECTS)) {
                 event.setLine(1, LINE_RMEFFECTS);
             } else {
                 GUtils.sendTranslated(player, "signs.rmeffects.place-no-perm");
                 event.setCancelled(true);
             }
-        } else if (GUtils.stringContainsIgnoreCaseAndColor(event.getLine(1), LINE_COUNTDOWN)) {
+        } else if (StringUtils.stringContainsIgnoreCaseAndColor(event.getLine(1), LINE_COUNTDOWN)) {
             if (player.hasPermission(PERM_SIGN_PLACE_COUNTDOWN)) {
                 event.setLine(1, LINE_COUNTDOWN);
             } else {
                 GUtils.sendTranslated(player, "signs.countdown.place-no-perm");
                 event.setCancelled(true);
             }
-        } else if (GUtils.stringContainsIgnoreCaseAndColor(event.getLine(1), LINE_RESTORE)) {
+        } else if (StringUtils.stringContainsIgnoreCaseAndColor(event.getLine(1), LINE_RESTORE)) {
             if (player.hasPermission(PERM_SIGN_PLACE_RESTORE)) {
                 event.setLine(1, LINE_RESTORE);
             } else {

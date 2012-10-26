@@ -25,6 +25,7 @@
                 <include name="DoOrNotify.java"/>
                 <include name="ToStringer.java"/>
                 <include name="CbUtils.java"/>
+                <include name="YamlUtils.java"/>
             </fileset>
         </copy>
         <replace dir="src/${utils.package}/${utils.suffix}" token="${utils.placeholder}" value="${utils.suffix}"/>

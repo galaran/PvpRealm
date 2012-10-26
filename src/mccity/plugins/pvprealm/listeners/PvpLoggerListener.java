@@ -83,7 +83,7 @@ public class PvpLoggerListener implements Listener {
             }
         });
 
-        String pvpLogMessage = GUtils.getProcessedTranslation("logger.message", pvpPlayer.getName(), playerList);
+        String pvpLogMessage = GUtils.getDecoratedTranslation("logger.message", pvpPlayer.getName(), playerList);
         GUtils.log(pvpLogMessage);
         if (Settings.pvpLoggerMessage) {
             GUtils.serverBroadcast(pvpLogMessage);

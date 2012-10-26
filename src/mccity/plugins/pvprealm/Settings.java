@@ -3,6 +3,7 @@ package mccity.plugins.pvprealm;
 import me.galaran.bukkitutils.pvprealm.DoOrNotify;
 import me.galaran.bukkitutils.pvprealm.GUtils;
 import me.galaran.bukkitutils.pvprealm.Pair;
+import me.galaran.bukkitutils.pvprealm.YamlUtils;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.World;
@@ -61,12 +62,12 @@ public class Settings {
             if (pvpWorld == null) {
                 return false;
             }
-            pvpwEntryLoc = GUtils.deserializeLocation(worldSection.getConfigurationSection("entry-loc").getValues(false));
+            pvpwEntryLoc = YamlUtils.deserializeLocation(worldSection.getConfigurationSection("entry-loc").getValues(false));
             if (!pvpwEntryLoc.getWorld().equals(pvpWorld)) {
                 GUtils.log("Entry location must be in the Pvp World");
                 return false;
             }
-            pvpwDefaultReturnLoc = GUtils.deserializeLocation(worldSection.getConfigurationSection("default-return-loc").getValues(false));
+            pvpwDefaultReturnLoc = YamlUtils.deserializeLocation(worldSection.getConfigurationSection("default-return-loc").getValues(false));
             if (pvpwDefaultReturnLoc.getWorld().equals(pvpWorld)) {
                 GUtils.log("Entry location must be out of the Pvp World");
                 return false;

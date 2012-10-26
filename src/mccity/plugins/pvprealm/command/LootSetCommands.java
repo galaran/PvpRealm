@@ -49,7 +49,7 @@ public class LootSetCommands implements SubCommandExecutor {
                     for (Map.Entry<String, Float> kitEntry : lootSetMapping.entrySet()) {
                         String kitName = kitEntry.getKey();
                         String coloredKitName = (om.getKit(kitName) == null ? ChatColor.DARK_RED : ChatColor.GREEN) + kitName;
-                        sender.sendMessage(GUtils.getProcessed("$1&f - &b$2%", coloredKitName, StringUtils.formatDouble(kitEntry.getValue() * 100)));
+                        sender.sendMessage(StringUtils.decorateString("$1&f - &b$2%", coloredKitName, StringUtils.formatDouble(kitEntry.getValue() * 100)));
                     }
                 }
                 return true;

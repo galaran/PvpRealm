@@ -7,6 +7,7 @@ import mccity.plugins.pvprealm.Settings;
 import mccity.plugins.pvprealm.listeners.PvpRealmListener;
 import me.galaran.bukkitutils.pvprealm.CbUtils;
 import me.galaran.bukkitutils.pvprealm.GUtils;
+import me.galaran.bukkitutils.pvprealm.YamlUtils;
 import org.bukkit.Location;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.serialization.ConfigurationSerializable;
@@ -138,7 +139,7 @@ public class PvpPlayer implements ConfigurationSerializable {
     public void load(ConfigurationSection section) {
         ConfigurationSection returnSection = section.getConfigurationSection("return-loc");
         if (returnSection != null) {
-            returnLoc = GUtils.deserializeLocation(returnSection.getValues(false));
+            returnLoc = YamlUtils.deserializeLocation(returnSection.getValues(false));
         } else {
             returnLoc = null;
         }
@@ -148,7 +149,7 @@ public class PvpPlayer implements ConfigurationSerializable {
     public Map<String, Object> serialize() {
         Map<String, Object> result = new LinkedHashMap<String, Object>();
         if (returnLoc != null) {
-            result.put("return-loc", GUtils.serializeLocation(returnLoc));
+            result.put("return-loc", YamlUtils.serializeLocation(returnLoc));
         }
         return result;
     }

@@ -27,6 +27,7 @@ public class CbUtils {
      * Gives deep clone of stacks, and drop ungiven, if not fit to inventory
      * @return is there was no enought inventory space and some stacks dropped
      */
+    @SuppressWarnings("deprecation")
     public static boolean giveStacksOrDrop(Player player, ItemStack... stacks) {
         ItemStack[] cloneStacks = new ItemStack[stacks.length];
         for (int i = 0; i < stacks.length; i++) {
