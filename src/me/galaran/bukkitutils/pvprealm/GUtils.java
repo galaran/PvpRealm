@@ -1,6 +1,9 @@
 package me.galaran.bukkitutils.pvprealm;
 
-import org.bukkit.*;
+import org.bukkit.Bukkit;
+import org.bukkit.ChatColor;
+import org.bukkit.Location;
+import org.bukkit.Material;
 import org.bukkit.block.Block;
 import org.bukkit.command.CommandSender;
 import org.bukkit.enchantments.Enchantment;
@@ -8,7 +11,6 @@ import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.material.MaterialData;
 
-import java.util.LinkedHashMap;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Random;
@@ -27,7 +29,7 @@ public class GUtils {
 
     public static void init(Logger logger, String chatPrefixx) {
         log = logger;
-        chatPrefix = StringUtils.surroundString("[", chatPrefixx, "] ", ChatColor.GRAY, ChatColor.DARK_PURPLE) + ChatColor.GRAY;
+        chatPrefix = ChatColor.GRAY + "[" + chatPrefixx + "] " + ChatColor.WHITE;
     }
 
     public static String enabledDisabled(boolean state) {

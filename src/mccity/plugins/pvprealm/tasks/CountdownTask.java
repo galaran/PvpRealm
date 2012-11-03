@@ -3,6 +3,7 @@ package mccity.plugins.pvprealm.tasks;
 import mccity.plugins.pvprealm.PvpRealm;
 import mccity.plugins.pvprealm.object.PvpPlayer;
 import me.galaran.bukkitutils.pvprealm.GUtils;
+import me.galaran.bukkitutils.pvprealm.StringUtils;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
@@ -42,7 +43,7 @@ public class CountdownTask implements Runnable {
     public void run() {
         if (stringIndex < cdStrings.length) {
             for (Player notifyPlayer : notifyList) {
-                GUtils.sendMessage(notifyPlayer, cdStrings[stringIndex], pvpPlayer.getName());
+                notifyPlayer.sendMessage(StringUtils.decorateString(cdStrings[stringIndex], pvpPlayer.getName()));
             }
             stringIndex++;
         } else {

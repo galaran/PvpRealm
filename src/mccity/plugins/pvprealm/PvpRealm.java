@@ -13,6 +13,7 @@ import mccity.plugins.pvprealm.object.ObjectManager;
 import mccity.plugins.pvprealm.object.PvpPlayer;
 import me.galaran.bukkitutils.pvprealm.GUtils;
 import me.galaran.bukkitutils.pvprealm.Lang;
+import org.bukkit.plugin.Plugin;
 import org.bukkit.plugin.PluginManager;
 import org.bukkit.plugin.java.JavaPlugin;
 
@@ -74,16 +75,16 @@ public class PvpRealm extends JavaPlugin {
         PluginManager pm = getServer().getPluginManager();
         heroes = (Heroes) pm.getPlugin("Heroes");
 
-        Towny townyplugin = (Towny) pm.getPlugin("Towny");
-        if (townyplugin != null) {
-            towny = new TownyFacade(townyplugin.getTownyUniverse());
+        Plugin townyPlugin = pm.getPlugin("Towny");
+        if (townyPlugin != null && townyPlugin instanceof Towny) {
+            towny = new TownyFacade((Towny) townyPlugin);
             usingTowny = true;
             GUtils.log("Linked with Towny");
         }
 
-        WorldGuardPlugin worldGuardPlugin = (WorldGuardPlugin) pm.getPlugin("WorldGuard");
-        if (worldGuardPlugin != null) {
-            worldGuard = new WorldGuardFacade(worldGuardPlugin);
+        Plugin worldGuardPlugin = pm.getPlugin("WorldGuard");
+        if (worldGuardPlugin != null && worldGuardPlugin instanceof WorldGuardPlugin) {
+            worldGuard = new WorldGuardFacade((WorldGuardPlugin) worldGuardPlugin);
             usingWorldGuard = true;
             GUtils.log("Linked with WorldGuard");
         }

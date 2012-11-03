@@ -1,5 +1,6 @@
 package mccity.plugins.pvprealm;
 
+import com.palmergames.bukkit.towny.Towny;
 import com.palmergames.bukkit.towny.object.Nation;
 import com.palmergames.bukkit.towny.object.Resident;
 import com.palmergames.bukkit.towny.object.Town;
@@ -10,8 +11,8 @@ public class TownyFacade {
 
     private final TownyUniverse townyUniv;
 
-    public TownyFacade(TownyUniverse townyUniverse) {
-        townyUniv = townyUniverse;
+    public TownyFacade(Towny towny) {
+        townyUniv = towny.getTownyUniverse();
     }
 
     public Resident getTownyResident(Player player) {

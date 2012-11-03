@@ -1,7 +1,7 @@
 <project name="PvpRealm" basedir=".">
 
     <property name="plugins.dir" value="C:/Users/Galaran/Desktop/McServer/plugins"/>
-    <property name="utils.srcroot" value="F:/Dropbox/Java/idea_prj/Bukkit/GalaranUtils/src"/>
+    <property name="utils.srcroot" value="C:/Dropbox/Java/idea_prj/Bukkit/GalaranUtils/src"/>
     <property name="utils.package" value="me/galaran/bukkitutils"/>
     <property name="utils.placeholder" value="$_utils_project_name_$"/>
     <property name="utils.suffix" value="pvprealm"/>
@@ -14,7 +14,6 @@
 
     <target name="update-utils">
         <delete dir="src/${utils.package}"/>
-        <mkdir dir="src/${utils.package}"/>
         <mkdir dir="src/${utils.package}/${utils.suffix}"/>
         <copy todir="src/${utils.package}/${utils.suffix}">
             <fileset dir="${utils.srcroot}/${utils.package}/${utils.placeholder}">
