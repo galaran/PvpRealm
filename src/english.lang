@@ -11,33 +11,12 @@ world.disabled: &cPvp World disabled
 world.side-teleport-in: &3You has been side-teleported to the Pvp World
 world.side-teleport-out: &3You has been side-teleported out of the Pvp World
 
-kit.list: Kits: $1
-kit.saved-as: &fYour inventory content saved as kit &6$1
-kit.removed: &fKit &6$1&f has been removed
-kit.no-such: &cNo such kit: &6$1
-kit.content-header: &fKit &6$1&f content ($2):
-kit.disabled-out-of-pvp-world: &cKit signs disabled out of the Pvp World
-kit.signplace.no-perm: &cYou have no permission to place kit signs
-kit.no-slots: &5You have not enought slots in the inventory
-kit.obtained: &fYou have obtain kit &6$1
-
 bp.list: Battle points: $1
 bp.added: &fBattle point &5$1&f has been added
 bp.removed: &fBattle point &5$1&f has been removed
 bp.info: &fBattle point &5$1&f: &2$2
 bp.no-such: &cNo such battle point: &5$1
 bp.no-match: &cThere are no battle points matching &7$1
-
-lootset.list: Loot sets: $1
-lootset.added: &fLoot set &e$1&f added
-lootset.replaced: &fLoot set &e$1&f replaced
-lootset.removed: &fLoot set &e$1&f removed
-lootset.no-such: &cNo such loot set: &e$1
-lootset.content-header: &fLoot set &e$1&f ($2) content (&2kit name&f - &bchance&f):
-lootset.kit.removed: &fKit &6$1&f removed from lootset &e$2
-lootset.kit.no-such: &fThere is no kit &6$1&f in lootset &e$2
-lootset.kit.replaced: &fKit &6$1&f replaced in lootset &e$2&f, new chance: &b$3%
-lootset.kit.added: &fKit &6$1&f added to lootset &e$2&f, chance: &b$3%
 
 logger.message: &4$1&5 left the game during combat with &6$2
 

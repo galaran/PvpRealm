@@ -3,10 +3,9 @@ package mccity.plugins.pvprealm.persistence;
 import mccity.plugins.pvprealm.Settings;
 import mccity.plugins.pvprealm.PvpRealm;
 import mccity.plugins.pvprealm.object.BattlePoint;
-import mccity.plugins.pvprealm.object.ItemsKit;
-import mccity.plugins.pvprealm.object.LootSet;
 import mccity.plugins.pvprealm.object.PvpPlayer;
 import me.galaran.bukkitutils.pvprealm.GUtils;
+import me.galaran.bukkitutils.pvprealm.YamlUtils;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.entity.Player;
@@ -23,8 +22,6 @@ public class YmlStorage {
     private final File playersDir;
 
     private final File battlePointsFile;
-    private final File kitsFile;
-    private final File lootSetsFile;
 
     public YmlStorage(PvpRealm plugin) {
         this.plugin = plugin;
@@ -35,13 +32,7 @@ public class YmlStorage {
         }
 
         battlePointsFile = new File(pluginDir, "battle_points.yml");
-        createFileIfNotExists(battlePointsFile);
-
-        kitsFile = new File(pluginDir, "kits.yml");
-        createFileIfNotExists(kitsFile);
-
-        lootSetsFile = new File(pluginDir, "lootsets.yml");
-        createFileIfNotExists(lootSetsFile);
+        YamlUtils.createFileIfNotExists(battlePointsFile);
     }
 
     public List<BattlePoint> loadBattlePoints() {
@@ -95,66 +86,12 @@ public class YmlStorage {
         return new File(subDir, name + ".yml");
     }
 
-    public List<ItemsKit> loadKits() {
-        FileConfiguration kitsRoot = YamlConfiguration.loadConfiguration(kitsFile);
-        Set<String> keys = kitsRoot.getKeys(false);
-
-        List<ItemsKit> results = new ArrayList<ItemsKit>();
-        for (String curKey : keys) {
-            results.add(new ItemsKit(kitsRoot.getConfigurationSection(curKey)));
-        }
-        return results;
-    }
-
-    public void storeKits(Collection<ItemsKit> kits) {
-        FileConfiguration kitsRoot = new YamlConfiguration();
-
-        int idx = 0;
-        for (ItemsKit kit : kits) {
-            kitsRoot.set(String.valueOf(idx++), kit.serialize());
-        }
-
-        saveYml(kitsRoot, kitsFile);
-    }
-
-    public List<LootSet> loadLootSets() {
-        FileConfiguration lootSetsRoot = YamlConfiguration.loadConfiguration(lootSetsFile);
-        Set<String> keys = lootSetsRoot.getKeys(false);
-
-        List<LootSet> results = new ArrayList<LootSet>();
-        for (String curKey : keys) {
-            results.add(new LootSet(lootSetsRoot.getConfigurationSection(curKey)));
-        }
-        return results;
-    }
-
-    public void storeLootSets(Collection<LootSet> lootSets) {
-        FileConfiguration lootSetsRoot = new YamlConfiguration();
-
-        int idx = 0;
-        for (LootSet lootSet : lootSets) {
-            lootSetsRoot.set(String.valueOf(idx++), lootSet.serialize());
-        }
-
-        saveYml(lootSetsRoot, lootSetsFile);
-    }
-
     private void saveYml(FileConfiguration config, File file) {
         try {
             config.save(file);
         } catch (IOException ex) {
             GUtils.log(Level.SEVERE, "Failed to save " + file.getAbsolutePath());
             ex.printStackTrace();
-        }
-    }
-
-    private void createFileIfNotExists(File file) {
-        if (!file.isFile()) {
-            try {
-                file.createNewFile();
-            } catch (IOException ex) {
-                ex.printStackTrace();
-            }
         }
     }
 }

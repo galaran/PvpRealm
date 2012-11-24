@@ -43,8 +43,6 @@ public class Settings {
     public static int pvpLoggerExpPenalty;
     public static boolean pvpLoggerKill;
 
-    public static boolean kitSignsGlobal;
-
     private static final Set<Pair<String, World>> deathNoDropRegions = new HashSet<Pair<String, World>>();
 
     public static boolean load(File configFile) {
@@ -101,8 +99,6 @@ public class Settings {
             pvpLoggerExpPenalty = loggerSection.getInt("heroes-exp-penalty");
             pvpLoggerKill = loggerSection.getBoolean("kill", false);
         }
-
-        kitSignsGlobal = root.getBoolean("kit-signs-global", false);
 
         deathNoDropRegions.clear();
         List<Map<?, ?>> dndRegions = root.getMapList("death-nodrop-regions");

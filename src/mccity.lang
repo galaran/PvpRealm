@@ -11,33 +11,12 @@ world.disabled: &cPvp мир отключен
 world.side-teleport-in: $suppress
 world.side-teleport-out: $suppress
 
-kit.list: Наборы: $1
-kit.saved-as: &fВаш инвентарь сохранен, как набор &6$1
-kit.removed: &fНабор &6$1&f удален
-kit.no-such: &cНет такого набора: &6$1
-kit.content-header: &fСодержимое набора &6$1&f ($2):
-kit.disabled-out-of-pvp-world: &cТаблички для получения наборов разрешено использовать только в Pvp-мире
-kit.signplace.no-perm: &cВы не можете создавать такие таблички
-kit.no-slots: &5Недостаточно места в инвентаре для выдачи набора
-kit.obtained: &fВы получили набор &6$1
-
 bp.list: Точки боя: $1
 bp.added: &fТочка боя &5$1&f добавлена
 bp.removed: &fТочка боя &5$1&f удалена
 bp.info: &fТочка боя &5$1&f: &2$2
 bp.no-such: &cНет такой точки боя: &5$1
 bp.no-match: &cНет точек боя, начинающихся на &7$1
-
-lootset.list: Таблицы предметов: $1
-lootset.added: &fТаблица предметов &e$1&f создана
-lootset.replaced: &fТаблица предметов &e$1&f заменена
-lootset.removed: &fТаблица предметов &e$1&f удалена
-lootset.no-such: &cНет такой таблицы предметов: &e$1
-lootset.content-header: &fСодержимое таблицы предметов &e$1&f ($2) (&2Название набора&f - &bшанс&f):
-lootset.kit.removed: &fНабор &6$1&f удален из таблицы предметов &e$2
-lootset.kit.no-such: &fНабор &6$1&f не выходит в таблицу предметов &e$2
-lootset.kit.replaced: &fНабор &6$1&f из таблицы предметов &e$2&f заменен, новый шанс: &b$3%
-lootset.kit.added: &fНабор &6$1&f добавлен в таблицу предметов &e$2&f, шанс: &b$3%
 
 logger.message: &4$1&d выходит из игры во время боя с &6$2
 

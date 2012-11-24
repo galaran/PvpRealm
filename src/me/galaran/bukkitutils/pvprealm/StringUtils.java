@@ -130,7 +130,7 @@ public class StringUtils {
 
     /** -data 3 -a "he he he" -t "title 123" */
     public static Map<String, String> parseParameters(String string) throws IllegalArgumentException {
-        // handle empty string -> empty array
+        // special case: empty string is empty array
         String[] args = string.trim().isEmpty() ? new String[0] : string.trim().split("\\s+");
 
         return parseParameters(args);

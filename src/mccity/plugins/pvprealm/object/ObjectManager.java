@@ -28,8 +28,6 @@ public class ObjectManager {
     private final Set<String> unloadPlayers = Collections.synchronizedSet(new HashSet<String>());
 
     private final Map<String, BattlePoint> battlePoints = new LinkedHashMap<String, BattlePoint>();
-    private final Map<String, ItemsKit> kits = new LinkedHashMap<String, ItemsKit>();
-    private final Map<String, LootSet> lootSets = new LinkedHashMap<String, LootSet>();
 
     public static void init(PvpRealm plugin) {
         instance = new ObjectManager(plugin);
@@ -44,18 +42,6 @@ public class ObjectManager {
             battlePoints.put(battlePoint.getName(), battlePoint);
         }
         GUtils.log(loadedPoints.size() + " battle points");
-
-        List<ItemsKit> loadedKits = storage.loadKits();
-        for (ItemsKit loadedKit : loadedKits) {
-            kits.put(loadedKit.getName(), loadedKit);
-        }
-        GUtils.log(loadedKits.size() + " kits");
-
-        List<LootSet> loadedLootSets = storage.loadLootSets();
-        for (LootSet loadedLootSet : loadedLootSets) {
-            lootSets.put(loadedLootSet.getName(), loadedLootSet);
-        }
-        GUtils.log(loadedLootSets.size() + " loot sets");
 
         Bukkit.getPluginManager().registerEvents(new PlayerJoinQuitListener(), plugin);
         Bukkit.getScheduler().scheduleAsyncRepeatingTask(plugin, new AutoSaveTask(), AUTOSAVE_PERIOD, AUTOSAVE_PERIOD);
@@ -112,60 +98,8 @@ public class ObjectManager {
         return prev != null;
     }
 
-    /**
-     * @return replaced?
-     */
-    public boolean addKit(ItemsKit newKit) {
-        ItemsKit prev = kits.put(newKit.getName(), newKit);
-        storage.storeKits(listKits());
-        return prev != null;
-    }
-
-    public boolean removeKit(String kitName) {
-        boolean isRemoved = kits.remove(kitName) != null;
-        if (isRemoved) {
-            storage.storeKits(listKits());
-        }
-        return isRemoved;
-    }
-
-    public List<ItemsKit> listKits() {
-        return new ArrayList<ItemsKit>(kits.values());
-    }
-
-    public ItemsKit getKit(String kitName) {
-        return kits.get(kitName);
-    }
-
-    /**
-     * @return replaced?
-     */
-    public boolean addLootSet(String lootSetName) {
-        LootSet prev = lootSets.put(lootSetName, new LootSet(lootSetName));
-        storage.storeLootSets(listLootSets());
-        return prev != null;
-    }
-
-    public LootSet getLootSet(String lootSetName) {
-        return lootSets.get(lootSetName);
-    }
-
-    public List<LootSet> listLootSets() {
-        return new ArrayList<LootSet>(lootSets.values());
-    }
-
-    public boolean removeLootSet(String lootSetName) {
-        boolean isRemoved = lootSets.remove(lootSetName) != null;
-        if (isRemoved) {
-            storage.storeLootSets(listLootSets());
-        }
-        return isRemoved;
-    }
-
     public void shutdown() {
         storage.storeBattlePoints(listBattlePoints());
-        storage.storeKits(listKits());
-        storage.storeLootSets(listLootSets());
         for (PvpPlayer pvpPlayer : pvpPlayers.values()) {
             storage.storePvpPlayer(pvpPlayer);
         }

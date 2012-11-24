@@ -5,18 +5,14 @@ import com.herocraftonline.heroes.characters.party.HeroParty;
 import mccity.plugins.pvprealm.PvpRealm;
 import mccity.plugins.pvprealm.Settings;
 import mccity.plugins.pvprealm.listeners.PvpRealmListener;
-import me.galaran.bukkitutils.pvprealm.CbUtils;
 import me.galaran.bukkitutils.pvprealm.GUtils;
 import me.galaran.bukkitutils.pvprealm.YamlUtils;
 import org.bukkit.Location;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.serialization.ConfigurationSerializable;
 import org.bukkit.entity.Player;
-import org.bukkit.inventory.Inventory;
-import org.bukkit.inventory.ItemStack;
 import org.bukkit.potion.PotionEffect;
 
-import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.logging.Level;
@@ -49,24 +45,6 @@ public class PvpPlayer implements ConfigurationSerializable {
 
     public String getName() {
         return name;
-    }
-
-    @SuppressWarnings({ "deprecation" })
-    public void giveKit(ItemsKit kit, boolean dropIfFull, boolean silent) {
-        Inventory inv = player.getInventory();
-        HashMap<Integer,ItemStack> ungiven = inv.addItem(kit.getContentArray());
-        if (ungiven != null && !ungiven.isEmpty()) {
-            GUtils.sendTranslated(player, "kit.no-slots");
-            if (dropIfFull) {
-                for (ItemStack ungivenStack : ungiven.values()) {
-                    CbUtils.dropStackSafe(ungivenStack, player.getEyeLocation());
-                }
-            }
-        }
-        player.updateInventory();
-        if (!silent) {
-            GUtils.sendTranslated(player, "kit.obtained", kit.getName());
-        }
     }
 
     public void enterPvpRealm() {

@@ -57,12 +57,18 @@ public class YamlUtils {
     }
 
     public static void createFileIfNotExists(File file) {
-        if (!file.isFile()) {
+        if (!file.exists()) {
             try {
                 file.createNewFile();
             } catch (IOException ex) {
                 ex.printStackTrace();
             }
+        }
+    }
+
+    public static void createDirectoryPathIfNotExists(File dir) {
+        if (!dir.exists()) {
+            dir.mkdirs();
         }
     }
 }

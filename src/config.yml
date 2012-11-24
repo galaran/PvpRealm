@@ -39,8 +39,6 @@ pvp-logger:
     heroes-exp-penalty: 0
     kill: false
 
-kit-signs-global: false
-
 death-nodrop-regions:
   - id: pvp_main
     world: world_pvp

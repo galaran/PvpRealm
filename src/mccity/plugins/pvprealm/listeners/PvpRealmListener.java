@@ -4,7 +4,6 @@ import com.herocraftonline.heroes.api.events.ExperienceChangeEvent;
 import com.herocraftonline.heroes.characters.classes.HeroClass;
 import mccity.plugins.pvprealm.PvpRealm;
 import mccity.plugins.pvprealm.Settings;
-import mccity.plugins.pvprealm.object.ItemsKit;
 import mccity.plugins.pvprealm.object.ObjectManager;
 import mccity.plugins.pvprealm.object.PvpPlayer;
 import mccity.plugins.pvprealm.tasks.CountdownTask;
@@ -26,15 +25,10 @@ import org.bukkit.event.player.PlayerTeleportEvent;
 import org.bukkit.event.weather.ThunderChangeEvent;
 import org.bukkit.event.weather.WeatherChangeEvent;
 
-import java.util.logging.Level;
-
 public class PvpRealmListener implements Listener {
 
     private final PvpRealm plugin;
     private static boolean checkTeleport = true;
-
-    private static final String PERM_SIGN_PLACE_KIT = "pvprealm.placesign.kit";
-    private static final String LINE_KIT = ChatColor.DARK_RED + "[kit]";
 
     private static final String PERM_SIGN_PLACE_RMEFFECTS = "pvprealm.placesign.rmeffects";
     private static final String LINE_RMEFFECTS = ChatColor.BLUE + "[rmeffects]";
@@ -98,28 +92,14 @@ public class PvpRealmListener implements Listener {
             Block clicked = event.getClickedBlock();
             if (clicked.getType() == Material.SIGN || clicked.getType() == Material.WALL_SIGN) {
                 Sign sign = (Sign) clicked.getState();
-                handleSignClick(sign, event.getPlayer());
+                handleSignUse(sign, event.getPlayer());
             }
         }
     }
 
-    private void handleSignClick(Sign sign, Player player) {
+    private void handleSignUse(Sign sign, Player player) {
         ObjectManager om = ObjectManager.instance;
-        if (sign.getLine(1).equals(LINE_KIT)) {
-            if (Settings.kitSignsGlobal || (Settings.pvpwEnabled && sign.getWorld().equals(Settings.pvpWorld))) {
-                String kitName = ChatColor.stripColor(sign.getLine(2).trim());
-                ItemsKit kit = om.getKit(kitName);
-                if (kit != null) {
-                    PvpPlayer pvpPlayer = om.getPvpPlayer(player);
-                    pvpPlayer.giveKit(kit, false, false);
-                } else if (Settings.debug) {
-                    GUtils.log(Level.WARNING, "$1 tried to obtain non-existent kit $2 with kit sign $3",
-                            player.getName(), kitName, GUtils.locToStringWorldXYZ(sign.getLocation()));
-                }
-            } else {
-                GUtils.sendTranslated(player, "kit.disabled-out-of-pvp-world");
-            }
-        } else if (sign.getLine(1).equals(LINE_RMEFFECTS)) {
+        if (sign.getLine(1).equals(LINE_RMEFFECTS)) {
             PvpPlayer pvpPlayer = om.getPvpPlayer(player);
             pvpPlayer.clearEffects();
         } else if (sign.getLine(1).equals(LINE_COUNTDOWN)) {
@@ -135,14 +115,7 @@ public class PvpRealmListener implements Listener {
     @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
     public void onSignChange(SignChangeEvent event) {
         Player player = event.getPlayer();
-        if (StringUtils.stringContainsIgnoreCaseAndColor(event.getLine(1), LINE_KIT)) {
-            if (player.hasPermission(PERM_SIGN_PLACE_KIT)) {
-                event.setLine(1, LINE_KIT);
-            } else {
-                GUtils.sendTranslated(player, "kit.signplace.no-perm");
-                event.setCancelled(true);
-            }
-        } else if (StringUtils.stringContainsIgnoreCaseAndColor(event.getLine(1), LINE_RMEFFECTS)) {
+        if (StringUtils.stringContainsIgnoreCaseAndColor(event.getLine(1), LINE_RMEFFECTS)) {
             if (player.hasPermission(PERM_SIGN_PLACE_RMEFFECTS)) {
                 event.setLine(1, LINE_RMEFFECTS);
             } else {

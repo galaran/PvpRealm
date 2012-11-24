@@ -32,12 +32,6 @@ public class Lang {
         for (String curKey : prop.stringPropertyNames()) {
             langMap.put(curKey, prop.getProperty(curKey));
         }
-
-        updateUtilsTranslation();
-    }
-
-    private static void updateUtilsTranslation() {
-        DoOrNotify.setNotifyMessages(langMap.get("utils.no-player"), langMap.get("utils.no-world"), langMap.get("utils.cs-not-player"));
     }
 
     public static String getTranslation(String key) {

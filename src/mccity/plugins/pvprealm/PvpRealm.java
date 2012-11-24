@@ -46,7 +46,7 @@ public class PvpRealm extends JavaPlugin {
         PvpRealmCommandExecutor commandExecutor = new PvpRealmCommandExecutor(this);
         getCommand("pvprealm").setExecutor(commandExecutor);
 
-        GUtils.log("Pvp Realm enabled");
+        GUtils.log("Pvp Realm " + getDescription().getVersion() + " enabled");
     }
 
     public boolean reloadSettings() {

@@ -23,7 +23,6 @@
                 <include name="Lang.java"/>
                 <include name="DoOrNotify.java"/>
                 <include name="ToStringer.java"/>
-                <include name="CbUtils.java"/>
                 <include name="YamlUtils.java"/>
             </fileset>
         </copy>
