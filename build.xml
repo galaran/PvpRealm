@@ -27,6 +27,8 @@
                 <include name="LocUtils.java"/>
                 <include name="IOUtils.java"/>
                 <include name="RandomUtils.java"/>
+
+                <include name="nms/InventoryPlayer.java"/>
             </fileset>
         </copy>
         <replace dir="src/${utils.package}/${utils.suffix}" token="${utils.placeholder}" value="${utils.suffix}"/>
