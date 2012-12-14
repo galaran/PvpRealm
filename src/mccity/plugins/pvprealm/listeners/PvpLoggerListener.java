@@ -1,16 +1,16 @@
 package mccity.plugins.pvprealm.listeners;
 
+import com.google.common.base.Function;
 import com.herocraftonline.heroes.api.events.HeroLeaveCombatEvent;
 import com.herocraftonline.heroes.characters.Hero;
 import com.herocraftonline.heroes.characters.classes.HeroClass;
 import com.herocraftonline.heroes.characters.effects.CombatEffect;
-import mccity.plugins.pvprealm.Settings;
 import mccity.plugins.pvprealm.PvpRealm;
+import mccity.plugins.pvprealm.Settings;
 import mccity.plugins.pvprealm.object.ObjectManager;
 import mccity.plugins.pvprealm.object.PvpPlayer;
-import me.galaran.bukkitutils.pvprealm.GUtils;
-import me.galaran.bukkitutils.pvprealm.StringUtils;
-import me.galaran.bukkitutils.pvprealm.ToStringer;
+import me.galaran.bukkitutils.pvprealm.text.Messaging;
+import me.galaran.bukkitutils.pvprealm.text.StringUtils;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -60,7 +60,7 @@ public class PvpLoggerListener implements Listener {
 
         if (Settings.pvpLoggerBypassFriendly) {
             if (Settings.debug) {
-                GUtils.log(player.getName() + " logged out of pvp. Before friend check: " + combatWith.toString());
+                Messaging.log("$1 logged out of pvp. Before friend check: $2", player.getName(), combatWith.toString());
             }
             Iterator<Player> itr = combatWith.iterator();
             while (itr.hasNext()) {
@@ -68,7 +68,7 @@ public class PvpLoggerListener implements Listener {
                 if (curCombatPlayer.hasFriend(player)) {
                     itr.remove();
                     if (Settings.debug) {
-                        GUtils.log(curCombatPlayer.getName() + " has friend " + player.getName());
+                        Messaging.log("$1 has friend $2", curCombatPlayer.getName(), player.getName());
                     }
                 }
             }
@@ -76,17 +76,17 @@ public class PvpLoggerListener implements Listener {
             if (combatWith.isEmpty()) return;
         }
 
-        String playerList = StringUtils.join(combatWith, ", ", new ToStringer<Player>() {
+        String playerList = StringUtils.join(combatWith, ", ", new Function<Player, String>() {
             @Override
-            public String toString(Player obj) {
-                return obj.getName();
+            public String apply(Player player) {
+                return player.getName();
             }
         });
 
-        String pvpLogMessage = GUtils.getDecoratedTranslation("logger.message", pvpPlayer.getName(), playerList);
-        GUtils.log(pvpLogMessage);
+        String pvpLogMessage = Messaging.getDecoratedTranslation("logger.message", pvpPlayer.getName(), playerList);
+        Messaging.log(pvpLogMessage);
         if (Settings.pvpLoggerMessage) {
-            GUtils.serverBroadcast(pvpLogMessage);
+            Messaging.broadcastServerNoPrefix(pvpLogMessage);
         }
 
         Hero hero = plugin.getHero(pvpPlayer);

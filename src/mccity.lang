@@ -1,8 +1,10 @@
 # PvpRealm translation file
 
-utils.no-player: &cИгрок с именем $1 не найден
-utils.no-world: &cМир $1 не загружен
+utils.no-player: &cИгрок с именем &3$1&c не найден
+utils.no-player-matching: &cИгрок с именем, начинающимся на &3$1&c не найден
+utils.no-world: &cМир &6$1&c не загружен
 utils.cs-not-player: &cЭта команда недоступна из консоли
+utils.no-perm: &cУ вас нет доступа для этого действия
 
 reload.ok: &aКонфигурация перезагружена
 reload.error: &cОшибка перезагрузки конфигурации, см. консоль сервера

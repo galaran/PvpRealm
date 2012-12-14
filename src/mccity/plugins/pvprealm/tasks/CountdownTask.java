@@ -2,15 +2,11 @@ package mccity.plugins.pvprealm.tasks;
 
 import mccity.plugins.pvprealm.PvpRealm;
 import mccity.plugins.pvprealm.object.PvpPlayer;
-import me.galaran.bukkitutils.pvprealm.GUtils;
-import me.galaran.bukkitutils.pvprealm.StringUtils;
+import me.galaran.bukkitutils.pvprealm.text.Messaging;
 import org.bukkit.Bukkit;
-import org.bukkit.entity.Entity;
-import org.bukkit.entity.Player;
+import org.bukkit.Location;
 
-import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 public class CountdownTask implements Runnable {
@@ -29,10 +25,10 @@ public class CountdownTask implements Runnable {
 
     private final PvpRealm plugin;
     private final PvpPlayer pvpPlayer;
-    private int taskId;
 
-    private final List<Player> notifyList = new ArrayList<Player>();
-    private int stringIndex = 0;
+    private Location loc;
+    private int taskId;
+    private int curLine = 0;
 
     public CountdownTask(PvpRealm plugin, PvpPlayer pvpPlayer) {
         this.plugin = plugin;
@@ -41,11 +37,9 @@ public class CountdownTask implements Runnable {
 
     @Override
     public void run() {
-        if (stringIndex < cdStrings.length) {
-            for (Player notifyPlayer : notifyList) {
-                notifyPlayer.sendMessage(StringUtils.decorateString(cdStrings[stringIndex], pvpPlayer.getName()));
-            }
-            stringIndex++;
+        if (curLine < cdStrings.length) {
+            Messaging.broadcastNoPrefix(loc, RADIUS, cdStrings[curLine], pvpPlayer.getName());
+            curLine++;
         } else {
             Bukkit.getScheduler().cancelTask(taskId);
         }
@@ -54,17 +48,11 @@ public class CountdownTask implements Runnable {
     public void start() {
         Long lastUseTime = playersLastUseTime.get(pvpPlayer.getName());
         if (lastUseTime == null || System.currentTimeMillis() > lastUseTime + USE_COOLDOWN) {
-            notifyList.add(pvpPlayer.getPlayer());
-            List<Entity> nearbyEntities = pvpPlayer.getPlayer().getNearbyEntities(RADIUS, RADIUS, RADIUS);
-            for (Entity nearbyEntity : nearbyEntities) {
-                if (nearbyEntity instanceof Player) {
-                    notifyList.add((Player) nearbyEntity);
-                }
-            }
-            taskId = Bukkit.getScheduler().scheduleSyncRepeatingTask(plugin, this, PERIOD, PERIOD);
             playersLastUseTime.put(pvpPlayer.getName(), System.currentTimeMillis());
+            loc = pvpPlayer.getPlayer().getLocation();
+            taskId = Bukkit.getScheduler().scheduleSyncRepeatingTask(plugin, this, PERIOD, PERIOD);
         } else {
-            GUtils.sendTranslated(pvpPlayer.getPlayer(), "signs.countdown.cooldown");
+            Messaging.send(pvpPlayer.getPlayer(), "signs.countdown.cooldown");
         }
     }
 }

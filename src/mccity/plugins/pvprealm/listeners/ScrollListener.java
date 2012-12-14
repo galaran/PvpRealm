@@ -1,10 +1,11 @@
 package mccity.plugins.pvprealm.listeners;
 
-import mccity.plugins.pvprealm.Settings;
 import mccity.plugins.pvprealm.PvpRealm;
+import mccity.plugins.pvprealm.Settings;
 import mccity.plugins.pvprealm.object.ObjectManager;
-import me.galaran.bukkitutils.pvprealm.GUtils;
+import me.galaran.bukkitutils.pvprealm.LocUtils;
 import me.galaran.bukkitutils.pvprealm.Pair;
+import me.galaran.bukkitutils.pvprealm.text.Messaging;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
@@ -38,27 +39,27 @@ public class ScrollListener implements Listener {
         if (event.getAction() != Action.RIGHT_CLICK_BLOCK && event.getAction() != Action.RIGHT_CLICK_AIR) return;
 
         ItemStack handStack = event.getItem();
-        if (handStack == null || !handStack.getData().equals(Settings.scrollItem)) return;
+        if (!Settings.scrollItem.matches(handStack)) return;
 
         Player player = event.getPlayer();
         if (!player.hasPermission(PERM_SCROLL)) {
-            GUtils.sendTranslated(player, "scroll.no-perm");
+            Messaging.send(player, "scroll.no-perm");
             return;
         }
 
         if (player.getLocation().getWorld().equals(Settings.pvpWorld)) {
-            GUtils.sendTranslated(player, "scroll.already-in-pvp-world");
+            Messaging.send(player, "scroll.already-in-pvp-world");
             return;
         }
 
         if (playersUsingScroll.containsKey(player)) {
-            GUtils.sendTranslated(player, "scroll.already-use");
+            Messaging.send(player, "scroll.already-use");
             return;
         }
 
         int taskId = Bukkit.getScheduler().scheduleSyncDelayedTask(plugin, new ScrollTask(player), Settings.scrollDelaySec * 20);
         playersUsingScroll.put(player, new Pair<Integer, Location>(taskId, player.getLocation()));
-        GUtils.sendTranslated(player, "scroll.using", Settings.scrollDelaySec);
+        Messaging.send(player, "scroll.using", Settings.scrollDelaySec);
     }
 
     @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
@@ -69,10 +70,10 @@ public class ScrollListener implements Listener {
         Pair<Integer, Location> taskLoc = playersUsingScroll.get(player);
         if (taskLoc == null) return;
 
-        if (!GUtils.isPositionsEquals(player.getLocation(), taskLoc.getRight(), 0.1)) {
+        if (!LocUtils.closerThan(player.getLocation(), taskLoc.getRight(), 0.1)) {
             playersUsingScroll.remove(player);
             Bukkit.getScheduler().cancelTask(taskLoc.getLeft());
-            GUtils.sendTranslated(player, "scroll.aborted");
+            Messaging.send(player, "scroll.aborted");
         }
     }
 
@@ -88,7 +89,7 @@ public class ScrollListener implements Listener {
         public void run() {
             if (player.isOnline()) {
                 ItemStack handStack = player.getItemInHand();
-                if (handStack != null && handStack.getData().equals(Settings.scrollItem)) {
+                if (Settings.scrollItem.matches(handStack)) {
                     if (Settings.consumeScroll) {
                         if (handStack.getAmount() > 1) {
                             handStack.setAmount(handStack.getAmount() - 1);
@@ -98,10 +99,10 @@ public class ScrollListener implements Listener {
                     }
                     ObjectManager.instance.getPvpPlayer(player).enterPvpRealm();
                     if (Settings.scrollBroadcastArrival) {
-                        GUtils.serverBroadcast(GUtils.getDecoratedTranslation("scroll.arrival-message", player.getName()));
+                        Messaging.broadcastServerNoPrefix("scroll.arrival-message", player.getName());
                     }
                 } else {
-                    GUtils.sendTranslated(player, "scroll.not-in-hand");
+                    Messaging.send(player, "scroll.not-in-hand");
                 }
             }
             playersUsingScroll.remove(player);

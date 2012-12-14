@@ -1,10 +1,9 @@
 package mccity.plugins.pvprealm.command;
 
-import mccity.plugins.pvprealm.Settings;
 import mccity.plugins.pvprealm.PvpRealm;
+import mccity.plugins.pvprealm.Settings;
 import mccity.plugins.pvprealm.object.ObjectManager;
-import me.galaran.bukkitutils.pvprealm.DoOrNotify;
-import me.galaran.bukkitutils.pvprealm.GUtils;
+import me.galaran.bukkitutils.pvprealm.text.Messaging;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
@@ -43,31 +42,31 @@ public class PvpRealmCommandExecutor implements CommandExecutor {
         if (args.length == 1) {
             if (args[0].equalsIgnoreCase("reload")) {
                 if (plugin.reloadSettings()) {
-                    GUtils.sendTranslated(sender, "reload.ok");
+                    Messaging.send(sender, "reload.ok");
                 } else {
-                    GUtils.sendTranslated(sender, "reload.error");
+                    Messaging.send(sender, "reload.error");
                 }
                 return true;
             }
         } else if (args.length == 2) {
             if (args[0].equalsIgnoreCase("enter")) {
                 if (Settings.pvpwEnabled) {
-                    Player player = DoOrNotify.getPlayer(args[1], true, sender);
+                    Player player = Messaging.getPlayer(args[1], sender);
                     if (player != null) {
                         om.getPvpPlayer(player).enterPvpRealm();
                     }
                 } else {
-                    GUtils.sendTranslated(sender, "world.disabled");
+                    Messaging.send(sender, "world.disabled");
                 }
                 return true;
             } else if (args[0].equalsIgnoreCase("return")) {
                 if (Settings.pvpwEnabled) {
-                    Player player = DoOrNotify.getPlayer(args[1], true, sender);
+                    Player player = Messaging.getPlayer(args[1], sender);
                     if (player != null) {
                         om.getPvpPlayer(player).leavePvpRealm();
                     }
                 } else {
-                    GUtils.sendTranslated(sender, "world.disabled");
+                    Messaging.send(sender, "world.disabled");
                 }
                 return true;
             }

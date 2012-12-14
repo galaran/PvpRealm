@@ -4,8 +4,8 @@ import mccity.plugins.pvprealm.Settings;
 import mccity.plugins.pvprealm.PvpRealm;
 import mccity.plugins.pvprealm.object.BattlePoint;
 import mccity.plugins.pvprealm.object.PvpPlayer;
-import me.galaran.bukkitutils.pvprealm.GUtils;
-import me.galaran.bukkitutils.pvprealm.YamlUtils;
+import me.galaran.bukkitutils.pvprealm.IOUtils;
+import me.galaran.bukkitutils.pvprealm.text.Messaging;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.entity.Player;
@@ -32,7 +32,7 @@ public class YmlStorage {
         }
 
         battlePointsFile = new File(pluginDir, "battle_points.yml");
-        YamlUtils.createFileIfNotExists(battlePointsFile);
+        IOUtils.createFileIfNotExists(battlePointsFile);
     }
 
     public List<BattlePoint> loadBattlePoints() {
@@ -64,7 +64,7 @@ public class YmlStorage {
             PvpPlayer pvpPlayer = new PvpPlayer(plugin, player);
             pvpPlayer.load(playerRoot.getConfigurationSection(player.getName()));
             if (Settings.debug) {
-                GUtils.log("Pvp player $1 loaded (id: $2)", pvpPlayer.getName(), player.getEntityId());
+                Messaging.log("Pvp player $1 loaded (id: $2)", pvpPlayer.getName(), player.getEntityId());
             }
             return pvpPlayer;
         } else {
@@ -77,7 +77,7 @@ public class YmlStorage {
         playerRoot.set(pvpPlayer.getName(), pvpPlayer.serialize());
         saveYml(playerRoot, getPlayerFile(pvpPlayer.getName()));
         if (Settings.debug) {
-            GUtils.log("Pvp player $1 stored", pvpPlayer.getName());
+            Messaging.log("Pvp player $1 stored", pvpPlayer.getName());
         }
     }
 
@@ -90,7 +90,7 @@ public class YmlStorage {
         try {
             config.save(file);
         } catch (IOException ex) {
-            GUtils.log(Level.SEVERE, "Failed to save " + file.getAbsolutePath());
+            Messaging.log(Level.SEVERE, "Failed to save " + file.getAbsolutePath());
             ex.printStackTrace();
         }
     }

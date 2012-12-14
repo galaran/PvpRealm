@@ -1,19 +1,21 @@
 package mccity.plugins.pvprealm;
 
-import me.galaran.bukkitutils.pvprealm.DoOrNotify;
-import me.galaran.bukkitutils.pvprealm.GUtils;
+import me.galaran.bukkitutils.pvprealm.IdData;
+import me.galaran.bukkitutils.pvprealm.LocUtils;
 import me.galaran.bukkitutils.pvprealm.Pair;
-import me.galaran.bukkitutils.pvprealm.YamlUtils;
+import me.galaran.bukkitutils.pvprealm.text.Messaging;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.World;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
-import org.bukkit.material.MaterialData;
 
 import java.io.File;
-import java.util.*;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
 import java.util.logging.Level;
 
 public class Settings {
@@ -30,7 +32,7 @@ public class Settings {
     public static boolean pvpwDisableWeather;
 
     public static boolean scroll;
-    public static MaterialData scrollItem;
+    public static IdData scrollItem;
     public static boolean consumeScroll;
     public static int scrollDelaySec;
     public static boolean scrollBroadcastArrival;
@@ -56,18 +58,18 @@ public class Settings {
         pvpwEnabled = worldSection.getBoolean("enable", false);
         if (pvpwEnabled) {
             String pvpWorldName = worldSection.getString("world");
-            pvpWorld = DoOrNotify.getWorld(pvpWorldName, Bukkit.getConsoleSender());
+            pvpWorld = Messaging.getWorld(pvpWorldName, Bukkit.getConsoleSender());
             if (pvpWorld == null) {
                 return false;
             }
-            pvpwEntryLoc = YamlUtils.deserializeLocation(worldSection.getConfigurationSection("entry-loc").getValues(false));
+            pvpwEntryLoc = LocUtils.deserialize(worldSection.getConfigurationSection("entry-loc"));
             if (!pvpwEntryLoc.getWorld().equals(pvpWorld)) {
-                GUtils.log("Entry location must be in the Pvp World");
+                Messaging.log("Entry location must be in the Pvp World");
                 return false;
             }
-            pvpwDefaultReturnLoc = YamlUtils.deserializeLocation(worldSection.getConfigurationSection("default-return-loc").getValues(false));
+            pvpwDefaultReturnLoc = LocUtils.deserialize(worldSection.getConfigurationSection("default-return-loc"));
             if (pvpwDefaultReturnLoc.getWorld().equals(pvpWorld)) {
-                GUtils.log("Entry location must be out of the Pvp World");
+                Messaging.log("Entry location must be out of the Pvp World");
                 return false;
             }
 
@@ -78,7 +80,7 @@ public class Settings {
             // Enter Scroll
             scroll = worldSection.getBoolean("enter-scroll.enable", false);
             if (scroll) {
-                scrollItem = GUtils.parseMatData(worldSection.getString("enter-scroll.item", "369"), "-");
+                scrollItem = IdData.deserialize(worldSection.getString("enter-scroll.item", "369"));
                 consumeScroll = worldSection.getBoolean("enter-scroll.consume", true);
                 scrollDelaySec = worldSection.getInt("enter-scroll.delay-sec", 10);
                 scrollBroadcastArrival = worldSection.getBoolean("enter-scroll.broadcast-arrival", true);
@@ -107,13 +109,13 @@ public class Settings {
             String worldName = (String) dndRegion.get("world");
             World world = Bukkit.getWorld(worldName);
             if (world == null) {
-                GUtils.log(Level.SEVERE, "dnd region " + id + " skipped: world " + worldName + " not loaded");
+                Messaging.log(Level.SEVERE, "dnd region " + id + " skipped: world " + worldName + " not loaded");
             } else {
                 Pair<String, World> entry = new Pair<String, World>(id.toLowerCase(), world);
                 deathNoDropRegions.add(entry);
             }
         }
-        GUtils.log(deathNoDropRegions.size() + " dnd regions");
+        Messaging.log(deathNoDropRegions.size() + " dnd regions");
 
         return true;
     }

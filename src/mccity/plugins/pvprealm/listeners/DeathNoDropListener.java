@@ -2,7 +2,7 @@ package mccity.plugins.pvprealm.listeners;
 
 import mccity.plugins.pvprealm.Settings;
 import mccity.plugins.pvprealm.PvpRealm;
-import me.galaran.bukkitutils.pvprealm.GUtils;
+import me.galaran.bukkitutils.pvprealm.text.Messaging;
 import net.minecraft.server.EntityPlayer;
 import org.bukkit.Location;
 import org.bukkit.craftbukkit.entity.CraftPlayer;
@@ -42,10 +42,10 @@ import java.util.Map;
             if (Settings.isDndRegion(regionId, deathLoc.getWorld())) {
                 event.getDrops().clear();
                 itemsDrops.put(player, new PlayerInv(player));
-                GUtils.sendTranslated(player, "dnd.nodrop");
+                Messaging.send(player, "dnd.nodrop");
                 if (Settings.debug) {
-                    GUtils.log(player.getName() + " dead in the dnd region " + regionId +
-                            "[" + deathLoc.getWorld().getName() + "] and keep inventory");
+                    Messaging.log("$1 dead in the no-drop region $2 [$3] and keep inventory",
+                            player.getName(), regionId, deathLoc.getWorld().getName());
                 }
                 break;
             }

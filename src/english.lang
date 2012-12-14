@@ -1,8 +1,10 @@
 # PvpRealm translation file
 
-utils.no-player: &cNo player with name $1
+utils.no-player: &cNo player with name &3$1
+utils.no-player-matching: &cNo player with name matching &3$1
 utils.no-world: &cWorld $1 not loaded
 utils.cs-not-player: &cThis command can be executed only by a player
+utils.no-perm: &cYou don't have permission
 
 reload.ok: &aConfiguration reloaded
 reload.error: &cThere is error reloading config, see server console

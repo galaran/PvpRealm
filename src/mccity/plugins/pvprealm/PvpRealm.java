@@ -11,8 +11,9 @@ import mccity.plugins.pvprealm.listeners.PvpRealmListener;
 import mccity.plugins.pvprealm.listeners.ScrollListener;
 import mccity.plugins.pvprealm.object.ObjectManager;
 import mccity.plugins.pvprealm.object.PvpPlayer;
-import me.galaran.bukkitutils.pvprealm.GUtils;
-import me.galaran.bukkitutils.pvprealm.Lang;
+import me.galaran.bukkitutils.pvprealm.text.Messaging;
+import me.galaran.bukkitutils.pvprealm.text.TranslationLang;
+import org.bukkit.ChatColor;
 import org.bukkit.plugin.Plugin;
 import org.bukkit.plugin.PluginManager;
 import org.bukkit.plugin.java.JavaPlugin;
@@ -20,6 +21,8 @@ import org.bukkit.plugin.java.JavaPlugin;
 import java.io.File;
 
 public class PvpRealm extends JavaPlugin {
+
+    private TranslationLang translation;
 
     private Heroes heroes;
 
@@ -31,7 +34,9 @@ public class PvpRealm extends JavaPlugin {
 
     @Override
     public void onEnable() {
-        GUtils.init(getLogger(), "PvpRealm");
+        translation = new TranslationLang(this, "english");
+        Messaging.init(getLogger(), ChatColor.GRAY + "[PvpRealm] ", translation);
+
         reloadSettings();
         ObjectManager.init(this);
         initDependencies();
@@ -46,29 +51,21 @@ public class PvpRealm extends JavaPlugin {
         PvpRealmCommandExecutor commandExecutor = new PvpRealmCommandExecutor(this);
         getCommand("pvprealm").setExecutor(commandExecutor);
 
-        GUtils.log("Pvp Realm " + getDescription().getVersion() + " enabled");
+        Messaging.log("Pvp Realm " + getDescription().getVersion() + " enabled");
     }
 
     public boolean reloadSettings() {
         File configFile = new File(getDataFolder(), "config.yml");
         saveDefaultConfig();
         boolean settingsOk = Settings.load(configFile);
-
-        boolean langOk = true;
-        try {
-            Lang.initLang(Settings.lang, this);
-        } catch (Exception ex) {
-            langOk = false;
-            ex.printStackTrace();
-        }
-
-        return settingsOk && langOk;
+        translation.reload(Settings.lang);
+        return settingsOk;
     }
 
     @Override
     public void onDisable() {
         ObjectManager.instance.shutdown();
-        GUtils.log("Pvp Realm disabled");
+        Messaging.log("Pvp Realm disabled");
     }
 
     private void initDependencies() {
@@ -79,14 +76,14 @@ public class PvpRealm extends JavaPlugin {
         if (townyPlugin != null && townyPlugin instanceof Towny) {
             towny = new TownyFacade((Towny) townyPlugin);
             usingTowny = true;
-            GUtils.log("Linked with Towny");
+            Messaging.log("Linked with Towny");
         }
 
         Plugin worldGuardPlugin = pm.getPlugin("WorldGuard");
         if (worldGuardPlugin != null && worldGuardPlugin instanceof WorldGuardPlugin) {
             worldGuard = new WorldGuardFacade((WorldGuardPlugin) worldGuardPlugin);
             usingWorldGuard = true;
-            GUtils.log("Linked with WorldGuard");
+            Messaging.log("Linked with WorldGuard");
         }
     }
 
@@ -104,10 +101,6 @@ public class PvpRealm extends JavaPlugin {
         } else {
             throw new RuntimeException("Not linked with Towny");
         }
-    }
-
-    public boolean isUsingWorldGuard() {
-        return usingWorldGuard;
     }
 
     public WorldGuardFacade getWorldGuard() {

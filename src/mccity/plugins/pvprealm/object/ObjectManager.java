@@ -3,7 +3,8 @@ package mccity.plugins.pvprealm.object;
 import mccity.plugins.pvprealm.PvpRealm;
 import mccity.plugins.pvprealm.Settings;
 import mccity.plugins.pvprealm.persistence.YmlStorage;
-import me.galaran.bukkitutils.pvprealm.GUtils;
+import me.galaran.bukkitutils.pvprealm.RandomUtils;
+import me.galaran.bukkitutils.pvprealm.text.Messaging;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -41,7 +42,7 @@ public class ObjectManager {
         for (BattlePoint battlePoint : loadedPoints) {
             battlePoints.put(battlePoint.getName(), battlePoint);
         }
-        GUtils.log(loadedPoints.size() + " battle points");
+        Messaging.log(loadedPoints.size() + " battle points");
 
         Bukkit.getPluginManager().registerEvents(new PlayerJoinQuitListener(), plugin);
         Bukkit.getScheduler().scheduleAsyncRepeatingTask(plugin, new AutoSaveTask(), AUTOSAVE_PERIOD, AUTOSAVE_PERIOD);
@@ -54,7 +55,7 @@ public class ObjectManager {
             if (result == null) {
                 result = new PvpPlayer(plugin, player);
                 if (Settings.debug) {
-                    GUtils.log("New Pvp player: $1", result.getName());
+                    Messaging.log("New Pvp player: $1", result.getName());
                 }
             }
             pvpPlayers.put(result.getName(), result);
@@ -78,7 +79,7 @@ public class ObjectManager {
             }
         }
         if (matchedBps.isEmpty()) return null;
-        return matchedBps.get(GUtils.random.nextInt(matchedBps.size()));
+        return matchedBps.get(RandomUtils.rnd.nextInt(matchedBps.size()));
     }
 
     public boolean removeBattlePoint(String bPointName) {
@@ -139,7 +140,7 @@ public class ObjectManager {
             if (joined != null) {
                 joined.updateEntity(event.getPlayer());
                 if (Settings.debug) {
-                    GUtils.log("Updated entity (id $1) for Pvp player $2", event.getPlayer().getEntityId(), joined.getName());
+                    Messaging.log("Updated entity (id $1) for Pvp player $2", event.getPlayer().getEntityId(), joined.getName());
                 }
             }
         }

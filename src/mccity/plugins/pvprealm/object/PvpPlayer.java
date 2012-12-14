@@ -5,8 +5,8 @@ import com.herocraftonline.heroes.characters.party.HeroParty;
 import mccity.plugins.pvprealm.PvpRealm;
 import mccity.plugins.pvprealm.Settings;
 import mccity.plugins.pvprealm.listeners.PvpRealmListener;
-import me.galaran.bukkitutils.pvprealm.GUtils;
-import me.galaran.bukkitutils.pvprealm.YamlUtils;
+import me.galaran.bukkitutils.pvprealm.LocUtils;
+import me.galaran.bukkitutils.pvprealm.text.Messaging;
 import org.bukkit.Location;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.serialization.ConfigurationSerializable;
@@ -50,7 +50,7 @@ public class PvpPlayer implements ConfigurationSerializable {
     public void enterPvpRealm() {
         Location curLoc = player.getLocation();
         if (curLoc.getWorld().equals(Settings.pvpWorld)) { // no action required
-            GUtils.log(Level.WARNING, "Player " + player.getName() + " entering to pvp world " + Settings.pvpWorld.getName() +
+            Messaging.log(Level.WARNING, "Player " + player.getName() + " entering to pvp world " + Settings.pvpWorld.getName() +
                     " but it already in");
             return;
         }
@@ -58,7 +58,7 @@ public class PvpPlayer implements ConfigurationSerializable {
         if (teleportUnchecked(Settings.pvpwEntryLoc)) {
             returnLoc = curLoc;
         } else {
-            GUtils.log(Level.WARNING, "Failed to teleport player " + player.getName() + " into pvp world ");
+            Messaging.log(Level.WARNING, "Failed to teleport player " + player.getName() + " into pvp world ");
         }
     }
 
@@ -66,14 +66,14 @@ public class PvpPlayer implements ConfigurationSerializable {
         Location curLoc = player.getLocation();
         String playerName = player.getName();
         if (!curLoc.getWorld().equals(Settings.pvpWorld)) { // no action required
-            GUtils.log(Level.WARNING, "Player " + playerName + " leaving pvp world " + Settings.pvpWorld.getName() +
-                    " but already out of it at loc " + GUtils.locToStringWorldXYZ(curLoc));
+            Messaging.log(Level.WARNING, "Player " + playerName + " leaving pvp world " + Settings.pvpWorld.getName() +
+                    " but already out of it at loc " + LocUtils.toStringWorldXYZ(curLoc));
             return;
         }
 
         Location returnLoc = this.returnLoc;
         if (returnLoc == null) {
-            GUtils.log(Level.WARNING, "No return loc for player " + playerName);
+            Messaging.log(Level.WARNING, "No return loc for player " + playerName);
             returnLoc = Settings.pvpwDefaultReturnLoc;
         }
 
@@ -84,13 +84,13 @@ public class PvpPlayer implements ConfigurationSerializable {
                 clearEffects();
             }
         } else {
-            GUtils.log(Level.SEVERE, "Failed to teleport player " + playerName + " out of the pvp world ");
+            Messaging.log(Level.SEVERE, "Failed to teleport player " + playerName + " out of the pvp world ");
         }
     }
 
     public boolean tpToBattlePoint(BattlePoint battlePoint) {
         if (!teleportUnchecked(battlePoint.getLoc())) {
-            GUtils.log(Level.SEVERE, "Failed to teleport player " + player.getName() + " to tp point " + battlePoint.getName());
+            Messaging.log(Level.SEVERE, "Failed to teleport player " + player.getName() + " to tp point " + battlePoint.getName());
         }
         return true;
     }
@@ -106,18 +106,18 @@ public class PvpPlayer implements ConfigurationSerializable {
 
     public void onSideTeleportIn(Location from) {
         returnLoc = from;
-        GUtils.sendTranslated(player, "world.side-teleport-in");
+        Messaging.send(player, "world.side-teleport-in");
     }
 
     public void onSideTeleportOut() {
         returnLoc = null;
-        GUtils.sendTranslated(player, "world.side-teleport-out");
+        Messaging.send(player, "world.side-teleport-out");
     }
 
     public void load(ConfigurationSection section) {
         ConfigurationSection returnSection = section.getConfigurationSection("return-loc");
         if (returnSection != null) {
-            returnLoc = YamlUtils.deserializeLocation(returnSection.getValues(false));
+            returnLoc = LocUtils.deserialize(returnSection);
         } else {
             returnLoc = null;
         }
@@ -127,7 +127,7 @@ public class PvpPlayer implements ConfigurationSerializable {
     public Map<String, Object> serialize() {
         Map<String, Object> result = new LinkedHashMap<String, Object>();
         if (returnLoc != null) {
-            result.put("return-loc", YamlUtils.serializeLocation(returnLoc));
+            result.put("return-loc", LocUtils.serialize(returnLoc));
         }
         return result;
     }
@@ -168,7 +168,7 @@ public class PvpPlayer implements ConfigurationSerializable {
             cleared = true;
         }
         if (cleared) {
-            GUtils.sendTranslated(player, "signs.rmeffects.cleared-message");
+            Messaging.send(player, "signs.rmeffects.cleared-message");
         }
     }
 

@@ -1,6 +1,6 @@
 package mccity.plugins.pvprealm.object;
 
-import me.galaran.bukkitutils.pvprealm.YamlUtils;
+import me.galaran.bukkitutils.pvprealm.LocUtils;
 import org.bukkit.Location;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.serialization.ConfigurationSerializable;
@@ -20,8 +20,7 @@ public class BattlePoint implements ConfigurationSerializable {
 
     public BattlePoint(ConfigurationSection section) {
         name = section.getString("name");
-        Map<String, Object> locData = section.getConfigurationSection("location").getValues(false);
-        loc = YamlUtils.deserializeLocation(locData);
+        loc = LocUtils.deserialize(section.getConfigurationSection("location"));
     }
 
     public Location getLoc() {
@@ -36,7 +35,7 @@ public class BattlePoint implements ConfigurationSerializable {
     public Map<String, Object> serialize() {
         Map<String, Object> result = new LinkedHashMap<String, Object>();
         result.put("name", name);
-        result.put("location", YamlUtils.serializeLocation(loc));
+        result.put("location", LocUtils.serialize(loc));
         return result;
     }
 

@@ -17,13 +17,16 @@
         <mkdir dir="src/${utils.package}/${utils.suffix}"/>
         <copy todir="src/${utils.package}/${utils.suffix}">
             <fileset dir="${utils.srcroot}/${utils.package}/${utils.placeholder}">
-                <include name="GUtils.java"/>
+                <include name="text/Messaging.java"/>
+                <include name="text/StringUtils.java"/>
+                <include name="text/TranslationBase.java"/>
+                <include name="text/TranslationLang.java"/>
+
+                <include name="IdData.java"/>
                 <include name="Pair.java"/>
-                <include name="StringUtils.java"/>
-                <include name="Lang.java"/>
-                <include name="DoOrNotify.java"/>
-                <include name="ToStringer.java"/>
-                <include name="YamlUtils.java"/>
+                <include name="LocUtils.java"/>
+                <include name="IOUtils.java"/>
+                <include name="RandomUtils.java"/>
             </fileset>
         </copy>
         <replace dir="src/${utils.package}/${utils.suffix}" token="${utils.placeholder}" value="${utils.suffix}"/>

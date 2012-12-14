@@ -1,5 +1,6 @@
-package me.galaran.bukkitutils.pvprealm;
+package me.galaran.bukkitutils.pvprealm.text;
 
+import com.google.common.base.Function;
 import org.bukkit.ChatColor;
 
 import java.util.Iterator;
@@ -14,21 +15,21 @@ public class StringUtils {
     public static final Pattern AMP_COLOR_PATTERN = Pattern.compile("&([0-9A-FK-OR])", Pattern.CASE_INSENSITIVE);
 
     /**
-     * @param toStringer or null to convert with toString()
+     * @param toStringer tostring function or null to use Object.toString()
      */
-    public static <T> String join(Iterable<T> collection, String delimiter, ToStringer<T> toStringer) {
+    public static <T> String join(Iterable<T> collection, String delimiter, Function<T, String> toStringer) {
         return join(collection, null, delimiter, null, toStringer);
     }
 
     /**
-     * @param toStringer or null to convert with toString()
+     * @param toStringer tostring function or null to use Object.toString()
      */
-    public static <T> String join(Iterable<T> collection, ChatColor elementColor, String delimiter, ChatColor delimiterColor, ToStringer<T> toStringer) {
+    public static <T> String join(Iterable<T> collection, ChatColor elementColor, String delimiter, ChatColor delimiterColor, Function<T, String> toStringer) {
         StringBuilder sb = new StringBuilder();
         Iterator<T> itr = collection.iterator();
         while (itr.hasNext()) {
             T obj = itr.next();
-            String objString = (toStringer == null) ? obj.toString() : toStringer.toString(obj);
+            String objString = (toStringer == null) ? obj.toString() : toStringer.apply(obj);
 
             if (elementColor != null) {
                 sb.append(elementColor);
