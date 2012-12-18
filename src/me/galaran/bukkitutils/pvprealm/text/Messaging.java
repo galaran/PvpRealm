@@ -34,20 +34,13 @@ public class Messaging {
         translation = tr;
     }
 
-    public static void log(Level level, String message, Object... params) {
-        String parameterized = StringUtils.parameterizeString(message, params);
-        log.log(level, ChatColor.stripColor(parameterized));
-    }
-
     public static void log(String message, Object... params) {
         log(Level.INFO, message, params);
     }
 
-    public static void sendRaw(CommandSender sender, String raw, Object... params) {
-        String decorated = StringUtils.decorateString(raw, params);
-        if (!decorated.equals("$suppress")) {
-            sender.sendMessage(chatPrefix + decorated);
-        }
+    public static void log(Level level, String message, Object... params) {
+        String parameterized = StringUtils.parameterizeString(message, params);
+        log.log(level, ChatColor.stripColor(parameterized));
     }
 
     public static void send(CommandSender sender, String key, Object... params) {
@@ -61,6 +54,13 @@ public class Messaging {
         String decorated = getDecoratedTranslation(key, params);
         if (!decorated.equals("$suppress")) {
             sender.sendMessage(decorated);
+        }
+    }
+
+    public static void sendRaw(CommandSender sender, String raw, Object... params) {
+        String decorated = StringUtils.decorateString(raw, params);
+        if (!decorated.equals("$suppress")) {
+            sender.sendMessage(chatPrefix + decorated);
         }
     }
 
@@ -81,21 +81,28 @@ public class Messaging {
     }
 
     public static void broadcast(Location loc, double radius, String key, Object... params) {
-        broadcast(true, loc, radius, key, params);
+        broadcast(true, loc, radius, getDecoratedTranslation(key, params));
     }
 
     public static void broadcastNoPrefix(Location loc, double radius, String key, Object... params) {
-        broadcast(false, loc, radius, key, params);
+        broadcast(false, loc, radius, getDecoratedTranslation(key, params));
     }
 
-    private static void broadcast(boolean prefix, Location loc, double radius, String key, Object... params) {
-        String decorated = getDecoratedTranslation(key, params);
-        if (!decorated.equals("$suppress")) {
+    public static void broadcastRaw(Location loc, double radius, String raw, Object... params) {
+        broadcast(true, loc, radius, StringUtils.decorateString(raw, params));
+    }
+
+    public static void broadcastRawNoPrefix(Location loc, double radius, String raw, Object... params) {
+        broadcast(false, loc, radius, StringUtils.decorateString(raw, params));
+    }
+
+    private static void broadcast(boolean prefix, Location loc, double radius, String message) {
+        if (!message.equals("$suppress")) {
             for (Player curPlayer : Bukkit.getOnlinePlayers()) {
                 Location curPlayerLoc = curPlayer.getLocation();
                 if (!curPlayerLoc.getWorld().equals(loc.getWorld())) continue;
                 if (curPlayerLoc.distance(loc) <= radius) {
-                    curPlayer.sendMessage(prefix ? chatPrefix + decorated : decorated);
+                    curPlayer.sendMessage(prefix ? chatPrefix + message : message);
                 }
             }
         }

@@ -38,7 +38,7 @@ public class CountdownTask implements Runnable {
     @Override
     public void run() {
         if (curLine < cdStrings.length) {
-            Messaging.broadcastNoPrefix(loc, RADIUS, cdStrings[curLine], pvpPlayer.getName());
+            Messaging.broadcastRawNoPrefix(loc, RADIUS, cdStrings[curLine], pvpPlayer.getName());
             curLine++;
         } else {
             Bukkit.getScheduler().cancelTask(taskId);
