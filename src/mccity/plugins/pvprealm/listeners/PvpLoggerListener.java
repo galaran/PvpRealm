@@ -83,10 +83,9 @@ public class PvpLoggerListener implements Listener {
             }
         });
 
-        String pvpLogMessage = Messaging.getDecoratedTranslation("logger.message", pvpPlayer.getName(), playerList);
-        Messaging.log(pvpLogMessage);
+        Messaging.log(Messaging.getDecoratedTranslation("logger.message", pvpPlayer.getName(), playerList));
         if (Settings.pvpLoggerMessage) {
-            Messaging.broadcastServerNoPrefix(pvpLogMessage);
+            Messaging.broadcastServerNoPrefix("logger.message", pvpPlayer.getName(), playerList);
         }
 
         Hero hero = plugin.getHero(pvpPlayer);
