@@ -2,7 +2,6 @@ package mccity.plugins.pvprealm.listeners;
 
 import mccity.plugins.pvprealm.PvpRealm;
 import mccity.plugins.pvprealm.Settings;
-import me.galaran.bukkitutils.pvprealm.nms.InventoryPlayer;
 import me.galaran.bukkitutils.pvprealm.text.Messaging;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
@@ -11,21 +10,27 @@ import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.entity.PlayerDeathEvent;
 import org.bukkit.event.player.PlayerRespawnEvent;
+import org.bukkit.inventory.ItemStack;
 
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+// TODO: test this
+/*
+ * When player respawn after death in Death-no-Drop region, it receives inventory back
+ * But this will not works, if it rejoin when dead
+ */
  public class DeathNoDropListener implements Listener {
 
     private final PvpRealm plugin;
-    private final Map<Player, InventoryPlayer> itemsDrops = new HashMap<Player, InventoryPlayer>();
+    private final Map<Player, ItemStack[]> itemsDrops = new HashMap<Player, ItemStack[]>();
 
     public DeathNoDropListener(PvpRealm pvpRealm) {
         plugin = pvpRealm;
     }
 
-    @EventHandler(priority = EventPriority.MONITOR)
+    @EventHandler(priority = EventPriority.NORMAL)
     public void onPlayerDeath(PlayerDeathEvent event) {
         Player player = event.getEntity();
         Location deathLoc = player.getLocation();
@@ -33,7 +38,7 @@ import java.util.Map;
         for (String regionId : regions) {
             if (Settings.isDndRegion(regionId, deathLoc.getWorld())) {
                 event.getDrops().clear();
-                itemsDrops.put(player, new InventoryPlayer(player));
+                itemsDrops.put(player, player.getInventory().getContents());
                 Messaging.send(player, "dnd.nodrop");
                 if (Settings.debug) {
                     Messaging.log("$1 dead in the no-drop region $2 [$3] and keep inventory",
@@ -48,9 +53,9 @@ import java.util.Map;
     @EventHandler(priority = EventPriority.MONITOR)
     public void onPlayerRespawn(PlayerRespawnEvent event) {
         Player player = event.getPlayer();
-        InventoryPlayer inv = itemsDrops.remove(player);
+        ItemStack[] inv = itemsDrops.remove(player);
         if (inv != null) {
-            inv.setInventory(player);
+            player.getInventory().setContents(inv);
             player.updateInventory();
         }
     }
