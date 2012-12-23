@@ -9,7 +9,6 @@ import me.galaran.bukkitutils.pvprealm.LocUtils;
 import me.galaran.bukkitutils.pvprealm.text.Messaging;
 import org.bukkit.Location;
 import org.bukkit.configuration.ConfigurationSection;
-import org.bukkit.configuration.serialization.ConfigurationSerializable;
 import org.bukkit.entity.Player;
 import org.bukkit.potion.PotionEffect;
 
@@ -17,7 +16,7 @@ import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.logging.Level;
 
-public class PvpPlayer implements ConfigurationSerializable {
+public class PvpPlayer {
 
     private final PvpRealm plugin;
 
@@ -114,22 +113,21 @@ public class PvpPlayer implements ConfigurationSerializable {
         Messaging.send(player, "world.side-teleport-out");
     }
 
-    public void load(ConfigurationSection section) {
-        ConfigurationSection returnSection = section.getConfigurationSection("return-loc");
-        if (returnSection != null) {
-            returnLoc = LocUtils.deserialize(returnSection);
-        } else {
-            returnLoc = null;
-        }
-    }
-
-    @Override
     public Map<String, Object> serialize() {
         Map<String, Object> result = new LinkedHashMap<String, Object>();
         if (returnLoc != null) {
             result.put("return-loc", LocUtils.serialize(returnLoc));
         }
         return result;
+    }
+
+    public void deserialize(ConfigurationSection section) {
+        ConfigurationSection returnSection = section.getConfigurationSection("return-loc");
+        if (returnSection != null) {
+            returnLoc = LocUtils.deserialize(returnSection);
+        } else {
+            returnLoc = null;
+        }
     }
 
     public boolean hasFriend(Player player) {
@@ -142,23 +140,6 @@ public class PvpPlayer implements ConfigurationSerializable {
         }
 
         return false;
-    }
-
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-
-        PvpPlayer pvpPlayer = (PvpPlayer) o;
-
-        if (name != null ? !name.equals(pvpPlayer.name) : pvpPlayer.name != null) return false;
-
-        return true;
-    }
-
-    @Override
-    public int hashCode() {
-        return name != null ? name.hashCode() : 0;
     }
 
     public void clearEffects() {
@@ -183,5 +164,22 @@ public class PvpPlayer implements ConfigurationSerializable {
         hero.setMana(hero.getMaxMana());
         player.setFoodLevel(20);
         player.setSaturation(5.0f);
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+
+        PvpPlayer pvpPlayer = (PvpPlayer) o;
+
+        if (name != null ? !name.equals(pvpPlayer.name) : pvpPlayer.name != null) return false;
+
+        return true;
+    }
+
+    @Override
+    public int hashCode() {
+        return name != null ? name.hashCode() : 0;
     }
 }

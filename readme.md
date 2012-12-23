@@ -124,5 +124,5 @@ Pvp-таблички
 Download
 --------
 
-Версия CraftBukkit: 1.4.5-R1.0  
+Версия Bukkit: 1.4.6-R0.1  
 https://dl.dropbox.com/u/14150510/dd/mccity/PvpRealm.jar

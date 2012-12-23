@@ -45,7 +45,7 @@ public class ObjectManager {
         Messaging.log(loadedPoints.size() + " battle points");
 
         Bukkit.getPluginManager().registerEvents(new PlayerJoinQuitListener(), plugin);
-        Bukkit.getScheduler().scheduleAsyncRepeatingTask(plugin, new AutoSaveTask(), AUTOSAVE_PERIOD, AUTOSAVE_PERIOD);
+        Bukkit.getScheduler().runTaskTimerAsynchronously(plugin, new AutoSaveTask(), AUTOSAVE_PERIOD, AUTOSAVE_PERIOD);
     }
 
     public PvpPlayer getPvpPlayer(Player player) {

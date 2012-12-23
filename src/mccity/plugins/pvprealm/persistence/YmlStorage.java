@@ -62,7 +62,7 @@ public class YmlStorage {
         if (playerProfile.isFile()) {
             FileConfiguration playerRoot = YamlConfiguration.loadConfiguration(playerProfile);
             PvpPlayer pvpPlayer = new PvpPlayer(plugin, player);
-            pvpPlayer.load(playerRoot.getConfigurationSection(player.getName()));
+            pvpPlayer.deserialize(playerRoot.getConfigurationSection(player.getName()));
             if (Settings.debug) {
                 Messaging.log("Pvp player $1 loaded (id: $2)", pvpPlayer.getName(), player.getEntityId());
             }
