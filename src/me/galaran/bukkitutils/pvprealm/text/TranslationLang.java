@@ -11,7 +11,7 @@ import java.io.FileNotFoundException;
 public class TranslationLang extends TranslationBase {
 
     private final Plugin plugin;
-    private ImmutableMap<String, String> curTranslation;
+    private ImmutableMap<String, String> curTranslation = null;
 
     public TranslationLang(Plugin plugin, String defaultLang) {
         super("/" + defaultLang + ".lang");
@@ -44,13 +44,11 @@ public class TranslationLang extends TranslationBase {
     }
 
     public String getString(String key) {
-        String result = curTranslation.get(key);
-        if (result == null) {
-            result = defaultTranslation.get(key);
-            if (result == null) {
-                return missingKey(key);
-            }
+        if (curTranslation == null) { // before first reload()
+            return super.getString(key);
         }
-        return result;
+        
+        String result = curTranslation.get(key);
+        return result == null ? super.getString(key) : result;
     }
 }
