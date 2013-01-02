@@ -57,8 +57,11 @@ public class PvpRealm extends JavaPlugin {
     public boolean reloadSettings() {
         File configFile = new File(getDataFolder(), "config.yml");
         saveDefaultConfig();
-        boolean settingsOk = Settings.load(configFile);
+        
+        boolean settingsOk = Settings.reload(configFile);
+        Messaging.setDebug(Settings.debug);
         translation.reload(Settings.lang);
+        
         return settingsOk;
     }
 

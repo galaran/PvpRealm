@@ -1,6 +1,5 @@
 package mccity.plugins.pvprealm.persistence;
 
-import mccity.plugins.pvprealm.Settings;
 import mccity.plugins.pvprealm.PvpRealm;
 import mccity.plugins.pvprealm.object.BattlePoint;
 import mccity.plugins.pvprealm.object.PvpPlayer;
@@ -12,7 +11,10 @@ import org.bukkit.entity.Player;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.List;
+import java.util.Set;
 import java.util.logging.Level;
 
 public class YmlStorage {
@@ -63,9 +65,8 @@ public class YmlStorage {
             FileConfiguration playerRoot = YamlConfiguration.loadConfiguration(playerProfile);
             PvpPlayer pvpPlayer = new PvpPlayer(plugin, player);
             pvpPlayer.deserialize(playerRoot.getConfigurationSection(player.getName()));
-            if (Settings.debug) {
-                Messaging.log("Pvp player $1 loaded (id: $2)", pvpPlayer.getName(), player.getEntityId());
-            }
+            
+            Messaging.debug("Pvp player $1 loaded (id: $2)", pvpPlayer.getName(), player.getEntityId());
             return pvpPlayer;
         } else {
             return null;
@@ -76,9 +77,8 @@ public class YmlStorage {
         FileConfiguration playerRoot = new YamlConfiguration();
         playerRoot.set(pvpPlayer.getName(), pvpPlayer.serialize());
         saveYml(playerRoot, getPlayerFile(pvpPlayer.getName()));
-        if (Settings.debug) {
-            Messaging.log("Pvp player $1 stored", pvpPlayer.getName());
-        }
+
+        Messaging.debug("Pvp player $1 stored", pvpPlayer.getName());
     }
 
     private File getPlayerFile(String name) {

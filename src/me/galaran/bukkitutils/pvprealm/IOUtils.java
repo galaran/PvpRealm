@@ -30,4 +30,26 @@ public class IOUtils {
             dir.mkdirs();
         }
     }
+    
+    public static File firstAvailableNumberedFile(File dir, String fileName) {
+        if (!dir.exists()) dir.mkdirs();
+        
+        String name, dotExt;
+        int extDelimiterPos = fileName.lastIndexOf('.');
+        if (extDelimiterPos != -1) {
+            name = fileName.substring(0, extDelimiterPos);
+            dotExt = fileName.substring(extDelimiterPos);
+        } else {
+            name = fileName;
+            dotExt = "";
+        }
+        
+        int index = 0;
+        File result;
+        do {
+            result = new File(dir, name + (++index) + dotExt);
+        } while (result.exists());
+        
+        return result;
+    } 
 }

@@ -1,7 +1,9 @@
 package mccity.plugins.pvprealm.listeners;
 
+import com.google.common.collect.Maps;
 import mccity.plugins.pvprealm.PvpRealm;
 import mccity.plugins.pvprealm.Settings;
+import me.galaran.bukkitutils.pvprealm.Pair;
 import me.galaran.bukkitutils.pvprealm.text.Messaging;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
@@ -11,12 +13,11 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.entity.PlayerDeathEvent;
 import org.bukkit.event.player.PlayerRespawnEvent;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.inventory.PlayerInventory;
 
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-// TODO: test this
 /*
  * When player respawn after death in Death-no-Drop region, it receives inventory back
  * But this will not works, if it rejoin when dead
@@ -24,7 +25,7 @@ import java.util.Map;
  public class DeathNoDropListener implements Listener {
 
     private final PvpRealm plugin;
-    private final Map<Player, ItemStack[]> itemsDrops = new HashMap<Player, ItemStack[]>();
+    private final Map<Player, Pair<ItemStack[], ItemStack[]>> playersInventories = Maps.newHashMap();
 
     public DeathNoDropListener(PvpRealm pvpRealm) {
         plugin = pvpRealm;
@@ -38,12 +39,13 @@ import java.util.Map;
         for (String regionId : regions) {
             if (Settings.isDndRegion(regionId, deathLoc.getWorld())) {
                 event.getDrops().clear();
-                itemsDrops.put(player, player.getInventory().getContents());
+
+                PlayerInventory inv = player.getInventory();
+                playersInventories.put(player, new Pair<ItemStack[], ItemStack[]>(inv.getContents(), inv.getArmorContents()));
+                
                 Messaging.send(player, "dnd.nodrop");
-                if (Settings.debug) {
-                    Messaging.log("$1 dead in the no-drop region $2 [$3] and keep inventory",
-                            player.getName(), regionId, deathLoc.getWorld().getName());
-                }
+                Messaging.debug("$1 dead in the no-drop region $2 [$3] and keep inventory",
+                        player.getName(), regionId, deathLoc.getWorld().getName());
                 break;
             }
         }
@@ -53,9 +55,11 @@ import java.util.Map;
     @EventHandler(priority = EventPriority.MONITOR)
     public void onPlayerRespawn(PlayerRespawnEvent event) {
         Player player = event.getPlayer();
-        ItemStack[] inv = itemsDrops.remove(player);
-        if (inv != null) {
-            player.getInventory().setContents(inv);
+        Pair<ItemStack[], ItemStack[]> invContent = playersInventories.remove(player);
+        if (invContent != null) {
+            PlayerInventory inv = player.getInventory();
+            inv.setContents(invContent.getLeft());
+            inv.setArmorContents(invContent.getRight());
             player.updateInventory();
         }
     }

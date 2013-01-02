@@ -20,8 +20,8 @@ import java.util.logging.Level;
 
 public class Settings {
 
-    public static boolean debug;
-    public static String lang;
+    static boolean debug;
+    static String lang;
 
     public static boolean pvpwEnabled;
     public static World pvpWorld;
@@ -47,7 +47,7 @@ public class Settings {
 
     private static final Set<Pair<String, World>> deathNoDropRegions = new HashSet<Pair<String, World>>();
 
-    public static boolean load(File configFile) {
+    static boolean reload(File configFile) {
         FileConfiguration root = YamlConfiguration.loadConfiguration(configFile);
 
         debug = root.getBoolean("debug", false);

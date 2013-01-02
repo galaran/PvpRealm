@@ -59,17 +59,14 @@ public class PvpLoggerListener implements Listener {
         if (!Settings.pvpLoggerOp && player.isOp()) return;
 
         if (Settings.pvpLoggerBypassFriendly) {
-            if (Settings.debug) {
-                Messaging.log("$1 logged out of pvp. Before friend check: $2", player.getName(), combatWith.toString());
-            }
+            Messaging.debug("$1 logged out of pvp. Before friend check: $2", player.getName(), combatWith.toString());
+            
             Iterator<Player> itr = combatWith.iterator();
             while (itr.hasNext()) {
                 PvpPlayer curCombatPlayer = ObjectManager.instance.getPvpPlayer(itr.next());
                 if (curCombatPlayer.hasFriend(player)) {
                     itr.remove();
-                    if (Settings.debug) {
-                        Messaging.log("$1 has friend $2", curCombatPlayer.getName(), player.getName());
-                    }
+                    Messaging.debug("$1 has friend $2", curCombatPlayer.getName(), player.getName());
                 }
             }
 

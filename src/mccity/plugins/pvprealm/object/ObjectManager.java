@@ -54,9 +54,7 @@ public class ObjectManager {
             result = storage.loadPvpPlayer(player);
             if (result == null) {
                 result = new PvpPlayer(plugin, player);
-                if (Settings.debug) {
-                    Messaging.log("New Pvp player: $1", result.getName());
-                }
+                Messaging.debug("New Pvp player: $1", result.getName());
             }
             pvpPlayers.put(result.getName(), result);
         }
@@ -139,9 +137,7 @@ public class ObjectManager {
             PvpPlayer joined = pvpPlayers.get(playerName);
             if (joined != null) {
                 joined.updateEntity(event.getPlayer());
-                if (Settings.debug) {
-                    Messaging.log("Updated entity (id $1) for Pvp player $2", event.getPlayer().getEntityId(), joined.getName());
-                }
+                Messaging.debug("Updated entity (id $1) for Pvp player $2", event.getPlayer().getEntityId(), joined.getName());
             }
         }
     }
