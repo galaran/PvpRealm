@@ -23,15 +23,13 @@ public class CountdownTask implements Runnable {
             "&a$1: &cGo!"
     };
 
-    private final PvpRealm plugin;
     private final PvpPlayer pvpPlayer;
 
     private Location loc;
     private int taskId;
     private int curLine = 0;
 
-    public CountdownTask(PvpRealm plugin, PvpPlayer pvpPlayer) {
-        this.plugin = plugin;
+    public CountdownTask(PvpPlayer pvpPlayer) {
         this.pvpPlayer = pvpPlayer;
     }
 
@@ -50,7 +48,7 @@ public class CountdownTask implements Runnable {
         if (lastUseTime == null || System.currentTimeMillis() > lastUseTime + USE_COOLDOWN) {
             playersLastUseTime.put(pvpPlayer.getName(), System.currentTimeMillis());
             loc = pvpPlayer.getPlayer().getLocation();
-            taskId = Bukkit.getScheduler().scheduleSyncRepeatingTask(plugin, this, PERIOD, PERIOD);
+            taskId = Bukkit.getScheduler().scheduleSyncRepeatingTask(PvpRealm.getSelf(), this, PERIOD, PERIOD);
         } else {
             Messaging.send(pvpPlayer.getPlayer(), "signs.countdown.cooldown");
         }

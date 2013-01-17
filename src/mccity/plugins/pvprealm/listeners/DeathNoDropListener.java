@@ -20,28 +20,23 @@ import java.util.Map;
 
 /*
  * When player respawn after death in Death-no-Drop region, it receives inventory back
- * But this will not works, if it rejoin when dead
  */
- public class DeathNoDropListener implements Listener {
+public class DeathNoDropListener implements Listener {
 
-    private final PvpRealm plugin;
-    private final Map<Player, Pair<ItemStack[], ItemStack[]>> playersInventories = Maps.newHashMap();
-
-    public DeathNoDropListener(PvpRealm pvpRealm) {
-        plugin = pvpRealm;
-    }
+    private final Map<String, Pair<ItemStack[], ItemStack[]>> storedInventories = Maps.newHashMap();
 
     @EventHandler(priority = EventPriority.NORMAL)
     public void onPlayerDeath(PlayerDeathEvent event) {
         Player player = event.getEntity();
         Location deathLoc = player.getLocation();
-        List<String> regions = plugin.getWorldGuard().getRegions(deathLoc);
+        List<String> regions = PvpRealm.getSelf().getWorldGuard().getRegions(deathLoc);
         for (String regionId : regions) {
             if (Settings.isDndRegion(regionId, deathLoc.getWorld())) {
                 event.getDrops().clear();
 
                 PlayerInventory inv = player.getInventory();
-                playersInventories.put(player, new Pair<ItemStack[], ItemStack[]>(inv.getContents(), inv.getArmorContents()));
+                storedInventories.put(player.getName(),
+                        new Pair<ItemStack[], ItemStack[]>(inv.getContents(), inv.getArmorContents()));
                 
                 Messaging.send(player, "dnd.nodrop");
                 Messaging.debug("$1 dead in the no-drop region $2 [$3] and keep inventory",
@@ -55,11 +50,11 @@ import java.util.Map;
     @EventHandler(priority = EventPriority.MONITOR)
     public void onPlayerRespawn(PlayerRespawnEvent event) {
         Player player = event.getPlayer();
-        Pair<ItemStack[], ItemStack[]> invContent = playersInventories.remove(player);
+        Pair<ItemStack[], ItemStack[]> invContent = storedInventories.remove(player.getName());
         if (invContent != null) {
-            PlayerInventory inv = player.getInventory();
-            inv.setContents(invContent.getLeft());
-            inv.setArmorContents(invContent.getRight());
+            PlayerInventory storedInv = player.getInventory();
+            storedInv.setContents(invContent.getLeft());
+            storedInv.setArmorContents(invContent.getRight());
             player.updateInventory();
         }
     }

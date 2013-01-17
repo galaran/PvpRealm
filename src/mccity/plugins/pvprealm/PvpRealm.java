@@ -21,6 +21,8 @@ import org.bukkit.plugin.java.JavaPlugin;
 import java.io.File;
 
 public class PvpRealm extends JavaPlugin {
+    
+    private static PvpRealm self;
 
     private TranslationLang translation;
 
@@ -34,6 +36,7 @@ public class PvpRealm extends JavaPlugin {
 
     @Override
     public void onEnable() {
+        self = this;
         translation = new TranslationLang(this, "english");
         Messaging.init(getLogger(), ChatColor.GRAY + "[PvpRealm] ", translation);
 
@@ -42,33 +45,16 @@ public class PvpRealm extends JavaPlugin {
         initDependencies();
 
         PluginManager pm = getServer().getPluginManager();
-        pm.registerEvents(new PvpRealmListener(this), this);
-        pm.registerEvents(new PvpLoggerListener(this), this);
-        pm.registerEvents(new ScrollListener(this), this);
+        pm.registerEvents(new PvpRealmListener(), this);
+        pm.registerEvents(new PvpLoggerListener(), this);
+        pm.registerEvents(new ScrollListener(), this);
         if (usingWorldGuard) {
-            pm.registerEvents(new DeathNoDropListener(this), this);
+            pm.registerEvents(new DeathNoDropListener(), this);
         }
         PvpRealmCommandExecutor commandExecutor = new PvpRealmCommandExecutor(this);
         getCommand("pvprealm").setExecutor(commandExecutor);
 
         Messaging.log("Pvp Realm " + getDescription().getVersion() + " enabled");
-    }
-
-    public boolean reloadSettings() {
-        File configFile = new File(getDataFolder(), "config.yml");
-        saveDefaultConfig();
-        
-        boolean settingsOk = Settings.reload(configFile);
-        Messaging.setDebug(Settings.debug);
-        translation.reload(Settings.lang);
-        
-        return settingsOk;
-    }
-
-    @Override
-    public void onDisable() {
-        ObjectManager.instance.shutdown();
-        Messaging.log("Pvp Realm disabled");
     }
 
     private void initDependencies() {
@@ -88,6 +74,27 @@ public class PvpRealm extends JavaPlugin {
             usingWorldGuard = true;
             Messaging.log("Linked with WorldGuard");
         }
+    }
+
+    @Override
+    public void onDisable() {
+        ObjectManager.instance.shutdown();
+        Messaging.log("Pvp Realm disabled");
+    }
+
+    public static PvpRealm getSelf() {
+        return self;
+    }
+
+    public boolean reloadSettings() {
+        File configFile = new File(getDataFolder(), "config.yml");
+        saveDefaultConfig();
+        
+        boolean settingsOk = Settings.reload(configFile);
+        Messaging.setDebug(Settings.debug);
+        translation.reload(Settings.lang);
+        
+        return settingsOk;
     }
 
     public Hero getHero(PvpPlayer pvpPlayer) {

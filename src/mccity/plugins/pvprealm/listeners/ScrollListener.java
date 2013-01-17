@@ -11,6 +11,7 @@ import org.bukkit.Location;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
+import org.bukkit.event.HandlerList;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.Action;
 import org.bukkit.event.player.PlayerInteractEvent;
@@ -23,15 +24,12 @@ import java.util.Map;
 public class ScrollListener implements Listener {
 
     private static final String PERM_SCROLL = "pvprealm.enterscroll";
+    
+    private final MoveListener MOVE_LISTENER = new MoveListener();
+    private boolean moveRegistered = false;
 
-    private final PvpRealm plugin;
-
-    // Player -> Task id, Initial location
+    /** Player -> (Task id, Initial location) */
     private final Map<Player, Pair<Integer, Location>> playersUsingScroll = new HashMap<Player, Pair<Integer, Location>>();
-
-    public ScrollListener(PvpRealm plugin) {
-        this.plugin = plugin;
-    }
 
     @EventHandler(priority = EventPriority.MONITOR)
     public void onPlayerInteract(PlayerInteractEvent event) {
@@ -56,24 +54,43 @@ public class ScrollListener implements Listener {
             Messaging.send(player, "scroll.already-use");
             return;
         }
-
-        int taskId = Bukkit.getScheduler().scheduleSyncDelayedTask(plugin, new ScrollTask(player), Settings.scrollDelaySec * 20);
+        
+        int taskId = Bukkit.getScheduler().scheduleSyncDelayedTask(PvpRealm.getSelf(), new ScrollTask(player), Settings.scrollDelaySec * 20);
         playersUsingScroll.put(player, new Pair<Integer, Location>(taskId, player.getLocation()));
+        updateMoveRegistration();
+        
         Messaging.send(player, "scroll.using", Settings.scrollDelaySec);
     }
+    
+    private void updateMoveRegistration() {
+        if (playersUsingScroll.isEmpty()) {
+            if (moveRegistered) {
+                HandlerList.unregisterAll(MOVE_LISTENER);
+                moveRegistered = false;
+            }
+        } else {
+            if (!moveRegistered) {
+                Bukkit.getPluginManager().registerEvents(MOVE_LISTENER, PvpRealm.getSelf());
+                moveRegistered = true;
+            }
+        }
+    }
+    
+    private class MoveListener implements Listener {
+        
+        @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
+        public void onPlayerMove(PlayerMoveEvent event) {
+            Player player = event.getPlayer();
+            Pair<Integer, Location> taskLoc = playersUsingScroll.get(player);
+            if (taskLoc == null) return;
 
-    @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
-    public void onPlayerMove(PlayerMoveEvent event) {
-        if (!Settings.scroll) return;
-
-        Player player = event.getPlayer();
-        Pair<Integer, Location> taskLoc = playersUsingScroll.get(player);
-        if (taskLoc == null) return;
-
-        if (!LocUtils.closerThan(player.getLocation(), taskLoc.getRight(), 0.1)) {
-            playersUsingScroll.remove(player);
-            Bukkit.getScheduler().cancelTask(taskLoc.getLeft());
-            Messaging.send(player, "scroll.aborted");
+            if (!LocUtils.closerThan(player.getLocation(), taskLoc.getRight(), 0.1)) {
+                Bukkit.getScheduler().cancelTask(taskLoc.getLeft());
+                playersUsingScroll.remove(player);
+                updateMoveRegistration();
+                
+                Messaging.send(player, "scroll.aborted");
+            }
         }
     }
 
@@ -106,6 +123,7 @@ public class ScrollListener implements Listener {
                 }
             }
             playersUsingScroll.remove(player);
+            updateMoveRegistration();
         }
     }
 }

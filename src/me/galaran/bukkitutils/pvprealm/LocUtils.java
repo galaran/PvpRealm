@@ -43,16 +43,30 @@ public class LocUtils {
         locData.put("yaw", loc.getYaw());
         return locData;
     }
-
-    public static Location deserialize(ConfigurationSection section) {
-        World world = Bukkit.getServer().getWorld(section.getString("world"));
+    
+    public static Location deserialize(Map<String, Object> map) {
+        String worldName = (String) map.get("world");
+        World world = Bukkit.getServer().getWorld(worldName);
         if (world == null) {
-            throw new IllegalArgumentException("Non-existent world: " + section.getString("world"));
+            throw new IllegalArgumentException("Non-existent world: " + worldName);
         }
 
-        Location result = new Location(world, section.getDouble("x"), section.getDouble("y"), section.getDouble("z"));
-        result.setPitch((float) section.getDouble("pitch", 0));
-        result.setYaw((float) section.getDouble("yaw", 0));
+        Location result = new Location(world,
+                ((Number) map.get("x")).doubleValue(),
+                ((Number) map.get("y")).doubleValue(),
+                ((Number) map.get("z")).doubleValue());
+        
+        if (map.containsKey("pitch")) {
+            result.setPitch(((Number) map.get("pitch")).floatValue());
+        }
+        if (map.containsKey("yaw")) {
+            result.setYaw(((Number) map.get("yaw")).floatValue());
+        }
+        
         return result;
+    }
+
+    public static Location deserialize(ConfigurationSection section) {
+        return deserialize(section.getValues(false));
     }
 }

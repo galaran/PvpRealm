@@ -30,7 +30,7 @@ scroll.aborted: &cTeleport scroll aborted
 scroll.not-in-hand: &cHold scroll in the hands after start using it
 scroll.arrival-message: &6$1&5 arrives to the pvp world
 
-dnd.nodrop: &aYou died in safe region and keep your inventory
+dnd.nodrop: &aYou died in no-drop region and keep your inventory. &cDo not quit before respawn!
 
 signs.rmeffects.place-no-perm: &cYou have no permission to place effect remover signs
 signs.rmeffects.cleared-message: &eAll potion effects removed

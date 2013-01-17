@@ -27,7 +27,6 @@ import org.bukkit.event.weather.WeatherChangeEvent;
 
 public class PvpRealmListener implements Listener {
 
-    private final PvpRealm plugin;
     private static boolean checkTeleport = true;
 
     private static final String PERM_SIGN_PLACE_RMEFFECTS = "pvprealm.placesign.rmeffects";
@@ -38,10 +37,6 @@ public class PvpRealmListener implements Listener {
 
     private static final String PERM_SIGN_PLACE_RESTORE = "pvprealm.placesign.restore";
     private static final String LINE_RESTORE = ChatColor.BLUE + "[restore]";
-
-    public PvpRealmListener(PvpRealm pvpRealm) {
-        this.plugin = pvpRealm;
-    }
 
     @EventHandler(priority = EventPriority.HIGH)
     public void onWeatherChange(WeatherChangeEvent event) {
@@ -103,7 +98,7 @@ public class PvpRealmListener implements Listener {
             PvpPlayer pvpPlayer = om.getPvpPlayer(player);
             pvpPlayer.clearEffects();
         } else if (sign.getLine(1).equals(LINE_COUNTDOWN)) {
-            CountdownTask cdownTask = new CountdownTask(plugin, om.getPvpPlayer(player));
+            CountdownTask cdownTask = new CountdownTask(om.getPvpPlayer(player));
             cdownTask.start();
         } else if (sign.getLine(1).equals(LINE_RESTORE)) {
             om.getPvpPlayer(player).restore();

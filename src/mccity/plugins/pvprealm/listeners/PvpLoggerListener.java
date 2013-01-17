@@ -24,12 +24,6 @@ import java.util.Set;
 
 public class PvpLoggerListener implements Listener {
 
-    private final PvpRealm plugin;
-
-    public PvpLoggerListener(PvpRealm pvpRealm) {
-        plugin = pvpRealm;
-    }
-
     @EventHandler(priority = EventPriority.MONITOR)
     public void onHeroLeaveCombat(HeroLeaveCombatEvent event) {
         if (event.getReason() != CombatEffect.LeaveCombatReason.LOGOUT) return;
@@ -47,14 +41,14 @@ public class PvpLoggerListener implements Listener {
                 combatPlayers.add((Player) living);
             }
         }
-        combatPlayers.remove(hero.getPlayer()); // remove self
+        combatPlayers.remove(hero.getPlayer()); // exclude self
 
         if (!combatPlayers.isEmpty()) {
             onPvpLogout(ObjectManager.instance.getPvpPlayer(hero.getPlayer()), combatPlayers);
         }
     }
 
-    public void onPvpLogout(PvpPlayer pvpPlayer, Set<Player> combatWith) {
+    private void onPvpLogout(PvpPlayer pvpPlayer, Set<Player> combatWith) {
         Player player = pvpPlayer.getPlayer();
         if (!Settings.pvpLoggerOp && player.isOp()) return;
 
@@ -85,7 +79,7 @@ public class PvpLoggerListener implements Listener {
             Messaging.broadcastServerNoPrefix("logger.message", pvpPlayer.getName(), playerList);
         }
 
-        Hero hero = plugin.getHero(pvpPlayer);
+        Hero hero = PvpRealm.getSelf().getHero(pvpPlayer);
         if (Settings.pvpLoggerExpPenalty > 0) {
             hero.gainExp(-Settings.pvpLoggerExpPenalty, HeroClass.ExperienceType.EXTERNAL, player.getLocation());
         }
