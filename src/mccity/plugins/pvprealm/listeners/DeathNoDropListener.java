@@ -17,6 +17,7 @@ import org.bukkit.inventory.PlayerInventory;
 
 import java.util.List;
 import java.util.Map;
+import java.util.logging.Level;
 
 /*
  * When player respawn after death in Death-no-Drop region, it receives inventory back
@@ -29,18 +30,23 @@ public class DeathNoDropListener implements Listener {
     public void onPlayerDeath(PlayerDeathEvent event) {
         Player player = event.getEntity();
         Location deathLoc = player.getLocation();
-        List<String> regions = PvpRealm.getSelf().getWorldGuard().getRegions(deathLoc);
-        for (String regionId : regions) {
+        List<String> dndRegions = PvpRealm.getSelf().getWorldGuard().getRegions(deathLoc);
+        for (String regionId : dndRegions) {
             if (Settings.isDndRegion(regionId, deathLoc.getWorld())) {
-                event.getDrops().clear();
+                String name = player.getName();
+                if (!storedInventories.containsKey(name)) {
+                    PlayerInventory inv = player.getInventory();
+                    storedInventories.put(name, new Pair<ItemStack[], ItemStack[]>(inv.getContents(), inv.getArmorContents()));
 
-                PlayerInventory inv = player.getInventory();
-                storedInventories.put(player.getName(),
-                        new Pair<ItemStack[], ItemStack[]>(inv.getContents(), inv.getArmorContents()));
-                
-                Messaging.send(player, "dnd.nodrop");
-                Messaging.debug("$1 dead in the no-drop region $2 [$3] and keep inventory",
-                        player.getName(), regionId, deathLoc.getWorld().getName());
+                    event.getDrops().clear();
+
+                    Messaging.send(player, "dnd.nodrop");
+                    Messaging.debug("$1 dead in the DNDR $2 [$3] and keep inventory",
+                            name, regionId, deathLoc.getWorld().getName());
+                } else {
+                    Messaging.debug(Level.WARNING, "$1 dead in the DNDR $2 [$3]. Already has stored inventory!",
+                            name, regionId, deathLoc.getWorld().getName());
+                }
                 break;
             }
         }
