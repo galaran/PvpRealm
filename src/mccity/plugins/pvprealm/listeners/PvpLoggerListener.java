@@ -84,8 +84,7 @@ public class PvpLoggerListener implements Listener {
             hero.gainExp(-Settings.pvpLoggerExpPenalty, HeroClass.ExperienceType.EXTERNAL, player.getLocation());
         }
         if (Settings.pvpLoggerKill) {
-            hero.setHealth(0);
-            hero.syncHealth();
+            player.setHealth(0);
         }
     }
 }

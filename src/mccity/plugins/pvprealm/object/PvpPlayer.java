@@ -159,9 +159,8 @@ public class PvpPlayer {
 
     public void restore() {
         Hero hero = getHero();
-        hero.setHealth(hero.getMaxHealth());
-        hero.syncHealth();
         hero.setMana(hero.getMaxMana());
+        player.setHealth(player.getMaxHealth());
         player.setFoodLevel(20);
         player.setSaturation(5.0f);
     }
